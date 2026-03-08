@@ -1,10 +1,7 @@
 import { Panel } from './Panel';
 import { escapeHtml } from '@/utils/sanitize';
-<<<<<<< HEAD
-=======
 import { t } from '@/services/i18n';
 import { getCSSColor } from '@/utils';
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 import {
   calculateStrategicRiskOverview,
   getRecentAlerts,
@@ -23,51 +20,27 @@ import {
 } from '@/services/data-freshness';
 import { getLearningProgress } from '@/services/country-instability';
 import { fetchCachedRiskScores } from '@/services/cached-risk-scores';
-<<<<<<< HEAD
-=======
 import { getCachedPosture } from '@/services/cached-theater-posture';
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export class StrategicRiskPanel extends Panel {
   private overview: StrategicRiskOverview | null = null;
   private alerts: UnifiedAlert[] = [];
   private convergenceAlerts: GeoConvergenceAlert[] = [];
   private freshnessSummary: DataFreshnessSummary | null = null;
-<<<<<<< HEAD
-  private refreshInterval: ReturnType<typeof setInterval> | null = null;
-  private unsubscribeFreshness: (() => void) | null = null;
-  private onLocationClick?: (lat: number, lon: number) => void;
-  private usedCachedScores = false;
-=======
   private unsubscribeFreshness: (() => void) | null = null;
   private onLocationClick?: (lat: number, lon: number) => void;
   private usedCachedScores = false;
   private breakingAlerts: Map<string, { threatLevel: 'critical' | 'high'; timestamp: number }> = new Map();
   private boundOnBreaking: ((e: Event) => void) | null = null;
   private breakingExpiryTimer: ReturnType<typeof setTimeout> | null = null;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
   constructor() {
     super({
       id: 'strategic-risk',
-<<<<<<< HEAD
-      title: 'Strategic Risk Overview',
-      showCount: false,
-      trackActivity: true,
-      infoTooltip: `<strong>Methodology</strong>
-        Composite score (0-100) blending:
-        <ul>
-          <li>50% Country Instability (top 5 weighted)</li>
-          <li>30% Geographic convergence zones</li>
-          <li>20% Infrastructure incidents</li>
-        </ul>
-        Auto-refreshes every 5 minutes.`,
-=======
       title: t('panels.strategicRisk'),
       showCount: false,
       trackActivity: true,
       infoTooltip: t('components.strategicRisk.infoTooltip'),
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     });
     this.init();
   }
@@ -84,31 +57,6 @@ export class StrategicRiskPanel extends Panel {
           this.refresh();
         }, 500);
       });
-<<<<<<< HEAD
-      await this.refresh();
-      this.startAutoRefresh();
-    } catch (error) {
-      console.error('[StrategicRiskPanel] Init error:', error);
-      this.showError('Failed to calculate risk overview');
-    }
-  }
-
-  private startAutoRefresh(): void {
-    this.refreshInterval = setInterval(() => this.refresh(), 5 * 60 * 1000);
-  }
-
-  public async refresh(): Promise<void> {
-    this.freshnessSummary = dataFreshness.getSummary();
-    this.convergenceAlerts = detectConvergence();
-    this.overview = calculateStrategicRiskOverview(this.convergenceAlerts);
-    this.alerts = getRecentAlerts(24);
-
-    // Try to get cached scores during learning mode
-    const { inLearning } = getLearningProgress();
-    this.usedCachedScores = false;
-    if (inLearning) {
-      const cached = await fetchCachedRiskScores();
-=======
 
       // Listen for breaking news events (dispatched on document)
       this.boundOnBreaking = (e: Event) => {
@@ -127,7 +75,7 @@ export class StrategicRiskPanel extends Panel {
       await this.refresh();
     } catch (error) {
       console.error('[StrategicRiskPanel] Init error:', error);
-      this.showError(t('common.failedRiskOverview'));
+      this.showError(t('common.failedRiskOverview'), () => void this.refresh());
     }
   }
 
@@ -184,7 +132,6 @@ export class StrategicRiskPanel extends Panel {
     if (inLearning || this.freshnessSummary.overallStatus === 'insufficient') {
       const cached = await fetchCachedRiskScores(this.signal);
       if (!this.element?.isConnected) return false;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       if (cached && cached.strategicRisk) {
         this.usedCachedScores = true;
         console.log('[StrategicRiskPanel] Using cached scores from backend');
@@ -200,22 +147,6 @@ export class StrategicRiskPanel extends Panel {
     }
 
     this.render();
-<<<<<<< HEAD
-  }
-
-  private getScoreColor(score: number): string {
-    if (score >= 70) return '#ff4444';
-    if (score >= 50) return '#ff8800';
-    if (score >= 30) return '#ffaa00';
-    return '#44aa44';
-  }
-
-  private getScoreLevel(score: number): string {
-    if (score >= 70) return 'Critical';
-    if (score >= 50) return 'Elevated';
-    if (score >= 30) return 'Moderate';
-    return 'Low';
-=======
 
     const alertIds = this.alerts.map(a => a.id).sort().join(',');
     const fp = `${this.overview?.compositeScore}|${this.overview?.trend}|${alertIds}`;
@@ -236,7 +167,6 @@ export class StrategicRiskPanel extends Panel {
     if (score >= 50) return t('components.strategicRisk.levels.elevated');
     if (score >= 30) return t('components.strategicRisk.levels.moderate');
     return t('components.strategicRisk.levels.low');
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   private getTrendEmoji(trend: string): string {
@@ -249,32 +179,19 @@ export class StrategicRiskPanel extends Panel {
 
   private getTrendColor(trend: string): string {
     switch (trend) {
-<<<<<<< HEAD
-      case 'escalating': return '#ff4444';
-      case 'de-escalating': return '#44aa44';
-      default: return '#888888';
-=======
       case 'escalating': return getCSSColor('--semantic-critical');
       case 'de-escalating': return getCSSColor('--semantic-normal');
       default: return getCSSColor('--text-dim');
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
   }
 
 
   private getPriorityColor(priority: AlertPriority): string {
     switch (priority) {
-<<<<<<< HEAD
-      case 'critical': return '#ff4444';
-      case 'high': return '#ff8800';
-      case 'medium': return '#ffaa00';
-      case 'low': return '#88aa44';
-=======
       case 'critical': return getCSSColor('--semantic-critical');
       case 'high': return getCSSColor('--semantic-high');
       case 'medium': return getCSSColor('--semantic-elevated');
       case 'low': return getCSSColor('--semantic-normal');
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
   }
 
@@ -308,36 +225,21 @@ export class StrategicRiskPanel extends Panel {
       <div class="strategic-risk-panel">
         <div class="risk-no-data">
           <div class="risk-no-data-icon">⚠️</div>
-<<<<<<< HEAD
-          <div class="risk-no-data-title">Insufficient Data</div>
-          <div class="risk-no-data-desc">
-            Unable to assess risk level.<br>
-            Enable data sources to begin monitoring.
-=======
           <div class="risk-no-data-title">${t('components.strategicRisk.insufficientData')}</div>
           <div class="risk-no-data-desc">
             ${t('components.strategicRisk.unableToAssess')}<br>${t('components.strategicRisk.enableDataSources')}
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           </div>
         </div>
 
         <div class="risk-section">
-<<<<<<< HEAD
-          <div class="risk-section-title">Required Data Sources</div>
-=======
           <div class="risk-section-title">${t('components.strategicRisk.requiredDataSources')}</div>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           <div class="risk-sources">
             ${riskSources.map(source => this.renderSourceRow(source)).join('')}
           </div>
         </div>
 
         <div class="risk-section">
-<<<<<<< HEAD
-          <div class="risk-section-title">Optional Sources</div>
-=======
           <div class="risk-section-title">${t('components.strategicRisk.optionalSources')}</div>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           <div class="risk-sources">
             ${sources.filter(s => !s.requiredForRisk).slice(0, 4).map(source => this.renderSourceRow(source)).join('')}
           </div>
@@ -345,22 +247,13 @@ export class StrategicRiskPanel extends Panel {
 
         <div class="risk-actions">
           <button class="risk-action-btn risk-action-primary" data-action="enable-core">
-<<<<<<< HEAD
-            Enable Core Feeds
-=======
             ${t('components.strategicRisk.enableCoreFeeds')}
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           </button>
         </div>
 
         <div class="risk-footer">
-<<<<<<< HEAD
-          <span class="risk-updated">Waiting for data...</span>
-          <button class="risk-refresh-btn">Refresh</button>
-=======
           <span class="risk-updated">${t('components.strategicRisk.waitingForData')}</span>
           <button class="risk-refresh-btn">${t('components.strategicRisk.refresh')}</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         </div>
       </div>
     `;
@@ -385,11 +278,7 @@ export class StrategicRiskPanel extends Panel {
     const statusBanner = showLearning
       ? `<div class="risk-status-banner risk-status-learning">
           <span class="risk-status-icon">📊</span>
-<<<<<<< HEAD
-          <span class="risk-status-text">Learning Mode - ${remainingMinutes}m until reliable</span>
-=======
           <span class="risk-status-text">${t('components.strategicRisk.learningMode', { minutes: String(remainingMinutes) })}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           <div class="learning-progress-mini">
             <div class="learning-bar" style="width: ${progress}%"></div>
           </div>
@@ -410,15 +299,9 @@ export class StrategicRiskPanel extends Panel {
             </div>
           </div>
           <div class="risk-trend-container">
-<<<<<<< HEAD
-            <span class="risk-trend-label">Trend</span>
-            <div class="risk-trend" style="color: ${this.getTrendColor(this.overview.trend)}">
-              ${this.getTrendEmoji(this.overview.trend)} ${this.overview.trend.charAt(0).toUpperCase() + this.overview.trend.slice(1)}
-=======
             <span class="risk-trend-label">${t('components.strategicRisk.trend')}</span>
             <div class="risk-trend" style="color: ${this.getTrendColor(this.overview.trend)}">
               ${this.getTrendEmoji(this.overview.trend)} ${this.overview.trend === 'escalating' ? t('components.strategicRisk.trends.escalating') : this.overview.trend === 'de-escalating' ? t('components.strategicRisk.trends.deEscalating') : t('components.strategicRisk.trends.stable')}
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             </div>
           </div>
         </div>
@@ -428,13 +311,8 @@ export class StrategicRiskPanel extends Panel {
         ${this.renderRecentAlerts()}
 
         <div class="risk-footer">
-<<<<<<< HEAD
-          <span class="risk-updated">Updated: ${this.overview.timestamp.toLocaleTimeString()}</span>
-          <button class="risk-refresh-btn">Refresh</button>
-=======
           <span class="risk-updated">${t('components.strategicRisk.updated', { time: this.overview.timestamp.toLocaleTimeString() })}</span>
           <button class="risk-refresh-btn">${t('components.strategicRisk.refresh')}</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         </div>
       </div>
     `;
@@ -450,15 +328,9 @@ export class StrategicRiskPanel extends Panel {
           ${getStatusIcon(source.status)}
         </span>
         <span class="risk-source-name">${escapeHtml(source.name)}</span>
-<<<<<<< HEAD
-        <span class="risk-source-time">${source.status === 'no_data' ? 'no data' : timeSince}</span>
-        ${panelId && (source.status === 'no_data' || source.status === 'disabled') ? `
-          <button class="risk-source-enable" data-panel="${panelId}">Enable</button>
-=======
         <span class="risk-source-time">${source.status === 'no_data' ? t('components.strategicRisk.noData') : timeSince}</span>
         ${panelId && (source.status === 'no_data' || source.status === 'disabled') ? `
           <button class="risk-source-enable" data-panel="${panelId}">${t('components.strategicRisk.enable')}</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         ` : ''}
       </div>
     `;
@@ -473,21 +345,6 @@ export class StrategicRiskPanel extends Panel {
       <div class="risk-metrics">
         <div class="risk-metric">
           <span class="risk-metric-value">${this.overview.convergenceAlerts}</span>
-<<<<<<< HEAD
-          <span class="risk-metric-label">Convergence</span>
-        </div>
-        <div class="risk-metric">
-          <span class="risk-metric-value">${this.overview.avgCIIDeviation.toFixed(1)}</span>
-          <span class="risk-metric-label">CII Deviation</span>
-        </div>
-        <div class="risk-metric">
-          <span class="risk-metric-value">${this.overview.infrastructureIncidents}</span>
-          <span class="risk-metric-label">Infra Events</span>
-        </div>
-        <div class="risk-metric">
-          <span class="risk-metric-value">${alertCounts.critical + alertCounts.high}</span>
-          <span class="risk-metric-label">High Alerts</span>
-=======
           <span class="risk-metric-label">${t('components.strategicRisk.convergenceMetric')}</span>
         </div>
         <div class="risk-metric">
@@ -501,7 +358,6 @@ export class StrategicRiskPanel extends Panel {
         <div class="risk-metric">
           <span class="risk-metric-value">${alertCounts.critical + alertCounts.high}</span>
           <span class="risk-metric-label">${t('components.strategicRisk.highAlerts')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         </div>
       </div>
     `;
@@ -509,11 +365,7 @@ export class StrategicRiskPanel extends Panel {
 
   private renderTopRisks(): string {
     if (!this.overview || this.overview.topRisks.length === 0) {
-<<<<<<< HEAD
-      return '<div class="risk-empty">No significant risks detected</div>';
-=======
       return `<div class="risk-empty">${t('components.strategicRisk.noRisks')}</div>`;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
 
     // Get convergence zone for first risk if available
@@ -521,15 +373,6 @@ export class StrategicRiskPanel extends Panel {
 
     return `
       <div class="risk-section">
-<<<<<<< HEAD
-        <div class="risk-section-title">Top Risks</div>
-        <div class="risk-list">
-          ${this.overview.topRisks.map((risk, i) => {
-            // First risk is convergence - make it clickable if we have location
-            const isConvergence = i === 0 && risk.startsWith('Convergence:') && topZone;
-            if (isConvergence) {
-              return `
-=======
         <div class="risk-section-title">${t('components.strategicRisk.topRisks')}</div>
         <div class="risk-list">
           ${this.overview.topRisks.map((risk, i) => {
@@ -537,30 +380,20 @@ export class StrategicRiskPanel extends Panel {
       const isConvergence = i === 0 && risk.startsWith('Convergence:') && topZone;
       if (isConvergence) {
         return `
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
                 <div class="risk-item risk-item-clickable" data-lat="${topZone.lat}" data-lon="${topZone.lon}">
                   <span class="risk-rank">${i + 1}.</span>
                   <span class="risk-text">${escapeHtml(risk)}</span>
                   <span class="risk-location-icon">↗</span>
                 </div>
               `;
-<<<<<<< HEAD
-            }
-            return `
-=======
       }
       return `
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
               <div class="risk-item">
                 <span class="risk-rank">${i + 1}.</span>
                 <span class="risk-text">${escapeHtml(risk)}</span>
               </div>
             `;
-<<<<<<< HEAD
-          }).join('')}
-=======
     }).join('')}
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         </div>
       </div>
     `;
@@ -575,18 +408,6 @@ export class StrategicRiskPanel extends Panel {
 
     return `
       <div class="risk-section">
-<<<<<<< HEAD
-        <div class="risk-section-title">Recent Alerts (${this.alerts.length})</div>
-        <div class="risk-alerts">
-          ${displayAlerts.map(alert => {
-            const hasLocation = alert.location && alert.location.lat && alert.location.lon;
-            const clickableClass = hasLocation ? 'risk-alert-clickable' : '';
-            const locationAttrs = hasLocation
-              ? `data-lat="${alert.location!.lat}" data-lon="${alert.location!.lon}"`
-              : '';
-
-            return `
-=======
         <div class="risk-section-title">${t('components.strategicRisk.recentAlerts', { count: String(this.alerts.length) })}</div>
         <div class="risk-alerts">
           ${displayAlerts.map(alert => {
@@ -597,7 +418,6 @@ export class StrategicRiskPanel extends Panel {
         : '';
 
       return `
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
               <div class="risk-alert ${clickableClass}" style="border-left: 3px solid ${this.getPriorityColor(alert.priority)}" ${locationAttrs}>
                 <div class="risk-alert-header">
                   <span class="risk-alert-type">${this.getTypeEmoji(alert.type)}</span>
@@ -609,11 +429,7 @@ export class StrategicRiskPanel extends Panel {
                 <div class="risk-alert-time">${this.formatTime(alert.timestamp)}</div>
               </div>
             `;
-<<<<<<< HEAD
-          }).join('')}
-=======
     }).join('')}
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         </div>
       </div>
     `;
@@ -625,42 +441,35 @@ export class StrategicRiskPanel extends Panel {
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(minutes / 60);
 
-<<<<<<< HEAD
-    if (minutes < 1) return 'just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-=======
     if (minutes < 1) return t('components.strategicRisk.time.justNow');
     if (minutes < 60) return t('components.strategicRisk.time.minutesAgo', { count: String(minutes) });
     if (hours < 24) return t('components.strategicRisk.time.hoursAgo', { count: String(hours) });
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     return date.toLocaleDateString();
   }
 
   private render(): void {
     this.freshnessSummary = dataFreshness.getSummary();
 
-    if (!this.overview) {
-      this.showLoading();
-      return;
-    }
+    try {
+      if (!this.overview) {
+        this.showLoading();
+        return;
+      }
 
-    // Render full data view — partial data is handled gracefully by CII baselines
-    // Only show insufficient state if zero sources after 60s (true failure)
-    let html: string;
-    const uptime = performance.now();
-<<<<<<< HEAD
-    if (this.freshnessSummary.overallStatus === 'insufficient' && uptime > 60_000) {
-=======
-    if (this.freshnessSummary.overallStatus === 'insufficient' && uptime > 60_000 && !this.usedCachedScores) {
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
-      html = this.renderInsufficientData();
-    } else {
-      html = this.renderFullData();
-    }
+      // Render full data view — partial data is handled gracefully by CII baselines
+      // Only show insufficient state if zero sources after 60s (true failure)
+      const uptime = performance.now();
+      const html =
+        this.freshnessSummary.overallStatus === 'insufficient' && uptime > 60_000 && !this.usedCachedScores
+          ? this.renderInsufficientData()
+          : this.renderFullData();
 
-    this.content.innerHTML = html;
-    this.attachEventListeners();
+      this.content.innerHTML = html;
+      this.attachEventListeners();
+    } catch (e: unknown) {
+      console.error('[StrategicRiskPanel] Render error:', e);
+      this.showError(t('common.failedRiskOverview'), () => this.refresh());
+    }
   }
 
   private attachEventListeners(): void {
@@ -728,10 +537,6 @@ export class StrategicRiskPanel extends Panel {
   }
 
   public destroy(): void {
-<<<<<<< HEAD
-    if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
-=======
     if (this.boundOnBreaking) {
       document.removeEventListener('wm:breaking-news', this.boundOnBreaking);
       this.boundOnBreaking = null;
@@ -739,15 +544,11 @@ export class StrategicRiskPanel extends Panel {
     if (this.breakingExpiryTimer) {
       clearTimeout(this.breakingExpiryTimer);
       this.breakingExpiryTimer = null;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
     if (this.unsubscribeFreshness) {
       this.unsubscribeFreshness();
     }
-<<<<<<< HEAD
-=======
     super.destroy();
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   public getOverview(): StrategicRiskOverview | null {

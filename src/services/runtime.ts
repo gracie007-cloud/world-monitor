@@ -471,7 +471,7 @@ function isLocalOnlyApiTarget(target: string): boolean {
 }
 
 function isKeyFreeApiTarget(target: string): boolean {
-  return target.startsWith('/api/register-interest');
+  return target.startsWith('/api/register-interest') || target.startsWith('/api/version');
 }
 
 >>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27

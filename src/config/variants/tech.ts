@@ -24,14 +24,9 @@ export {
 
 // Tech-specific FEEDS configuration
 import type { Feed } from '@/types';
-<<<<<<< HEAD
-
-const rss = (url: string) => `/api/rss-proxy?url=${encodeURIComponent(url)}`;
-=======
 import { rssProxyUrl } from '@/utils';
 
 const rss = rssProxyUrl;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export const FEEDS: Record<string, Feed[]> = {
   // Core Tech News
@@ -108,14 +103,9 @@ export const FEEDS: Record<string, Feed[]> = {
     { name: 'The Hacker News', url: rss('https://feeds.feedburner.com/TheHackersNews') },
     { name: 'Dark Reading', url: rss('https://www.darkreading.com/rss.xml') },
     { name: 'Schneier', url: rss('https://www.schneier.com/feed/') },
-<<<<<<< HEAD
-    { name: 'CISA Advisories', url: 'https://rss.worldmonitor.app/api/rss-proxy?url=' + encodeURIComponent('https://www.cisa.gov/cybersecurity-advisories/all.xml') },
-    { name: 'Cyber Incidents', url: rss('https://news.google.com/rss/search?q=cyber+attack+OR+data+breach+OR+ransomware+OR+hacking+when:3d&hl=en-US&gl=US&ceid=US:en') },
-=======
     { name: 'CISA Advisories', url: rss('https://www.cisa.gov/cybersecurity-advisories/all.xml') },
     { name: 'Cyber Incidents', url: rss('https://news.google.com/rss/search?q=cyber+attack+OR+data+breach+OR+ransomware+OR+hacking+when:3d&hl=en-US&gl=US&ceid=US:en') },
     { name: 'Ransomware.live', url: rss('https://www.ransomware.live/rss.xml') },
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   ],
 
   // Policy & Regulation
@@ -128,11 +118,7 @@ export const FEEDS: Record<string, Feed[]> = {
   // Markets & Finance (tech-focused)
   finance: [
     { name: 'CNBC Tech', url: rss('https://www.cnbc.com/id/19854910/device/rss/rss.html') },
-<<<<<<< HEAD
-    { name: 'MarketWatch Tech', url: rss('https://feeds.marketwatch.com/marketwatch/topstories/') },
-=======
     { name: 'MarketWatch Tech', url: rss('https://news.google.com/rss/search?q=site:marketwatch.com+technology+markets+when:2d&hl=en-US&gl=US&ceid=US:en') },
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     { name: 'Yahoo Finance', url: rss('https://finance.yahoo.com/rss/topstories') },
     { name: 'Seeking Alpha Tech', url: rss('https://seekingalpha.com/market_currents.xml') },
   ],
@@ -175,8 +161,6 @@ export const FEEDS: Record<string, Feed[]> = {
     { name: 'New Unicorns', url: rss('https://news.google.com/rss/search?q=("becomes+unicorn"+OR+"joins+unicorn"+OR+"reaches+unicorn"+OR+"achieved+unicorn")+when:14d&hl=en-US&gl=US&ceid=US:en') },
   ],
 
-<<<<<<< HEAD
-=======
   // IPO & SPAC
   ipo: [
     { name: 'IPO News', url: rss('https://news.google.com/rss/search?q=(IPO+OR+"initial+public+offering"+OR+SPAC)+tech+when:7d&hl=en-US&gl=US&ceid=US:en') },
@@ -188,7 +172,6 @@ export const FEEDS: Record<string, Feed[]> = {
     { name: 'Product Hunt', url: rss('https://www.producthunt.com/feed') },
   ],
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   // Accelerators & Demo Days
   accelerators: [
     { name: 'YC News', url: rss('https://news.ycombinator.com/rss') },
@@ -231,11 +214,8 @@ export const DEFAULT_PANELS: Record<string, PanelConfig> = {
 // Tech-focused map layers (subset)
 export const DEFAULT_MAP_LAYERS: MapLayers = {
   // Keep only relevant layers, set others to false
-<<<<<<< HEAD
-=======
   gpsJamming: false,
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   conflicts: false,
   bases: false,
   cables: true,
@@ -249,10 +229,7 @@ export const DEFAULT_MAP_LAYERS: MapLayers = {
   economic: true,
   waterways: false,
   outages: true,
-<<<<<<< HEAD
-=======
   cyberThreats: false,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   datacenters: true,
   protests: false,
   flights: false,
@@ -270,8 +247,6 @@ export const DEFAULT_MAP_LAYERS: MapLayers = {
   accelerators: false,
   techHQs: true,
   techEvents: true,
-<<<<<<< HEAD
-=======
   // Finance layers (disabled in tech variant)
   stockExchanges: false,
   financialCenters: false,
@@ -288,16 +263,16 @@ export const DEFAULT_MAP_LAYERS: MapLayers = {
   iranAttacks: false,
   ciiChoropleth: false,
   dayNight: false,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+  // Commodity variant layers (disabled in tech variant)
+  miningSites: false,
+  processingPlants: false,
+  commodityPorts: false,
 };
 
 // Mobile defaults for tech variant
 export const MOBILE_DEFAULT_MAP_LAYERS: MapLayers = {
-<<<<<<< HEAD
-=======
   gpsJamming: false,
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   conflicts: false,
   bases: false,
   cables: false,
@@ -311,10 +286,7 @@ export const MOBILE_DEFAULT_MAP_LAYERS: MapLayers = {
   economic: false,
   waterways: false,
   outages: true,
-<<<<<<< HEAD
-=======
   cyberThreats: false,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   datacenters: true,
   protests: false,
   flights: false,
@@ -332,8 +304,6 @@ export const MOBILE_DEFAULT_MAP_LAYERS: MapLayers = {
   accelerators: false,
   techHQs: false,
   techEvents: true,
-<<<<<<< HEAD
-=======
   // Finance layers (disabled in tech variant)
   stockExchanges: false,
   financialCenters: false,
@@ -350,7 +320,10 @@ export const MOBILE_DEFAULT_MAP_LAYERS: MapLayers = {
   iranAttacks: false,
   ciiChoropleth: false,
   dayNight: false,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+  // Commodity variant layers (disabled in tech variant)
+  miningSites: false,
+  processingPlants: false,
+  commodityPorts: false,
 };
 
 export const VARIANT_CONFIG: VariantConfig = {

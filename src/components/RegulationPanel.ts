@@ -7,21 +7,14 @@ import {
   getRecentActions,
 } from '@/config';
 import { escapeHtml, sanitizeUrl } from '@/utils/sanitize';
-<<<<<<< HEAD
-=======
 import { t } from '@/services/i18n';
 import { getCSSColor } from '@/utils';
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export class RegulationPanel extends Panel {
   private viewMode: 'timeline' | 'deadlines' | 'regulations' | 'countries' = 'timeline';
 
   constructor(id: string) {
-<<<<<<< HEAD
-    super({ id, title: 'AI Regulation Dashboard' });
-=======
     super({ id, title: t('panels.regulation') });
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     this.render();
   }
 
@@ -29,21 +22,12 @@ export class RegulationPanel extends Panel {
     this.content.innerHTML = `
       <div class="regulation-panel">
         <div class="regulation-header">
-<<<<<<< HEAD
-          <h3>AI Regulation Dashboard</h3>
-          <div class="regulation-tabs">
-            <button class="tab ${this.viewMode === 'timeline' ? 'active' : ''}" data-view="timeline">Timeline</button>
-            <button class="tab ${this.viewMode === 'deadlines' ? 'active' : ''}" data-view="deadlines">Deadlines</button>
-            <button class="tab ${this.viewMode === 'regulations' ? 'active' : ''}" data-view="regulations">Regulations</button>
-            <button class="tab ${this.viewMode === 'countries' ? 'active' : ''}" data-view="countries">Countries</button>
-=======
           <h3>${t('components.regulation.dashboard')}</h3>
-          <div class="regulation-tabs">
-            <button class="tab ${this.viewMode === 'timeline' ? 'active' : ''}" data-view="timeline">${t('components.regulation.timeline')}</button>
-            <button class="tab ${this.viewMode === 'deadlines' ? 'active' : ''}" data-view="deadlines">${t('components.regulation.deadlines')}</button>
-            <button class="tab ${this.viewMode === 'regulations' ? 'active' : ''}" data-view="regulations">${t('components.regulation.regulations')}</button>
-            <button class="tab ${this.viewMode === 'countries' ? 'active' : ''}" data-view="countries">${t('components.regulation.countries')}</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+          <div class="panel-tabs">
+            <button class="panel-tab ${this.viewMode === 'timeline' ? 'active' : ''}" data-view="timeline">${t('components.regulation.timeline')}</button>
+            <button class="panel-tab ${this.viewMode === 'deadlines' ? 'active' : ''}" data-view="deadlines">${t('components.regulation.deadlines')}</button>
+            <button class="panel-tab ${this.viewMode === 'regulations' ? 'active' : ''}" data-view="regulations">${t('components.regulation.regulations')}</button>
+            <button class="panel-tab ${this.viewMode === 'countries' ? 'active' : ''}" data-view="countries">${t('components.regulation.countries')}</button>
           </div>
         </div>
         <div class="regulation-content">
@@ -53,7 +37,7 @@ export class RegulationPanel extends Panel {
     `;
 
     // Add event listeners for tabs
-    this.content.querySelectorAll('.tab').forEach(tab => {
+    this.content.querySelectorAll('.panel-tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
         const target = e.target as HTMLElement;
         const view = target.dataset.view as typeof this.viewMode;
@@ -84,23 +68,14 @@ export class RegulationPanel extends Panel {
     const recentActions = getRecentActions(12); // Last 12 months
 
     if (recentActions.length === 0) {
-<<<<<<< HEAD
-      return '<div class="empty-state">No recent regulatory actions</div>';
-=======
       return `<div class="empty-state">${t('components.regulation.emptyActions')}</div>`;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
 
     return `
       <div class="timeline-view">
         <div class="timeline-header">
-<<<<<<< HEAD
-          <h4>Recent Regulatory Actions (Last 12 Months)</h4>
-          <span class="count">${recentActions.length} actions</span>
-=======
           <h4>${t('components.regulation.recentActions')}</h4>
           <span class="count">${t('components.regulation.actionsCount', { count: String(recentActions.length) })}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         </div>
         <div class="timeline-list">
           ${recentActions.map(action => this.renderTimelineItem(action)).join('')}
@@ -126,15 +101,9 @@ export class RegulationPanel extends Panel {
     };
 
     const impactColors: Record<RegulatoryAction['impact'], string> = {
-<<<<<<< HEAD
-      high: '#ff4444',
-      medium: '#ffaa00',
-      low: '#44ff88',
-=======
       high: getCSSColor('--semantic-critical'),
       medium: getCSSColor('--semantic-elevated'),
       low: getCSSColor('--semantic-normal'),
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
 
     return `
@@ -151,11 +120,7 @@ export class RegulationPanel extends Panel {
           </div>
           <h5>${escapeHtml(action.title)}</h5>
           <p>${escapeHtml(action.description)}</p>
-<<<<<<< HEAD
-          ${action.source ? `<span class="timeline-source">Source: ${escapeHtml(action.source)}</span>` : ''}
-=======
           ${action.source ? `<span class="timeline-source">${t('components.regulation.source')}: ${escapeHtml(action.source)}</span>` : ''}
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         </div>
       </div>
     `;
@@ -165,23 +130,14 @@ export class RegulationPanel extends Panel {
     const upcomingDeadlines = getUpcomingDeadlines();
 
     if (upcomingDeadlines.length === 0) {
-<<<<<<< HEAD
-      return '<div class="empty-state">No upcoming compliance deadlines in the next 12 months</div>';
-=======
       return `<div class="empty-state">${t('components.regulation.emptyDeadlines')}</div>`;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
 
     return `
       <div class="deadlines-view">
         <div class="deadlines-header">
-<<<<<<< HEAD
-          <h4>Upcoming Compliance Deadlines</h4>
-          <span class="count">${upcomingDeadlines.length} deadlines</span>
-=======
           <h4>${t('components.regulation.upcomingDeadlines')}</h4>
           <span class="count">${t('components.regulation.deadlinesCount', { count: String(upcomingDeadlines.length) })}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         </div>
         <div class="deadlines-list">
           ${upcomingDeadlines.map(reg => this.renderDeadlineItem(reg)).join('')}
@@ -207,11 +163,7 @@ export class RegulationPanel extends Panel {
       <div class="deadline-item ${urgencyClass}">
         <div class="deadline-countdown">
           <div class="days-until">${daysUntil}</div>
-<<<<<<< HEAD
-          <div class="days-label">days</div>
-=======
           <div class="days-label">${t('components.regulation.days')}</div>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         </div>
         <div class="deadline-content">
           <h5>${escapeHtml(regulation.shortName)}</h5>
@@ -236,21 +188,13 @@ export class RegulationPanel extends Panel {
     return `
       <div class="regulations-view">
         <div class="regulations-section">
-<<<<<<< HEAD
-          <h4>Active Regulations (${activeRegulations.length})</h4>
-=======
           <h4>${t('components.regulation.activeCount', { count: String(activeRegulations.length) })}</h4>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           <div class="regulations-list">
             ${activeRegulations.map(reg => this.renderRegulationCard(reg)).join('')}
           </div>
         </div>
         <div class="regulations-section">
-<<<<<<< HEAD
-          <h4>Proposed Regulations (${proposedRegulations.length})</h4>
-=======
           <h4>${t('components.regulation.proposedCount', { count: String(proposedRegulations.length) })}</h4>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           <div class="regulations-list">
             ${proposedRegulations.map(reg => this.renderRegulationCard(reg)).join('')}
           </div>
@@ -261,17 +205,10 @@ export class RegulationPanel extends Panel {
 
   private renderRegulationCard(regulation: AIRegulation): string {
     const typeColors: Record<AIRegulation['type'], string> = {
-<<<<<<< HEAD
-      comprehensive: '#4488ff',
-      sectoral: '#ff8844',
-      voluntary: '#44ff88',
-      proposed: '#ffaa00',
-=======
       comprehensive: getCSSColor('--semantic-low'),
       sectoral: getCSSColor('--semantic-high'),
       voluntary: getCSSColor('--semantic-normal'),
       proposed: getCSSColor('--semantic-elevated'),
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
 
     const effectiveDate = regulation.effectiveDate
@@ -293,27 +230,16 @@ export class RegulationPanel extends Panel {
         </div>
         ${regulation.description ? `<p class="regulation-description">${escapeHtml(regulation.description)}</p>` : ''}
         <div class="regulation-provisions">
-<<<<<<< HEAD
-          <strong>Key Provisions:</strong>
-          <ul>
-            ${regulation.keyProvisions.slice(0, 3).map(p => `<li>${escapeHtml(p)}</li>`).join('')}
-            ${regulation.keyProvisions.length > 3 ? `<li class="more-provisions">+${regulation.keyProvisions.length - 3} more...</li>` : ''}
-=======
           <strong>${t('components.regulation.keyProvisions')}:</strong>
           <ul>
             ${regulation.keyProvisions.slice(0, 3).map(p => `<li>${escapeHtml(p)}</li>`).join('')}
             ${regulation.keyProvisions.length > 3 ? `<li class="more-provisions">${t('components.regulation.moreProvisions', { count: String(regulation.keyProvisions.length - 3) })}</li>` : ''}
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           </ul>
         </div>
         <div class="regulation-scope">
           ${regulation.scope.map(s => `<span class="scope-tag">${escapeHtml(s)}</span>`).join('')}
         </div>
-<<<<<<< HEAD
-        ${regulationLink ? `<a href="${regulationLink}" target="_blank" rel="noopener noreferrer" class="regulation-link">Learn More →</a>` : ''}
-=======
         ${regulationLink ? `<a href="${regulationLink}" target="_blank" rel="noopener noreferrer" class="regulation-link">${t('components.regulation.learnMore')} →</a>` : ''}
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
   }
@@ -332,21 +258,12 @@ export class RegulationPanel extends Panel {
     return `
       <div class="countries-view">
         <div class="countries-header">
-<<<<<<< HEAD
-          <h4>Global Regulatory Landscape</h4>
-          <div class="stance-legend">
-            <span class="legend-item"><span class="color-box strict"></span> Strict</span>
-            <span class="legend-item"><span class="color-box moderate"></span> Moderate</span>
-            <span class="legend-item"><span class="color-box permissive"></span> Permissive</span>
-            <span class="legend-item"><span class="color-box undefined"></span> Undefined</span>
-=======
           <h4>${t('components.regulation.globalLandscape')}</h4>
           <div class="stance-legend">
             <span class="legend-item"><span class="color-box strict"></span> ${t('components.regulation.stances.strict')}</span>
             <span class="legend-item"><span class="color-box moderate"></span> ${t('components.regulation.stances.moderate')}</span>
             <span class="legend-item"><span class="color-box permissive"></span> ${t('components.regulation.stances.permissive')}</span>
             <span class="legend-item"><span class="color-box undefined"></span> ${t('components.regulation.stances.undefined')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           </div>
         </div>
         <div class="countries-list">
@@ -358,17 +275,10 @@ export class RegulationPanel extends Panel {
 
   private renderCountryCard(profile: CountryRegulationProfile): string {
     const stanceColors: Record<CountryRegulationProfile['stance'], string> = {
-<<<<<<< HEAD
-      strict: '#ff4444',
-      moderate: '#ffaa00',
-      permissive: '#44ff88',
-      undefined: '#666666',
-=======
       strict: getCSSColor('--semantic-critical'),
       moderate: getCSSColor('--semantic-elevated'),
       permissive: getCSSColor('--semantic-normal'),
       undefined: getCSSColor('--text-muted'),
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
 
     const activeCount = profile.activeRegulations.length;
@@ -384,17 +294,6 @@ export class RegulationPanel extends Panel {
         <div class="country-stats">
           <div class="stat">
             <span class="stat-value">${activeCount}</span>
-<<<<<<< HEAD
-            <span class="stat-label">Active</span>
-          </div>
-          <div class="stat">
-            <span class="stat-value">${proposedCount}</span>
-            <span class="stat-label">Proposed</span>
-          </div>
-          <div class="stat">
-            <span class="stat-value">${new Date(profile.lastUpdated).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
-            <span class="stat-label">Updated</span>
-=======
             <span class="stat-label">${t('components.regulation.active')}</span>
           </div>
           <div class="stat">
@@ -404,7 +303,6 @@ export class RegulationPanel extends Panel {
           <div class="stat">
             <span class="stat-value">${new Date(profile.lastUpdated).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
             <span class="stat-label">${t('components.regulation.updated')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           </div>
         </div>
       </div>

@@ -2,20 +2,13 @@
 // For variant-specific builds, set VITE_VARIANT environment variable
 // VITE_VARIANT=tech → tech.worldmonitor.app (tech-focused)
 // VITE_VARIANT=full → worldmonitor.app (geopolitical)
-<<<<<<< HEAD
-=======
 // VITE_VARIANT=finance → finance.worldmonitor.app (markets/trading)
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export { SITE_VARIANT } from './variant';
 
 // Shared base configuration (always included)
 export {
-<<<<<<< HEAD
-  API_URLS,
-=======
   IDLE_PAUSE_MS,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   REFRESH_INTERVALS,
   MONITOR_COLORS,
   STORAGE_KEYS,
@@ -48,10 +41,7 @@ export {
   DEFAULT_PANELS,
   DEFAULT_MAP_LAYERS,
   MOBILE_DEFAULT_MAP_LAYERS,
-<<<<<<< HEAD
-=======
   LAYER_TO_SOURCE,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 } from './panels';
 
 // ============================================
@@ -69,10 +59,7 @@ export {
 export {
   INTEL_HOTSPOTS,
   CONFLICT_ZONES,
-<<<<<<< HEAD
-=======
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   MILITARY_BASES,
   NUCLEAR_FACILITIES,
   APT_GROUPS,
@@ -115,8 +102,6 @@ export {
   type TechHQ,
   type CloudRegion,
 } from './tech-geo';
-<<<<<<< HEAD
-=======
 
 // Finance variant - these are included in finance builds
 export {
@@ -132,4 +117,19 @@ export {
 
 // Gulf FDI investment database
 export { GULF_INVESTMENTS } from './gulf-fdi';
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+
+// Commodity variant - these are included in commodity builds
+export {
+  COMMODITY_PRICES,
+  COMMODITY_MARKET_SYMBOLS,
+} from './commodity-markets';
+
+export {
+  MINING_SITES,
+  PROCESSING_PLANTS,
+  COMMODITY_PORTS,
+} from './commodity-geo';
+
+// COMMODITY_MINERS: 30+ mining company HQs — not yet rendered on map.
+// Uncomment when a miners layer is added to DeckGLMap.ts.
+// export { COMMODITY_MINERS, type CommodityMiner } from './commodity-miners';

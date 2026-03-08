@@ -4,6 +4,7 @@ import { t } from '../services/i18n';
 import { h, replaceChildren, safeHtml } from '../utils/dom-utils';
 import { trackPanelResized } from '@/services/analytics';
 import { getAiFlowSettings } from '@/services/ai-flow-settings';
+import { getSecretState } from '@/services/runtime-config';
 
 export interface PanelOptions {
   id: string;
@@ -12,6 +13,7 @@ export interface PanelOptions {
   className?: string;
   trackActivity?: boolean;
   infoTooltip?: string;
+  premium?: 'locked' | 'enhanced';
 }
 
 const PANEL_SPANS_KEY = 'worldmonitor-panel-spans';
@@ -31,20 +33,6 @@ function savePanelSpan(panelId: string, span: number): void {
   localStorage.setItem(PANEL_SPANS_KEY, JSON.stringify(spans));
 }
 
-<<<<<<< HEAD
-function heightToSpan(height: number): number {
-  // Much lower thresholds for responsive resizing
-  // Start at 200px, so:
-  // - 50px drag → span 2 (250px)
-  // - 150px drag → span 3 (350px)
-  // - 300px drag → span 4 (500px)
-  if (height >= 500) return 4;
-  if (height >= 350) return 3;
-  if (height >= 250) return 2;
-  return 1;
-}
-
-=======
 const PANEL_COL_SPANS_KEY = 'worldmonitor-panel-col-spans';
 const ROW_RESIZE_STEP_PX = 80;
 const COL_RESIZE_STEP_PX = 80;
@@ -167,7 +155,6 @@ function deltaToRowSpan(startSpan: number, deltaY: number): number {
   return Math.max(1, Math.min(4, startSpan + spanDelta));
 }
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 function setSpanClass(element: HTMLElement, span: number): void {
   element.classList.remove('span-1', 'span-2', 'span-3', 'span-4');
   element.classList.add(`span-${span}`);
@@ -182,20 +169,11 @@ export class Panel {
   protected statusBadgeEl: HTMLElement | null = null;
   protected newBadgeEl: HTMLElement | null = null;
   protected panelId: string;
-<<<<<<< HEAD
-=======
   private abortController: AbortController = new AbortController();
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   private tooltipCloseHandler: (() => void) | null = null;
   private resizeHandle: HTMLElement | null = null;
   private isResizing = false;
   private startY = 0;
-<<<<<<< HEAD
-  private startHeight = 0;
-  private onTouchMove: ((e: TouchEvent) => void) | null = null;
-  private onTouchEnd: (() => void) | null = null;
-  private onDocMouseUp: (() => void) | null = null;
-=======
   private startRowSpan = 1;
   private onTouchMove: ((e: TouchEvent) => void) | null = null;
   private onTouchEnd: (() => void) | null = null;
@@ -218,7 +196,11 @@ export class Panel {
   private readonly contentDebounceMs = 150;
   private pendingContentHtml: string | null = null;
   private contentDebounceTimer: ReturnType<typeof setTimeout> | null = null;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+  private retryCallback: (() => void) | null = null;
+  private retryCountdownTimer: ReturnType<typeof setInterval> | null = null;
+  private retryAttempt = 0;
+  private _fetching = false;
+  private _locked = false;
 
   constructor(options: PanelOptions) {
     this.panelId = options.id;
@@ -238,21 +220,10 @@ export class Panel {
     headerLeft.appendChild(title);
 
     if (options.infoTooltip) {
-<<<<<<< HEAD
-      const infoBtn = document.createElement('button');
-      infoBtn.className = 'panel-info-btn';
-      infoBtn.innerHTML = '?';
-      infoBtn.setAttribute('aria-label', 'Show methodology info');
-
-      const tooltip = document.createElement('div');
-      tooltip.className = 'panel-info-tooltip';
-      tooltip.innerHTML = options.infoTooltip;
-=======
       const infoBtn = h('button', { className: 'panel-info-btn', 'aria-label': t('components.panel.showMethodologyInfo') }, '?');
 
       const tooltip = h('div', { className: 'panel-info-tooltip' });
       tooltip.appendChild(safeHtml(options.infoTooltip));
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
       infoBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -277,6 +248,11 @@ export class Panel {
       headerLeft.appendChild(this.newBadgeEl);
     }
 
+    if (isDesktopRuntime() && options.premium === 'enhanced' && !getSecretState('WORLDMONITOR_API_KEY').present) {
+      const proBadge = h('span', { className: 'panel-pro-badge' }, t('premium.pro'));
+      headerLeft.appendChild(proBadge);
+    }
+
     this.header.appendChild(headerLeft);
 
     this.statusBadgeEl = document.createElement('span');
@@ -298,16 +274,15 @@ export class Panel {
     this.element.appendChild(this.header);
     this.element.appendChild(this.content);
 
+    this.content.addEventListener('click', (e) => {
+      const target = (e.target as HTMLElement).closest('[data-panel-retry]');
+      if (!target || this._fetching) return;
+      this.retryCallback?.();
+    });
+
     // Add resize handle
     this.resizeHandle = document.createElement('div');
     this.resizeHandle.className = 'panel-resize-handle';
-<<<<<<< HEAD
-    this.resizeHandle.title = 'Drag to resize (double-click to reset)';
-    this.resizeHandle.draggable = false; // Prevent parent's drag from capturing
-    this.element.appendChild(this.resizeHandle);
-    this.setupResizeHandlers();
-
-=======
     this.resizeHandle.title = t('components.panel.dragToResize');
     this.element.appendChild(this.resizeHandle);
     this.setupResizeHandlers();
@@ -319,7 +294,6 @@ export class Panel {
     this.element.appendChild(this.colResizeHandle);
     this.setupColResizeHandlers();
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     // Restore saved span
     const savedSpans = loadPanelSpans();
     const savedSpan = savedSpans[this.panelId];
@@ -327,14 +301,6 @@ export class Panel {
       setSpanClass(this.element, savedSpan);
     }
 
-<<<<<<< HEAD
-    this.showLoading();
-  }
-
-  private setupResizeHandlers(): void {
-    if (!this.resizeHandle) return;
-
-=======
     // Restore saved col-span
     this.restoreSavedColSpan();
     this.reconcileColSpanAfterAttach();
@@ -437,43 +403,11 @@ export class Panel {
 
     this.onRowWindowBlur = () => this.onRowMouseUp?.();
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const onMouseDown = (e: MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
       this.isResizing = true;
       this.startY = e.clientY;
-<<<<<<< HEAD
-      this.startHeight = this.element.getBoundingClientRect().height;
-      this.element.classList.add('resizing');
-      this.element.draggable = false;
-      this.resizeHandle?.classList.add('active');
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
-    };
-
-    const onMouseMove = (e: MouseEvent) => {
-      if (!this.isResizing) return;
-      const deltaY = e.clientY - this.startY;
-      const newHeight = Math.max(200, this.startHeight + deltaY);
-      const span = heightToSpan(newHeight);
-      setSpanClass(this.element, span);
-    };
-
-    const onMouseUp = () => {
-      if (!this.isResizing) return;
-      this.isResizing = false;
-      this.element.classList.remove('resizing');
-      this.element.draggable = true;
-      this.resizeHandle?.classList.remove('active');
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-
-      const currentSpan = this.element.classList.contains('span-4') ? 4 :
-                          this.element.classList.contains('span-3') ? 3 :
-                          this.element.classList.contains('span-2') ? 2 : 1;
-      savePanelSpan(this.panelId, currentSpan);
-=======
       this.startRowSpan = getRowSpan(this.element);
       this.element.dataset.resizing = 'true';
       this.element.classList.add('resizing');
@@ -488,29 +422,10 @@ export class Panel {
       if (this.onRowWindowBlur) {
         window.addEventListener('blur', this.onRowWindowBlur);
       }
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
 
     this.resizeHandle.addEventListener('mousedown', onMouseDown);
 
-<<<<<<< HEAD
-    // Prevent panel drag when resizing (capture phase runs before App.ts listener)
-    this.element.addEventListener('dragstart', (e) => {
-      const target = e.target as HTMLElement;
-      if (this.isResizing || target === this.resizeHandle || target.closest('.panel-resize-handle')) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        return false;
-      }
-    }, true);
-
-    // Mark element as resizing for external listeners
-    this.resizeHandle.addEventListener('mousedown', () => {
-      this.element.dataset.resizing = 'true';
-    });
-
-=======
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     // Double-click to reset
     this.resizeHandle.addEventListener('dblclick', () => {
       this.resetHeight();
@@ -524,13 +439,6 @@ export class Panel {
       if (!touch) return;
       this.isResizing = true;
       this.startY = touch.clientY;
-<<<<<<< HEAD
-      this.startHeight = this.element.getBoundingClientRect().height;
-      this.element.classList.add('resizing');
-      this.element.draggable = false;
-      this.element.dataset.resizing = 'true';
-      this.resizeHandle?.classList.add('active');
-=======
       this.startRowSpan = getRowSpan(this.element);
       this.element.classList.add('resizing');
       this.element.dataset.resizing = 'true';
@@ -538,7 +446,6 @@ export class Panel {
       this.resizeHandle?.classList.add('active');
       this.removeRowTouchDocumentListeners();
       this.addRowTouchDocumentListeners();
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }, { passive: false });
 
     // Use bound handlers so they can be removed in destroy()
@@ -547,41 +454,6 @@ export class Panel {
       const touch = e.touches[0];
       if (!touch) return;
       const deltaY = touch.clientY - this.startY;
-<<<<<<< HEAD
-      const newHeight = Math.max(200, this.startHeight + deltaY);
-      const span = heightToSpan(newHeight);
-      setSpanClass(this.element, span);
-    };
-
-    this.onTouchEnd = () => {
-      if (!this.isResizing) return;
-      this.isResizing = false;
-      this.element.classList.remove('resizing');
-      this.element.draggable = true;
-      delete this.element.dataset.resizing;
-      this.resizeHandle?.classList.remove('active');
-      const currentSpan = this.element.classList.contains('span-4') ? 4 :
-                          this.element.classList.contains('span-3') ? 3 :
-                          this.element.classList.contains('span-2') ? 2 : 1;
-      savePanelSpan(this.panelId, currentSpan);
-    };
-
-    this.onDocMouseUp = () => {
-      if (this.element.dataset.resizing) {
-        delete this.element.dataset.resizing;
-      }
-    };
-
-    document.addEventListener('touchmove', this.onTouchMove, { passive: false });
-    document.addEventListener('touchend', this.onTouchEnd);
-    document.addEventListener('mouseup', this.onDocMouseUp);
-  }
-
-
-  protected setDataBadge(state: 'live' | 'cached' | 'unavailable', detail?: string): void {
-    if (!this.statusBadgeEl) return;
-    const labels = { live: 'LIVE', cached: 'CACHED', unavailable: 'UNAVAILABLE' } as const;
-=======
       setSpanClass(this.element, deltaToRowSpan(this.startRowSpan, deltaY));
     };
 
@@ -751,7 +623,6 @@ export class Panel {
       cached: t('common.cached'),
       unavailable: t('common.unavailable'),
     } as const;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     this.statusBadgeEl.textContent = detail ? `${labels[state]} · ${detail}` : labels[state];
     this.statusBadgeEl.className = `panel-data-badge ${state}`;
     this.statusBadgeEl.style.display = 'inline-flex';
@@ -765,19 +636,10 @@ export class Panel {
     return this.element;
   }
 
-<<<<<<< HEAD
-  public showLoading(message = 'Loading'): void {
-    this.content.innerHTML = `
-      <div class="panel-loading">
-        <div class="panel-loading-radar">
-          <div class="panel-radar-sweep"></div>
-          <div class="panel-radar-dot"></div>
-        </div>
-        <div class="panel-loading-text">${message}</div>
-      </div>
-    `;
-=======
   public showLoading(message = t('common.loading')): void {
+    if (this._locked) return;
+    this.setErrorState(false);
+    this.clearRetryCountdown();
     replaceChildren(this.content,
       h('div', { className: 'panel-loading' },
         h('div', { className: 'panel-loading-radar' },
@@ -787,23 +649,139 @@ export class Panel {
         h('div', { className: 'panel-loading-text' }, message),
       ),
     );
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
-  public showError(message = t('common.failedToLoad')): void {
-    replaceChildren(this.content, h('div', { className: 'error-message' }, message));
-  }
+  public showError(message?: string, onRetry?: () => void, autoRetrySeconds?: number): void {
+    if (this._locked) return;
+    this.clearRetryCountdown();
+    this.setErrorState(true);
+    if (onRetry !== undefined) this.retryCallback = onRetry;
 
-  public showRetrying(message = t('common.retrying')): void {
-    replaceChildren(this.content,
-      h('div', { className: 'panel-loading' },
-        h('div', { className: 'panel-loading-radar' },
-          h('div', { className: 'panel-radar-sweep' }),
-          h('div', { className: 'panel-radar-dot' }),
-        ),
-        h('div', { className: 'panel-loading-text retrying' }, message),
-      ),
+    const radarEl = h('div', { className: 'panel-loading-radar panel-error-radar' },
+      h('div', { className: 'panel-radar-sweep' }),
+      h('div', { className: 'panel-radar-dot error' }),
     );
+
+    const msgEl = h('div', { className: 'panel-error-msg' }, message || t('common.failedToLoad'));
+
+    const children: (HTMLElement | string)[] = [radarEl, msgEl];
+
+    if (this.retryCallback) {
+      const backoffSeconds = autoRetrySeconds ?? Math.min(15 * Math.pow(2, this.retryAttempt), 180);
+      this.retryAttempt++;
+      let remaining = Math.round(backoffSeconds);
+      const countdownEl = h('div', { className: 'panel-error-countdown' },
+        `${t('common.retrying')} (${remaining}s)`,
+      );
+      children.push(countdownEl);
+      this.retryCountdownTimer = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+          this.clearRetryCountdown();
+          this.retryCallback?.();
+          return;
+        }
+        countdownEl.textContent = `${t('common.retrying')} (${remaining}s)`;
+      }, 1000);
+    }
+    replaceChildren(this.content, h('div', { className: 'panel-error-state' }, ...children));
+  }
+
+  public resetRetryBackoff(): void {
+    this.retryAttempt = 0;
+  }
+
+  public showLocked(features: string[] = []): void {
+    this._locked = true;
+    this.clearRetryCountdown();
+
+    for (let child = this.header.nextElementSibling; child && child !== this.content; child = child.nextElementSibling) {
+      (child as HTMLElement).style.display = 'none';
+    }
+    this.element.classList.add('panel-is-locked');
+
+    const lockSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>`;
+    const iconEl = h('div', { className: 'panel-locked-icon' });
+    iconEl.innerHTML = lockSvg;
+
+    const lockedChildren: (HTMLElement | string)[] = [
+      iconEl,
+      h('div', { className: 'panel-locked-desc' }, t('premium.lockedDesc')),
+    ];
+
+    if (features.length > 0) {
+      const featureList = h('ul', { className: 'panel-locked-features' });
+      for (const feat of features) {
+        featureList.appendChild(h('li', {}, feat));
+      }
+      lockedChildren.push(featureList);
+    }
+
+    const ctaBtn = h('button', { type: 'button', className: 'panel-locked-cta' }, t('premium.joinWaitlist'));
+    if (isDesktopRuntime()) {
+      ctaBtn.addEventListener('click', () => void invokeTauri<void>('open_settings_window_command').catch(() => {}));
+    } else {
+      ctaBtn.addEventListener('click', () => window.open('https://worldmonitor.app/pro', '_blank'));
+    }
+    lockedChildren.push(ctaBtn);
+
+    replaceChildren(this.content, h('div', { className: 'panel-locked-state' }, ...lockedChildren));
+  }
+
+  public showRetrying(message?: string, countdownSeconds?: number): void {
+    if (this._locked) return;
+    this.clearRetryCountdown();
+    this.setErrorState(true);
+
+    const radarEl = h('div', { className: 'panel-loading-radar panel-error-radar' },
+      h('div', { className: 'panel-radar-sweep' }),
+      h('div', { className: 'panel-radar-dot error' }),
+    );
+
+    const msgEl = h('div', { className: 'panel-error-msg' }, message || t('common.retrying'));
+    const children: (HTMLElement | string)[] = [radarEl, msgEl];
+
+    if (countdownSeconds && countdownSeconds > 0) {
+      let remaining = countdownSeconds;
+      const countdownEl = h('div', { className: 'panel-error-countdown' },
+        `${t('common.retrying')} (${remaining}s)`,
+      );
+      children.push(countdownEl);
+      this.retryCountdownTimer = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+          this.clearRetryCountdown();
+          countdownEl.textContent = t('common.retrying');
+          return;
+        }
+        countdownEl.textContent = `${t('common.retrying')} (${remaining}s)`;
+      }, 1000);
+    }
+
+    replaceChildren(this.content,
+      h('div', { className: 'panel-error-state' }, ...children),
+    );
+  }
+
+  private clearRetryCountdown(): void {
+    if (this.retryCountdownTimer) {
+      clearInterval(this.retryCountdownTimer);
+      this.retryCountdownTimer = null;
+    }
+  }
+
+  protected setRetryCallback(fn: (() => void) | null): void {
+    this.retryCallback = fn;
+  }
+
+  protected setFetching(v: boolean): void {
+    this._fetching = v;
+    const btn = this.content.querySelector<HTMLButtonElement>('[data-panel-retry]');
+    if (btn) btn.disabled = v;
+  }
+
+  protected get isFetching(): boolean {
+    return this._fetching;
   }
 
   public showConfigError(message: string): void {
@@ -841,16 +819,11 @@ export class Panel {
     }
   }
 
-  public setErrorState(hasError: boolean, tooltip?: string): void {
-    this.header.classList.toggle('panel-header-error', hasError);
-    if (tooltip) {
-      this.header.title = tooltip;
-    } else {
-      this.header.removeAttribute('title');
-    }
-  }
-
   public setContent(html: string): void {
+    if (this._locked) return;
+    this.setErrorState(false);
+    this.clearRetryCountdown();
+    this.retryAttempt = 0;
     if (this.pendingContentHtml === html || this.content.innerHTML === html) {
       return;
     }
@@ -907,11 +880,7 @@ export class Panel {
       return;
     }
 
-<<<<<<< HEAD
-    this.newBadgeEl.textContent = count > 99 ? '99+' : `${count} new`;
-=======
     this.newBadgeEl.textContent = count > 99 ? '99+' : `${count} ${t('common.new')}`;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     this.newBadgeEl.style.display = 'inline-flex';
     this.element.classList.add('has-new');
 
@@ -946,12 +915,6 @@ export class Panel {
     localStorage.setItem(PANEL_SPANS_KEY, JSON.stringify(spans));
   }
 
-<<<<<<< HEAD
-  /**
-   * Clean up event listeners and resources
-   */
-  public destroy(): void {
-=======
   public resetWidth(): void {
     clearColSpanClass(this.element);
     clearPanelColSpan(this.panelId);
@@ -967,6 +930,7 @@ export class Panel {
 
   public destroy(): void {
     this.abortController.abort();
+    this.clearRetryCountdown();
     if (this.colSpanReconcileRaf !== null) {
       cancelAnimationFrame(this.colSpanReconcileRaf);
       this.colSpanReconcileRaf = null;
@@ -977,21 +941,10 @@ export class Panel {
     }
     this.pendingContentHtml = null;
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     if (this.tooltipCloseHandler) {
       document.removeEventListener('click', this.tooltipCloseHandler);
       this.tooltipCloseHandler = null;
     }
-<<<<<<< HEAD
-    if (this.onTouchMove) {
-      document.removeEventListener('touchmove', this.onTouchMove);
-      this.onTouchMove = null;
-    }
-    if (this.onTouchEnd) {
-      document.removeEventListener('touchend', this.onTouchEnd);
-      this.onTouchEnd = null;
-    }
-=======
     this.removeRowTouchDocumentListeners();
     if (this.onTouchMove) {
       this.onTouchMove = null;
@@ -1002,13 +955,10 @@ export class Panel {
     if (this.onTouchCancel) {
       this.onTouchCancel = null;
     }
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     if (this.onDocMouseUp) {
       document.removeEventListener('mouseup', this.onDocMouseUp);
       this.onDocMouseUp = null;
     }
-<<<<<<< HEAD
-=======
     if (this.onRowMouseMove) {
       document.removeEventListener('mousemove', this.onRowMouseMove);
       this.onRowMouseMove = null;
@@ -1046,6 +996,5 @@ export class Panel {
     this.element.classList.remove('resizing', 'col-resizing');
     delete this.element.dataset.resizing;
     document.body.classList.remove('panel-resize-active');
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 }

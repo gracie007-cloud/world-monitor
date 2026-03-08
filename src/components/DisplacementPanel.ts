@@ -1,13 +1,8 @@
 import { Panel } from './Panel';
 import { escapeHtml } from '@/utils/sanitize';
-<<<<<<< HEAD
-import type { UnhcrSummary, CountryDisplacement } from '@/types';
-import { formatPopulation, getDisplacementBadge } from '@/services/unhcr';
-=======
 import type { UnhcrSummary, CountryDisplacement } from '@/services/displacement';
 import { formatPopulation } from '@/services/displacement';
 import { t } from '@/services/i18n';
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 type DisplacementTab = 'origins' | 'hosts';
 
@@ -19,28 +14,27 @@ export class DisplacementPanel extends Panel {
   constructor() {
     super({
       id: 'displacement',
-<<<<<<< HEAD
-      title: 'UNHCR Displacement',
-      showCount: true,
-      trackActivity: true,
-      infoTooltip: `<strong>UNHCR Displacement Data</strong>
-        Global refugee, asylum seeker, and IDP counts from UNHCR.
-        <ul>
-          <li><strong>Origins</strong>: Countries people flee FROM</li>
-          <li><strong>Hosts</strong>: Countries hosting refugees</li>
-          <li>Crisis badges: 🔴 >1M | 🟠 >500K displaced</li>
-        </ul>
-        Data updates yearly. CC BY 4.0 license.`,
-    });
-    this.showLoading('Loading displacement data');
-=======
       title: t('panels.displacement'),
       showCount: true,
       trackActivity: true,
       infoTooltip: t('components.displacement.infoTooltip'),
     });
     this.showLoading(t('common.loadingDisplacement'));
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+
+    this.content.addEventListener('click', (e) => {
+      const tab = (e.target as HTMLElement).closest<HTMLElement>('.panel-tab');
+      if (tab?.dataset.tab) {
+        this.activeTab = tab.dataset.tab as DisplacementTab;
+        this.renderContent();
+        return;
+      }
+      const row = (e.target as HTMLElement).closest<HTMLElement>('.disp-row');
+      if (row) {
+        const lat = Number(row.dataset.lat);
+        const lon = Number(row.dataset.lon);
+        if (Number.isFinite(lat) && Number.isFinite(lon)) this.onCountryClick?.(lat, lon);
+      }
+    });
   }
 
   public setCountryClickHandler(handler: (lat: number, lon: number) => void): void {
@@ -49,7 +43,7 @@ export class DisplacementPanel extends Panel {
 
   public setData(data: UnhcrSummary): void {
     this.data = data;
-    this.setCount(data.countries.length);
+    this.setCount(data.countries?.length ?? 0);
     this.renderContent();
   }
 
@@ -57,21 +51,6 @@ export class DisplacementPanel extends Panel {
     if (!this.data) return;
 
     const g = this.data.globalTotals;
-<<<<<<< HEAD
-    const summaryHtml = `
-      <div class="displacement-summary">
-        <span class="disp-stat"><strong>${formatPopulation(g.refugees)}</strong> refugees</span>
-        <span class="disp-stat"><strong>${formatPopulation(g.asylumSeekers)}</strong> asylum seekers</span>
-        <span class="disp-stat"><strong>${formatPopulation(g.idps)}</strong> IDPs</span>
-        <span class="disp-total">${formatPopulation(g.total)} total</span>
-      </div>
-    `;
-
-    const tabsHtml = `
-      <div class="displacement-tabs">
-        <button class="panel-tab ${this.activeTab === 'origins' ? 'active' : ''}" data-tab="origins">Origins</button>
-        <button class="panel-tab ${this.activeTab === 'hosts' ? 'active' : ''}" data-tab="hosts">Hosts</button>
-=======
 
     const stats = [
       { label: t('components.displacement.refugees'), value: formatPopulation(g.refugees), cls: 'disp-stat-refugees' },
@@ -88,10 +67,9 @@ export class DisplacementPanel extends Panel {
     ).join('');
 
     const tabsHtml = `
-      <div class="disp-tabs" role="tablist" aria-label="Displacement data view">
-        <button class="disp-tab ${this.activeTab === 'origins' ? 'disp-tab-active' : ''}" data-tab="origins" role="tab" aria-selected="${this.activeTab === 'origins'}" id="disp-tab-origins" aria-controls="disp-tab-panel">${t('components.displacement.origins')}</button>
-        <button class="disp-tab ${this.activeTab === 'hosts' ? 'disp-tab-active' : ''}" data-tab="hosts" role="tab" aria-selected="${this.activeTab === 'hosts'}" id="disp-tab-hosts" aria-controls="disp-tab-panel">${t('components.displacement.hosts')}</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+      <div class="panel-tabs" role="tablist" aria-label="Displacement data view">
+        <button class="panel-tab ${this.activeTab === 'origins' ? 'active' : ''}" data-tab="origins" role="tab" aria-selected="${this.activeTab === 'origins'}" id="disp-tab-origins" aria-controls="disp-tab-panel">${t('components.displacement.origins')}</button>
+        <button class="panel-tab ${this.activeTab === 'hosts' ? 'active' : ''}" data-tab="hosts" role="tab" aria-selected="${this.activeTab === 'hosts'}" id="disp-tab-hosts" aria-controls="disp-tab-panel">${t('components.displacement.hosts')}</button>
       </div>
     `;
 
@@ -107,31 +85,6 @@ export class DisplacementPanel extends Panel {
     }
 
     const displayed = countries.slice(0, 30);
-<<<<<<< HEAD
-    const listHtml = displayed.length === 0
-      ? '<div class="panel-empty">No data</div>'
-      : displayed.map(c => {
-        const hostTotal = c.hostTotal || 0;
-        const badge = getDisplacementBadge(this.activeTab === 'origins' ? c.totalDisplaced : hostTotal);
-        const badgeHtml = badge.label
-          ? `<span class="disp-badge" style="background:${badge.color}">${badge.label}</span>`
-          : '';
-        const primary = this.activeTab === 'origins'
-          ? formatPopulation(c.refugees + c.asylumSeekers)
-          : formatPopulation(hostTotal);
-
-        return `
-          <div class="disp-country" data-lat="${c.lat || ''}" data-lon="${c.lon || ''}">
-            <span class="disp-name">${escapeHtml(c.name)}</span>
-            ${badgeHtml}
-            <span class="disp-count">${primary}</span>
-          </div>`;
-      }).join('');
-
-    this.setContent(`${summaryHtml}${tabsHtml}<div class="displacement-list">${listHtml}</div>`);
-
-    this.content.querySelectorAll('.panel-tab').forEach(btn => {
-=======
     let tableHtml: string;
 
     if (displayed.length === 0) {
@@ -182,25 +135,5 @@ export class DisplacementPanel extends Panel {
         </div>
       </div>
     `);
-
-    this.content.querySelectorAll('.disp-tab').forEach(btn => {
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
-      btn.addEventListener('click', () => {
-        this.activeTab = (btn as HTMLElement).dataset.tab as DisplacementTab;
-        this.renderContent();
-      });
-    });
-
-<<<<<<< HEAD
-    this.content.querySelectorAll('.disp-country').forEach(el => {
-=======
-    this.content.querySelectorAll('.disp-row').forEach(el => {
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
-      el.addEventListener('click', () => {
-        const lat = Number((el as HTMLElement).dataset.lat);
-        const lon = Number((el as HTMLElement).dataset.lon);
-        if (Number.isFinite(lat) && Number.isFinite(lon)) this.onCountryClick?.(lat, lon);
-      });
-    });
   }
 }

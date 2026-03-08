@@ -222,8 +222,8 @@ export * from './analysis-constants';
 <<<<<<< HEAD
 =======
 export { getCSSColor, invalidateColorCache } from './theme-colors';
-export { getStoredTheme, getCurrentTheme, setTheme, applyStoredTheme } from './theme-manager';
-export type { Theme } from './theme-manager';
+export { getStoredTheme, getCurrentTheme, setTheme, applyStoredTheme, getThemePreference, setThemePreference } from './theme-manager';
+export type { Theme, ThemePreference } from './theme-manager';
 
 import { getCurrentLanguage } from '../services/i18n';
 >>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27

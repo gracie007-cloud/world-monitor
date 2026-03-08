@@ -1,37 +1,11 @@
-<<<<<<< HEAD
-import './styles/main.css';
-import 'maplibre-gl/dist/maplibre-gl.css';
-=======
 import './styles/base-layer.css';
 import './styles/happy-theme.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import * as Sentry from '@sentry/browser';
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 import { inject } from '@vercel/analytics';
 import { App } from './App';
-import { debugInjectTestEvents, debugGetCells, getCellCount } from '@/services/geo-convergence';
-import { initMetaTags } from '@/services/meta-tags';
-import { installRuntimeFetchPatch } from '@/services/runtime';
-import { loadDesktopSecrets } from '@/services/runtime-config';
+import { installUtmInterceptor } from './utils/utm';
 
-// Initialize Vercel Analytics
-inject();
-
-// Initialize dynamic meta tags for sharing
-initMetaTags();
-
-// In desktop mode, route /api/* calls to the local Tauri sidecar backend.
-installRuntimeFetchPatch();
-void loadDesktopSecrets();
-
-<<<<<<< HEAD
-const app = new App('app');
-app.init().catch(console.error);
-
-// Debug helpers for geo-convergence testing (remove in production)
-(window as unknown as Record<string, unknown>).geoDebug = {
-  inject: debugInjectTestEvents,
-=======
 const sentryDsn = import.meta.env.VITE_SENTRY_DSN?.trim();
 
 // Initialize Sentry error tracking (early as possible)
@@ -209,6 +183,33 @@ Sentry.init({
     /Cannot read properties of null \(reading '__uv'\)/,
     /Can't find variable: p\d+/,
     /^timeout$/,
+    /Can't find variable: caches/,
+    /crypto\.randomUUID is not a function/,
+    /ucapi is not defined/,
+    /Identifier '(?:script|reportPage)' has already been declared/,
+    /getAttribute is not a function.*getAttribute\("role"\)/,
+    /^TypeError: Internal error$/,
+    /SCDynimacBridge/,
+    /errTimes is not defined/,
+    /Failed to get ServiceWorkerRegistration/,
+    /^ReferenceError: Cannot access uninitialized variable\.?$/,
+    /Failed writing data to the file system/,
+    /Error invoking initializeCallbackHandler/,
+    /releasePointerCapture.*Invalid pointer/,
+    /Array buffer allocation failed/,
+    /Client can't handle this message/,
+    /Invalid LngLat object/,
+    /autoReset/,
+    /webkitExitFullScreen/,
+    /downProgCallback/,
+    /syncDownloadState/,
+    /^ReferenceError: HTMLOUT is not defined$/,
+    /^ReferenceError: xbrowser is not defined$/,
+    /LibraryDetectorTests_detect/,
+    /contentBoxSize\[0\] is undefined/,
+    /Attempting to run\(\), but is already running/,
+    /Out of range source coordinates for DEM data/,
+    /Invalid character: '\\0'/,
   ],
   beforeSend(event) {
     const msg = event.exception?.values?.[0]?.value ?? '';
@@ -231,12 +232,16 @@ Sentry.init({
     }
     // Suppress Three.js OrbitControls touch crashes (finger lifted during pinch-zoom)
     if (/undefined is not an object \(evaluating 't\.x'\)|Cannot read properties of undefined \(reading 'x'\)/.test(msg)) {
-      if (frames.some(f => /_handleTouchStart|Dolly|eie|jse/.test(f.function ?? ''))) return null;
+      const nonSentryFrames = frames.filter(f => f.filename && f.filename !== '<anonymous>' && !/\/sentry-[A-Za-z0-9_-]+\.js/.test(f.filename));
+      const hasSourceMapped = nonSentryFrames.some(f => /\.(ts|tsx)$/.test(f.filename ?? '') || /^src\//.test(f.filename ?? ''));
+      if (!hasSourceMapped) return null;
     }
     // Suppress deck.gl/maplibre null-access crashes with no usable stack trace (requestAnimationFrame wrapping)
     if (/null is not an object \(evaluating '\w{1,3}\.(id|type|style)'\)/.test(msg) && frames.length === 0) return null;
     // Suppress TypeErrors from anonymous/injected scripts (no real source files)
     if (/^TypeError:/.test(msg) && frames.length > 0 && frames.every(f => !f.filename || f.filename === '<anonymous>' || /^blob:/.test(f.filename))) return null;
+    // Suppress parentNode.insertBefore from injected scripts only (iOS WKWebView)
+    if (/parentNode\.insertBefore/.test(msg) && frames.every(f => !f.filename || f.filename === '<anonymous>' || /^blob:/.test(f.filename))) return null;
     // Suppress errors originating entirely from blob: URLs (browser extensions)
     if (frames.length > 0 && frames.every(f => /^blob:/.test(f.filename ?? ''))) return null;
     // Suppress errors originating from UV proxy (Ultraviolet service worker)
@@ -316,6 +321,7 @@ if (urlParams.get('settings') === '1') {
     }
   );
 } else {
+  installUtmInterceptor();
   const app = new App('app');
   app
     .init()
@@ -327,30 +333,10 @@ if (urlParams.get('settings') === '1') {
 
 // Debug helpers for geo-convergence testing (remove in production)
 (window as unknown as Record<string, unknown>).geoDebug = {
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   cells: debugGetCells,
   count: getCellCount,
 };
 
-<<<<<<< HEAD
-if (!('__TAURI_INTERNALS__' in window) && !('__TAURI__' in window)) {
-  import('virtual:pwa-register').then(({ registerSW }) => {
-    registerSW({
-      onRegisteredSW(_swUrl, registration) {
-        if (registration) {
-          setInterval(async () => {
-            if (!navigator.onLine) return;
-            try { await registration.update(); } catch {}
-          }, 60 * 60 * 1000);
-        }
-      },
-      onOfflineReady() {
-        console.log('[PWA] App ready for offline use');
-      },
-    });
-  });
-}
-=======
 // Beta mode toggle: type `beta=true` / `beta=false` in console
 Object.defineProperty(window, 'beta', {
   get() {
@@ -413,4 +399,3 @@ if (!('__TAURI_INTERNALS__' in window) && !('__TAURI__' in window) && 'serviceWo
       });
   }
 }
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27

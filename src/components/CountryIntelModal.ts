@@ -50,6 +50,7 @@ export class CountryIntelModal {
   private onShareStory?: (code: string, name: string) => void;
   private currentCode: string | null = null;
   private currentName: string | null = null;
+  private keydownHandler: (e: KeyboardEvent) => void;
 
   constructor() {
     this.overlay = document.createElement('div');
@@ -76,9 +77,9 @@ export class CountryIntelModal {
     this.overlay.addEventListener('click', (e) => {
       if ((e.target as HTMLElement).classList.contains('country-intel-overlay')) this.hide();
     });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.overlay.classList.contains('active')) this.hide();
-    });
+    this.keydownHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') this.hide();
+    };
   }
 
   private countryFlag(code: string): string {
@@ -133,6 +134,7 @@ export class CountryIntelModal {
 
   public showLoading(): void {
     this.currentCode = '__loading__';
+    document.addEventListener('keydown', this.keydownHandler);
     this.headerEl.innerHTML = `
       <span class="country-flag">🌍</span>
 <<<<<<< HEAD
@@ -171,6 +173,7 @@ export class CountryIntelModal {
 <<<<<<< HEAD
 =======
     let html = '';
+    document.addEventListener('keydown', this.keydownHandler);
     this.overlay.classList.add('active');
 
 >>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
@@ -401,6 +404,7 @@ export class CountryIntelModal {
 
   public hide(): void {
     this.overlay.classList.remove('active');
+    document.removeEventListener('keydown', this.keydownHandler);
     this.currentCode = null;
     this.onCloseCallback?.();
   }

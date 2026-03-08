@@ -1,15 +1,10 @@
 import type { PanelConfig, MapLayers } from '@/types';
-<<<<<<< HEAD
-import { SITE_VARIANT } from './variant';
-
-=======
 import type { DataSourceId } from '@/services/data-freshness';
 import { SITE_VARIANT } from './variant';
 import { isDesktopRuntime } from '@/services/runtime';
 
 const _desktop = isDesktopRuntime();
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 // ============================================
 // FULL VARIANT (Geopolitical)
 // ============================================
@@ -18,16 +13,13 @@ const _desktop = isDesktopRuntime();
 const FULL_PANELS: Record<string, PanelConfig> = {
   map: { name: 'Global Map', enabled: true, priority: 1 },
   'live-news': { name: 'Live News', enabled: true, priority: 1 },
-<<<<<<< HEAD
-=======
   'live-webcams': { name: 'Live Webcams', enabled: true, priority: 1 },
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   insights: { name: 'AI Insights', enabled: true, priority: 1 },
   'strategic-posture': { name: 'AI Strategic Posture', enabled: true, priority: 1 },
-  cii: { name: 'Country Instability', enabled: true, priority: 1 },
-  'strategic-risk': { name: 'Strategic Risk Overview', enabled: true, priority: 1 },
+  cii: { name: 'Country Instability', enabled: true, priority: 1, ...(_desktop && { premium: 'enhanced' as const }) },
+  'strategic-risk': { name: 'Strategic Risk Overview', enabled: true, priority: 1, ...(_desktop && { premium: 'enhanced' as const }) },
   intel: { name: 'Intel Feed', enabled: true, priority: 1 },
-  'gdelt-intel': { name: 'Live Intelligence', enabled: true, priority: 1 },
+  'gdelt-intel': { name: 'Live Intelligence', enabled: true, priority: 1, ...(_desktop && { premium: 'enhanced' as const }) },
   cascade: { name: 'Infrastructure Cascade', enabled: true, priority: 1 },
   politics: { name: 'World News', enabled: true, priority: 1 },
   us: { name: 'United States', enabled: true, priority: 1 },
@@ -43,11 +35,8 @@ const FULL_PANELS: Record<string, PanelConfig> = {
   commodities: { name: 'Commodities', enabled: true, priority: 1 },
   markets: { name: 'Markets', enabled: true, priority: 1 },
   economic: { name: 'Economic Indicators', enabled: true, priority: 1 },
-<<<<<<< HEAD
-=======
   'trade-policy': { name: 'Trade Policy', enabled: true, priority: 1 },
-  'supply-chain': { name: 'Supply Chain', enabled: true, priority: 1 },
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+  'supply-chain': { name: 'Supply Chain', enabled: true, priority: 1, ...(_desktop && { premium: 'enhanced' as const }) },
   finance: { name: 'Financial', enabled: true, priority: 1 },
   tech: { name: 'Technology', enabled: true, priority: 2 },
   crypto: { name: 'Crypto', enabled: true, priority: 2 },
@@ -57,20 +46,6 @@ const FULL_PANELS: Record<string, PanelConfig> = {
   monitors: { name: 'My Monitors', enabled: true, priority: 2 },
   'satellite-fires': { name: 'Fires', enabled: true, priority: 2 },
   'macro-signals': { name: 'Market Radar', enabled: true, priority: 2 },
-<<<<<<< HEAD
-  'etf-flows': { name: 'BTC ETF Tracker', enabled: true, priority: 2 },
-  stablecoins: { name: 'Stablecoins', enabled: true, priority: 2 },
-  'runtime-config': { name: 'Desktop Configuration', enabled: true, priority: 2 },
-  'ucdp-events': { name: 'UCDP Conflict Events', enabled: false, priority: 2 },
-  displacement: { name: 'UNHCR Displacement', enabled: false, priority: 2 },
-  climate: { name: 'Climate Anomalies', enabled: false, priority: 2 },
-  'population-exposure': { name: 'Population Exposure', enabled: false, priority: 2 },
-};
-
-const FULL_MAP_LAYERS: MapLayers = {
-  conflicts: true,
-  bases: true,
-=======
   'gulf-economies': { name: 'Gulf Economies', enabled: false, priority: 2 },
   'etf-flows': { name: 'BTC ETF Tracker', enabled: true, priority: 2 },
   stablecoins: { name: 'Stablecoins', enabled: true, priority: 2 },
@@ -80,9 +55,10 @@ const FULL_MAP_LAYERS: MapLayers = {
   climate: { name: 'Climate Anomalies', enabled: true, priority: 2 },
   'population-exposure': { name: 'Population Exposure', enabled: true, priority: 2 },
   'security-advisories': { name: 'Security Advisories', enabled: true, priority: 2 },
-  'oref-sirens': { name: 'Israel Sirens', enabled: true, priority: 2 },
-  'telegram-intel': { name: 'Telegram Intel', enabled: true, priority: 2 },
+  'oref-sirens': { name: 'Israel Sirens', enabled: true, priority: 2, ...(_desktop && { premium: 'locked' as const }) },
+  'telegram-intel': { name: 'Telegram Intel', enabled: true, priority: 2, ...(_desktop && { premium: 'locked' as const }) },
   'airline-intel': { name: 'Airline Intelligence', enabled: true, priority: 2 },
+  'tech-readiness': { name: 'Tech Readiness Index', enabled: true, priority: 2 },
   'world-clock': { name: 'World Clock', enabled: true, priority: 2 },
 };
 
@@ -92,7 +68,6 @@ const FULL_MAP_LAYERS: MapLayers = {
 
   conflicts: true,
   bases: _desktop ? false : true,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   cables: false,
   pipelines: false,
   hotspots: true,
@@ -103,53 +78,12 @@ const FULL_MAP_LAYERS: MapLayers = {
   weather: true,
   economic: true,
   waterways: true,
-<<<<<<< HEAD
-  outages: true,
-  datacenters: false,
-  protests: false,
-  flights: false,
-  military: true,
-  natural: true,
-  spaceports: false,
-  minerals: false,
-  fires: false,
-  // Data source layers
-  ucdpEvents: false,
-  displacement: false,
-  climate: false,
-  // Tech layers (disabled in full variant)
-  startupHubs: false,
-  cloudRegions: false,
-  accelerators: false,
-  techHQs: false,
-  techEvents: false,
-};
-
-const FULL_MOBILE_MAP_LAYERS: MapLayers = {
-  conflicts: true,
-  bases: false,
-  cables: false,
-  pipelines: false,
-  hotspots: true,
-  ais: false,
-  nuclear: false,
-  irradiators: false,
-  sanctions: true,
-  weather: true,
-  economic: false,
-  waterways: false,
-=======
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   outages: true,
   cyberThreats: false,
   datacenters: false,
   protests: false,
   flights: false,
-<<<<<<< HEAD
-  military: false,
-=======
   military: true,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   natural: true,
   spaceports: false,
   minerals: false,
@@ -164,10 +98,6 @@ const FULL_MOBILE_MAP_LAYERS: MapLayers = {
   accelerators: false,
   techHQs: false,
   techEvents: false,
-<<<<<<< HEAD
-};
-
-=======
   // Finance layers (disabled in full variant)
   stockExchanges: false,
   financialCenters: false,
@@ -183,6 +113,10 @@ const FULL_MOBILE_MAP_LAYERS: MapLayers = {
   tradeRoutes: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Commodity layers (disabled in full variant)
+  miningSites: false,
+  processingPlants: false,
+  commodityPorts: false,
 };
 
 const FULL_MOBILE_MAP_LAYERS: MapLayers = {
@@ -236,19 +170,19 @@ const FULL_MOBILE_MAP_LAYERS: MapLayers = {
   tradeRoutes: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Commodity layers (disabled in full variant)
+  miningSites: false,
+  processingPlants: false,
+  commodityPorts: false,
 };
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 // ============================================
 // TECH VARIANT (Tech/AI/Startups)
 // ============================================
 const TECH_PANELS: Record<string, PanelConfig> = {
   map: { name: 'Global Tech Map', enabled: true, priority: 1 },
   'live-news': { name: 'Tech Headlines', enabled: true, priority: 1 },
-<<<<<<< HEAD
-=======
   'live-webcams': { name: 'Live Webcams', enabled: true, priority: 2 },
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   insights: { name: 'AI Insights', enabled: true, priority: 1 },
   ai: { name: 'AI/ML News', enabled: true, priority: 1 },
   tech: { name: 'Technology', enabled: true, priority: 1 },
@@ -274,29 +208,19 @@ const TECH_PANELS: Record<string, PanelConfig> = {
   producthunt: { name: 'Product Hunt', enabled: true, priority: 1 },
   events: { name: 'Tech Events', enabled: true, priority: 1 },
   'service-status': { name: 'Service Status', enabled: true, priority: 2 },
-<<<<<<< HEAD
-  'runtime-config': { name: 'Desktop Configuration', enabled: true, priority: 2 },
-=======
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   economic: { name: 'Economic Indicators', enabled: true, priority: 2 },
   'tech-readiness': { name: 'Tech Readiness Index', enabled: true, priority: 1 },
   'macro-signals': { name: 'Market Radar', enabled: true, priority: 2 },
   'etf-flows': { name: 'BTC ETF Tracker', enabled: true, priority: 2 },
   stablecoins: { name: 'Stablecoins', enabled: true, priority: 2 },
-<<<<<<< HEAD
-=======
   'airline-intel': { name: 'Airline Intelligence', enabled: true, priority: 2 },
   'world-clock': { name: 'World Clock', enabled: true, priority: 2 },
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   monitors: { name: 'My Monitors', enabled: true, priority: 2 },
 };
 
 const TECH_MAP_LAYERS: MapLayers = {
-<<<<<<< HEAD
-=======
   gpsJamming: false,
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   conflicts: false,
   bases: false,
   cables: true,
@@ -306,14 +230,11 @@ const TECH_MAP_LAYERS: MapLayers = {
   nuclear: false,
   irradiators: false,
   sanctions: false,
-  weather: true,
-  economic: true,
+  weather: false,
+  economic: false,
   waterways: false,
   outages: true,
-<<<<<<< HEAD
-=======
   cyberThreats: false,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   datacenters: true,
   protests: false,
   flights: false,
@@ -332,11 +253,6 @@ const TECH_MAP_LAYERS: MapLayers = {
   accelerators: false,
   techHQs: true,
   techEvents: true,
-<<<<<<< HEAD
-};
-
-const TECH_MOBILE_MAP_LAYERS: MapLayers = {
-=======
   // Finance layers (disabled in tech variant)
   stockExchanges: false,
   financialCenters: false,
@@ -353,12 +269,15 @@ const TECH_MOBILE_MAP_LAYERS: MapLayers = {
   iranAttacks: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Commodity layers (disabled in tech variant)
+  miningSites: false,
+  processingPlants: false,
+  commodityPorts: false,
 };
 
 const TECH_MOBILE_MAP_LAYERS: MapLayers = {
   gpsJamming: false,
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   conflicts: false,
   bases: false,
   cables: false,
@@ -372,10 +291,7 @@ const TECH_MOBILE_MAP_LAYERS: MapLayers = {
   economic: false,
   waterways: false,
   outages: true,
-<<<<<<< HEAD
-=======
   cyberThreats: false,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   datacenters: true,
   protests: false,
   flights: false,
@@ -394,8 +310,6 @@ const TECH_MOBILE_MAP_LAYERS: MapLayers = {
   accelerators: false,
   techHQs: false,
   techEvents: true,
-<<<<<<< HEAD
-=======
   // Finance layers (disabled in tech variant)
   stockExchanges: false,
   financialCenters: false,
@@ -412,6 +326,10 @@ const TECH_MOBILE_MAP_LAYERS: MapLayers = {
   iranAttacks: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Commodity layers (disabled in tech variant)
+  miningSites: false,
+  processingPlants: false,
+  commodityPorts: false,
 };
 
 // ============================================
@@ -505,6 +423,10 @@ const FINANCE_MAP_LAYERS: MapLayers = {
   iranAttacks: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Commodity layers (disabled in finance variant)
+  miningSites: false,
+  processingPlants: false,
+  commodityPorts: false,
 };
 
 const FINANCE_MOBILE_MAP_LAYERS: MapLayers = {
@@ -558,6 +480,10 @@ const FINANCE_MOBILE_MAP_LAYERS: MapLayers = {
   iranAttacks: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Commodity layers (disabled in finance variant)
+  miningSites: false,
+  processingPlants: false,
+  commodityPorts: false,
 };
 
 // ============================================
@@ -627,6 +553,10 @@ const HAPPY_MAP_LAYERS: MapLayers = {
   iranAttacks: false,
   ciiChoropleth: false,
   dayNight: false,
+  // Commodity layers (disabled)
+  miningSites: false,
+  processingPlants: false,
+  commodityPorts: false,
 };
 
 const HAPPY_MOBILE_MAP_LAYERS: MapLayers = {
@@ -680,21 +610,189 @@ const HAPPY_MOBILE_MAP_LAYERS: MapLayers = {
   iranAttacks: false,
   ciiChoropleth: false,
   dayNight: false,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+  // Commodity layers (disabled)
+  miningSites: false,
+  processingPlants: false,
+  commodityPorts: false,
+};
+
+// ============================================
+// COMMODITY VARIANT (Mining, Metals, Energy)
+// ============================================
+const COMMODITY_PANELS: Record<string, PanelConfig> = {
+  map: { name: 'Commodity Map', enabled: true, priority: 1 },
+  'live-news': { name: 'Commodity Headlines', enabled: true, priority: 1 },
+  insights: { name: 'AI Commodity Insights', enabled: true, priority: 1 },
+  'commodity-news': { name: 'Commodity News', enabled: true, priority: 1 },
+  'gold-silver': { name: 'Gold & Silver', enabled: true, priority: 1 },
+  energy: { name: 'Energy Markets', enabled: true, priority: 1 },
+  'mining-news': { name: 'Mining News', enabled: true, priority: 1 },
+  'critical-minerals': { name: 'Critical Minerals', enabled: true, priority: 1 },
+  'base-metals': { name: 'Base Metals', enabled: true, priority: 1 },
+  'mining-companies': { name: 'Mining Companies', enabled: true, priority: 1 },
+  'supply-chain': { name: 'Supply Chain & Logistics', enabled: true, priority: 1 },
+  'commodity-regulation': { name: 'Regulation & Policy', enabled: true, priority: 1 },
+  markets: { name: 'Commodity Markets', enabled: true, priority: 1 },
+  commodities: { name: 'Live Commodity Prices', enabled: true, priority: 1 },
+  heatmap: { name: 'Sector Heatmap', enabled: true, priority: 1 },
+  'macro-signals': { name: 'Market Radar', enabled: true, priority: 1 },
+  'trade-policy': { name: 'Trade Policy', enabled: true, priority: 1 },
+  economic: { name: 'Economic Indicators', enabled: true, priority: 1 },
+  'gulf-economies': { name: 'Gulf & OPEC Economies', enabled: true, priority: 1 },
+  'gcc-investments': { name: 'GCC Resource Investments', enabled: true, priority: 2 },
+  'airline-intel': { name: 'Airline Intelligence', enabled: true, priority: 2 },
+  finance: { name: 'Financial News', enabled: true, priority: 2 },
+  polymarket: { name: 'Commodity Predictions', enabled: true, priority: 2 },
+  'world-clock': { name: 'World Clock', enabled: true, priority: 2 },
+  monitors: { name: 'My Monitors', enabled: true, priority: 2 },
+};
+
+const COMMODITY_MAP_LAYERS: MapLayers = {
+  gpsJamming: false,
+
+  conflicts: false,
+  bases: false,
+  cables: false,
+  pipelines: true,
+  hotspots: false,
+  ais: true,
+  nuclear: false,
+  irradiators: false,
+  sanctions: true,
+  weather: true,
+  economic: true,
+  waterways: true,
+  outages: true,
+  cyberThreats: false,
+  datacenters: false,
+  protests: false,
+  flights: false,
+  military: false,
+  natural: true,
+  spaceports: false,
+  minerals: true,
+  fires: true,
+  // Data source layers
+  ucdpEvents: false,
+  displacement: false,
+  climate: true,         // Climate events disrupt supply chains
+  // Tech layers (disabled)
+  startupHubs: false,
+  cloudRegions: false,
+  accelerators: false,
+  techHQs: false,
+  techEvents: false,
+  // Finance layers (enabled for commodity hubs)
+  stockExchanges: false,
+  financialCenters: false,
+  centralBanks: false,
+  commodityHubs: true,
+  gulfInvestments: false,
+  // Happy variant layers (disabled)
+  positiveEvents: false,
+  kindness: false,
+  happiness: false,
+  speciesRecovery: false,
+  renewableInstallations: false,
+  tradeRoutes: true,
+  iranAttacks: false,
+  ciiChoropleth: false,
+  dayNight: false,
+  // Commodity layers (enabled)
+  miningSites: true,
+  processingPlants: true,
+  commodityPorts: true,
+};
+
+const COMMODITY_MOBILE_MAP_LAYERS: MapLayers = {
+  gpsJamming: false,
+
+  conflicts: false,
+  bases: false,
+  cables: false,
+  pipelines: false,
+  hotspots: false,
+  ais: false,
+  nuclear: false,
+  irradiators: false,
+  sanctions: false,
+  weather: false,
+  economic: true,
+  waterways: false,
+  outages: true,
+  cyberThreats: false,
+  datacenters: false,
+  protests: false,
+  flights: false,
+  military: false,
+  natural: true,
+  spaceports: false,
+  minerals: true,
+  fires: false,
+  // Data source layers
+  ucdpEvents: false,
+  displacement: false,
+  climate: false,
+  // Tech layers (disabled)
+  startupHubs: false,
+  cloudRegions: false,
+  accelerators: false,
+  techHQs: false,
+  techEvents: false,
+  // Finance layers (limited on mobile)
+  stockExchanges: false,
+  financialCenters: false,
+  centralBanks: false,
+  commodityHubs: true,
+  gulfInvestments: false,
+  // Happy variant layers (disabled)
+  positiveEvents: false,
+  kindness: false,
+  happiness: false,
+  speciesRecovery: false,
+  renewableInstallations: false,
+  tradeRoutes: false,
+  iranAttacks: false,
+  ciiChoropleth: false,
+  dayNight: false,
+  // Commodity layers (limited on mobile)
+  miningSites: true,
+  processingPlants: false,
+  commodityPorts: true,
 };
 
 // ============================================
 // VARIANT-AWARE EXPORTS
 // ============================================
-<<<<<<< HEAD
-export const DEFAULT_PANELS = SITE_VARIANT === 'tech' ? TECH_PANELS : FULL_PANELS;
-export const DEFAULT_MAP_LAYERS = SITE_VARIANT === 'tech' ? TECH_MAP_LAYERS : FULL_MAP_LAYERS;
-export const MOBILE_DEFAULT_MAP_LAYERS = SITE_VARIANT === 'tech' ? TECH_MOBILE_MAP_LAYERS : FULL_MOBILE_MAP_LAYERS;
+export const DEFAULT_PANELS = SITE_VARIANT === 'happy' 
+  ? HAPPY_PANELS 
+  : SITE_VARIANT === 'tech' 
+    ? TECH_PANELS 
+    : SITE_VARIANT === 'finance' 
+      ? FINANCE_PANELS 
+      : SITE_VARIANT === 'commodity'
+        ? COMMODITY_PANELS
+        : FULL_PANELS;
 
-=======
-export const DEFAULT_PANELS = SITE_VARIANT === 'happy' ? HAPPY_PANELS : SITE_VARIANT === 'tech' ? TECH_PANELS : SITE_VARIANT === 'finance' ? FINANCE_PANELS : FULL_PANELS;
-export const DEFAULT_MAP_LAYERS = SITE_VARIANT === 'happy' ? HAPPY_MAP_LAYERS : SITE_VARIANT === 'tech' ? TECH_MAP_LAYERS : SITE_VARIANT === 'finance' ? FINANCE_MAP_LAYERS : FULL_MAP_LAYERS;
-export const MOBILE_DEFAULT_MAP_LAYERS = SITE_VARIANT === 'happy' ? HAPPY_MOBILE_MAP_LAYERS : SITE_VARIANT === 'tech' ? TECH_MOBILE_MAP_LAYERS : SITE_VARIANT === 'finance' ? FINANCE_MOBILE_MAP_LAYERS : FULL_MOBILE_MAP_LAYERS;
+export const DEFAULT_MAP_LAYERS = SITE_VARIANT === 'happy' 
+  ? HAPPY_MAP_LAYERS 
+  : SITE_VARIANT === 'tech' 
+    ? TECH_MAP_LAYERS 
+    : SITE_VARIANT === 'finance' 
+      ? FINANCE_MAP_LAYERS 
+      : SITE_VARIANT === 'commodity'
+        ? COMMODITY_MAP_LAYERS
+        : FULL_MAP_LAYERS;
+
+export const MOBILE_DEFAULT_MAP_LAYERS = SITE_VARIANT === 'happy' 
+  ? HAPPY_MOBILE_MAP_LAYERS 
+  : SITE_VARIANT === 'tech' 
+    ? TECH_MOBILE_MAP_LAYERS 
+    : SITE_VARIANT === 'finance' 
+      ? FINANCE_MOBILE_MAP_LAYERS 
+      : SITE_VARIANT === 'commodity'
+        ? COMMODITY_MOBILE_MAP_LAYERS
+        : FULL_MOBILE_MAP_LAYERS;
 
 /** Maps map-layer toggle keys to their data-freshness source IDs (single source of truth). */
 export const LAYER_TO_SOURCE: Partial<Record<keyof MapLayers, DataSourceId[]>> = {
@@ -747,7 +845,7 @@ export const PANEL_CATEGORY_MAP: Record<string, { labelKey: string; panelKeys: s
   },
   dataTracking: {
     labelKey: 'header.panelCatDataTracking',
-    panelKeys: ['monitors', 'satellite-fires', 'ucdp-events', 'displacement', 'climate', 'population-exposure', 'security-advisories', 'oref-sirens', 'world-clock'],
+    panelKeys: ['monitors', 'satellite-fires', 'ucdp-events', 'displacement', 'climate', 'population-exposure', 'security-advisories', 'oref-sirens', 'world-clock', 'tech-readiness'],
     variants: ['full'],
   },
 
@@ -812,7 +910,6 @@ export const PANEL_CATEGORY_MAP: Record<string, { labelKey: string; panelKeys: s
 };
 
 // Monitor palette — fixed category colors persisted to localStorage (not theme-dependent)
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 export const MONITOR_COLORS = [
   '#44ff88',
   '#ff8844',

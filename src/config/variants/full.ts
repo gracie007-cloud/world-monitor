@@ -25,11 +25,8 @@ export const DEFAULT_PANELS: Record<string, PanelConfig> = {
   cascade: { name: 'Infrastructure Cascade', enabled: true, priority: 1 },
   'strategic-risk': { name: 'Strategic Risk Overview', enabled: true, priority: 1 },
   politics: { name: 'World News', enabled: true, priority: 1 },
-<<<<<<< HEAD
-=======
   us: { name: 'United States', enabled: true, priority: 1 },
   europe: { name: 'Europe', enabled: true, priority: 1 },
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   middleeast: { name: 'Middle East', enabled: true, priority: 1 },
   africa: { name: 'Africa', enabled: true, priority: 1 },
   latam: { name: 'Latin America', enabled: true, priority: 1 },
@@ -55,11 +52,8 @@ export const DEFAULT_PANELS: Record<string, PanelConfig> = {
 
 // Map layers for geopolitical view
 export const DEFAULT_MAP_LAYERS: MapLayers = {
-<<<<<<< HEAD
-=======
   gpsJamming: false,
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   conflicts: true,
   bases: true,
   cables: false,
@@ -70,18 +64,15 @@ export const DEFAULT_MAP_LAYERS: MapLayers = {
   irradiators: false,
   sanctions: true,
   weather: true,
-  economic: true,
+  economic: false,
   waterways: true,
   outages: true,
-<<<<<<< HEAD
-=======
   cyberThreats: false,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   datacenters: false,
   protests: false,
   flights: false,
   military: false,
-  natural: true,
+  natural: false,
   spaceports: false,
   minerals: false,
   fires: false,
@@ -94,8 +85,6 @@ export const DEFAULT_MAP_LAYERS: MapLayers = {
   accelerators: false,
   techHQs: false,
   techEvents: false,
-<<<<<<< HEAD
-=======
   // Finance layers (disabled in full variant)
   stockExchanges: false,
   financialCenters: false,
@@ -112,16 +101,16 @@ export const DEFAULT_MAP_LAYERS: MapLayers = {
   iranAttacks: true,
   ciiChoropleth: false,
   dayNight: false,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+  // Commodity variant layers (disabled in full variant)
+  miningSites: false,
+  processingPlants: false,
+  commodityPorts: false,
 };
 
 // Mobile-specific defaults for geopolitical
 export const MOBILE_DEFAULT_MAP_LAYERS: MapLayers = {
-<<<<<<< HEAD
-=======
   gpsJamming: false,
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   conflicts: true,
   bases: false,
   cables: false,
@@ -135,10 +124,7 @@ export const MOBILE_DEFAULT_MAP_LAYERS: MapLayers = {
   economic: false,
   waterways: false,
   outages: true,
-<<<<<<< HEAD
-=======
   cyberThreats: false,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   datacenters: false,
   protests: false,
   flights: false,
@@ -156,8 +142,6 @@ export const MOBILE_DEFAULT_MAP_LAYERS: MapLayers = {
   accelerators: false,
   techHQs: false,
   techEvents: false,
-<<<<<<< HEAD
-=======
   // Finance layers (disabled in full variant)
   stockExchanges: false,
   financialCenters: false,
@@ -174,7 +158,10 @@ export const MOBILE_DEFAULT_MAP_LAYERS: MapLayers = {
   iranAttacks: true,
   ciiChoropleth: false,
   dayNight: false,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+  // Commodity variant layers (disabled in full variant)
+  miningSites: false,
+  processingPlants: false,
+  commodityPorts: false,
 };
 
 export const VARIANT_CONFIG: VariantConfig = {

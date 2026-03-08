@@ -1,30 +1,15 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-<<<<<<< HEAD
-use std::fs::{self, File, OpenOptions};
-use std::io::Write;
-=======
 use std::collections::HashMap;
 use std::env;
 use std::fs::{self, File, OpenOptions};
 use std::io::Write;
 #[cfg(windows)]
 use std::os::windows::process::CommandExt;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, Stdio};
 use std::sync::Mutex;
 use std::time::{SystemTime, UNIX_EPOCH};
-<<<<<<< HEAD
-use std::env;
-
-use keyring::Entry;
-use serde_json::{Map, Value};
-use tauri::menu::{AboutMetadata, Menu, MenuItem, PredefinedMenuItem, Submenu};
-use tauri::{AppHandle, Manager, RunEvent, WindowEvent, WebviewUrl, WebviewWindowBuilder};
-
-const LOCAL_API_PORT: &str = "46123";
-=======
 
 use keyring::Entry;
 use reqwest::Url;
@@ -34,33 +19,24 @@ use tauri::menu::{AboutMetadata, Menu, MenuItem, PredefinedMenuItem, Submenu};
 use tauri::{AppHandle, Manager, RunEvent, Webview, WebviewUrl, WebviewWindowBuilder, WindowEvent};
 
 const DEFAULT_LOCAL_API_PORT: u16 = 46123;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 const KEYRING_SERVICE: &str = "world-monitor";
 const LOCAL_API_LOG_FILE: &str = "local-api.log";
 const DESKTOP_LOG_FILE: &str = "desktop.log";
 const MENU_FILE_SETTINGS_ID: &str = "file.settings";
 const MENU_HELP_GITHUB_ID: &str = "help.github";
-<<<<<<< HEAD
-const MENU_HELP_DEVTOOLS_ID: &str = "help.devtools";
-const SUPPORTED_SECRET_KEYS: [&str; 15] = [
-=======
 #[cfg(feature = "devtools")]
 const MENU_HELP_DEVTOOLS_ID: &str = "help.devtools";
 const TRUSTED_WINDOWS: [&str; 3] = ["main", "settings", "live-channels"];
 const SUPPORTED_SECRET_KEYS: [&str; 25] = [
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     "GROQ_API_KEY",
     "OPENROUTER_API_KEY",
     "FRED_API_KEY",
     "EIA_API_KEY",
     "CLOUDFLARE_API_TOKEN",
     "ACLED_ACCESS_TOKEN",
-<<<<<<< HEAD
-=======
     "URLHAUS_AUTH_KEY",
     "OTX_API_KEY",
     "ABUSEIPDB_API_KEY",
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     "WINGBITS_API_KEY",
     "WS_RELAY_URL",
     "VITE_OPENSKY_RELAY_URL",
@@ -70,8 +46,6 @@ const SUPPORTED_SECRET_KEYS: [&str; 25] = [
     "VITE_WS_RELAY_URL",
     "FINNHUB_API_KEY",
     "NASA_FIRMS_API_KEY",
-<<<<<<< HEAD
-=======
     "UCDP_ACCESS_TOKEN",
     "OLLAMA_API_URL",
     "OLLAMA_MODEL",
@@ -79,44 +53,28 @@ const SUPPORTED_SECRET_KEYS: [&str; 25] = [
     "WTO_API_KEY",
     "AVIATIONSTACK_API",
     "ICAO_API_KEY",
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 ];
 
-#[derive(Default)]
 struct LocalApiState {
     child: Mutex<Option<Child>>,
     token: Mutex<Option<String>>,
-<<<<<<< HEAD
-}
-
-fn secret_entry(key: &str) -> Result<Entry, String> {
-    if !SUPPORTED_SECRET_KEYS.contains(&key) {
-        return Err(format!("Unsupported secret key: {key}"));
-    }
-    Entry::new(KEYRING_SERVICE, key).map_err(|e| format!("Keyring init failed: {e}"))
-}
-
-fn generate_local_token() -> String {
-    use std::collections::hash_map::RandomState;
-    use std::hash::{BuildHasher, Hasher};
-    let state = RandomState::new();
-    let mut h1 = state.build_hasher();
-    h1.write_u64(std::process::id() as u64);
-    let a = h1.finish();
-    let mut h2 = state.build_hasher();
-    let nanos = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_nanos())
-        .unwrap_or(0);
-    h2.write_u128(nanos);
-    let b = h2.finish();
-    format!("{a:016x}{b:016x}")
-}
-
-#[tauri::command]
-fn get_local_api_token(state: tauri::State<'_, LocalApiState>) -> Result<String, String> {
-=======
     port: Mutex<Option<u16>>,
+    http_client: reqwest::Client,
+}
+
+impl Default for LocalApiState {
+    fn default() -> Self {
+        Self {
+            child: Mutex::new(None),
+            token: Mutex::new(None),
+            port: Mutex::new(None),
+            http_client: reqwest::Client::builder()
+                .use_native_tls()
+                .pool_max_idle_per_host(2)
+                .build()
+                .unwrap_or_default(),
+        }
+    }
 }
 
 /// In-memory cache for keychain secrets. Populated once at startup to avoid
@@ -281,27 +239,24 @@ fn require_trusted_window(label: &str) -> Result<(), String> {
 #[tauri::command]
 fn get_local_api_token(webview: Webview, state: tauri::State<'_, LocalApiState>) -> Result<String, String> {
     require_trusted_window(webview.label())?;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     let token = state
         .token
         .lock()
         .map_err(|_| "Failed to lock local API token".to_string())?;
-<<<<<<< HEAD
-    token.clone().ok_or_else(|| "Token not generated".to_string())
-=======
     token
         .clone()
         .ok_or_else(|| "Token not generated".to_string())
 }
 
 #[tauri::command]
-fn get_desktop_runtime_info(state: tauri::State<'_, LocalApiState>) -> DesktopRuntimeInfo {
+fn get_desktop_runtime_info(webview: Webview, state: tauri::State<'_, LocalApiState>) -> Result<DesktopRuntimeInfo, String> {
+    require_trusted_window(webview.label())?;
     let port = state.port.lock().ok().and_then(|g| *g);
-    DesktopRuntimeInfo {
+    Ok(DesktopRuntimeInfo {
         os: env::consts::OS.to_string(),
         arch: env::consts::ARCH.to_string(),
         local_api_port: port,
-    }
+    })
 }
 
 #[tauri::command]
@@ -310,42 +265,10 @@ fn get_local_api_port(webview: Webview, state: tauri::State<'_, LocalApiState>) 
     state.port.lock()
         .map_err(|_| "Failed to lock port state".to_string())?
         .ok_or_else(|| "Port not yet assigned".to_string())
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 #[tauri::command]
 fn list_supported_secret_keys() -> Vec<String> {
-<<<<<<< HEAD
-    SUPPORTED_SECRET_KEYS.iter().map(|key| (*key).to_string()).collect()
-}
-
-#[tauri::command]
-fn get_secret(key: String) -> Result<Option<String>, String> {
-    let entry = secret_entry(&key)?;
-    match entry.get_password() {
-        Ok(value) => Ok(Some(value)),
-        Err(keyring::Error::NoEntry) => Ok(None),
-        Err(err) => Err(format!("Failed to read keyring secret: {err}")),
-    }
-}
-
-#[tauri::command]
-fn set_secret(key: String, value: String) -> Result<(), String> {
-    let entry = secret_entry(&key)?;
-    entry
-        .set_password(&value)
-        .map_err(|e| format!("Failed to write keyring secret: {e}"))
-}
-
-#[tauri::command]
-fn delete_secret(key: String) -> Result<(), String> {
-    let entry = secret_entry(&key)?;
-    match entry.delete_credential() {
-        Ok(_) => Ok(()),
-        Err(keyring::Error::NoEntry) => Ok(()),
-        Err(err) => Err(format!("Failed to delete keyring secret: {err}")),
-    }
-=======
     SUPPORTED_SECRET_KEYS
         .iter()
         .map(|key| (*key).to_string())
@@ -422,7 +345,6 @@ fn delete_secret(webview: Webview, key: String, cache: tauri::State<'_, SecretsC
     save_vault(&proposed)?;
     *secrets = proposed;
     Ok(())
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 fn cache_file_path(app: &AppHandle) -> Result<PathBuf, String> {
@@ -436,50 +358,60 @@ fn cache_file_path(app: &AppHandle) -> Result<PathBuf, String> {
 }
 
 #[tauri::command]
-<<<<<<< HEAD
-fn read_cache_entry(app: AppHandle, key: String) -> Result<Option<Value>, String> {
-    let path = cache_file_path(&app)?;
-    if !path.exists() {
-        return Ok(None);
-    }
-
-    let contents = std::fs::read_to_string(&path)
-        .map_err(|e| format!("Failed to read cache store {}: {e}", path.display()))?;
-    let parsed: Value = serde_json::from_str(&contents).unwrap_or_else(|_| Value::Object(Map::new()));
-    let Some(root) = parsed.as_object() else {
-        return Ok(None);
-    };
-
-    Ok(root.get(&key).cloned())
-}
-
-#[tauri::command]
-fn write_cache_entry(app: AppHandle, key: String, value: String) -> Result<(), String> {
-    let path = cache_file_path(&app)?;
-
-    let mut root: Map<String, Value> = if path.exists() {
-        let contents = std::fs::read_to_string(&path)
-            .map_err(|e| format!("Failed to read cache store {}: {e}", path.display()))?;
-        serde_json::from_str::<Value>(&contents)
-            .ok()
-            .and_then(|v| v.as_object().cloned())
-            .unwrap_or_default()
-    } else {
-        Map::new()
-    };
-
-    let parsed_value: Value = serde_json::from_str(&value)
-        .map_err(|e| format!("Invalid cache payload JSON: {e}"))?;
-    root.insert(key, parsed_value);
-
-    let serialized = serde_json::to_string_pretty(&Value::Object(root))
-        .map_err(|e| format!("Failed to serialize cache store: {e}"))?;
-    std::fs::write(&path, serialized)
-        .map_err(|e| format!("Failed to write cache store {}: {e}", path.display()))
-=======
 fn read_cache_entry(webview: Webview, cache: tauri::State<'_, PersistentCache>, key: String) -> Result<Option<Value>, String> {
     require_trusted_window(webview.label())?;
     Ok(cache.get(&key))
+}
+
+const MAX_FLUSH_RETRIES: u32 = 5;
+
+fn schedule_debounced_flush(cache: &PersistentCache, app: &AppHandle) {
+    {
+        let mut gen = cache.generation.lock().unwrap_or_else(|e| e.into_inner());
+        *gen += 1;
+    }
+    let should_spawn = {
+        let mut sched = cache.flush_scheduled.lock().unwrap_or_else(|e| e.into_inner());
+        if *sched {
+            false
+        } else {
+            *sched = true;
+            true
+        }
+    };
+    if should_spawn {
+        let handle = app.app_handle().clone();
+        std::thread::spawn(move || {
+            let mut retries = 0u32;
+            loop {
+                std::thread::sleep(std::time::Duration::from_secs(2));
+                let Some(c) = handle.try_state::<PersistentCache>() else { break };
+                let Ok(path) = cache_file_path(&handle) else { break };
+                let gen_before = *c.generation.lock().unwrap_or_else(|e| e.into_inner());
+                match c.flush(&path) {
+                    Ok(_) => {
+                        retries = 0;
+                        let gen_after = *c.generation.lock().unwrap_or_else(|e| e.into_inner());
+                        if gen_after > gen_before {
+                            continue;
+                        }
+                        *c.flush_scheduled.lock().unwrap_or_else(|e| e.into_inner()) = false;
+                        break;
+                    }
+                    Err(e) => {
+                        retries += 1;
+                        eprintln!("[cache] flush error ({retries}/{MAX_FLUSH_RETRIES}): {e}");
+                        if retries >= MAX_FLUSH_RETRIES {
+                            eprintln!("[cache] giving up after {MAX_FLUSH_RETRIES} failures");
+                            *c.flush_scheduled.lock().unwrap_or_else(|e| e.into_inner()) = false;
+                            break;
+                        }
+                        continue;
+                    }
+                }
+            }
+        });
+    }
 }
 
 #[tauri::command]
@@ -493,39 +425,7 @@ fn delete_cache_entry(webview: Webview, app: AppHandle, cache: tauri::State<'_, 
         let mut dirty = cache.dirty.lock().unwrap_or_else(|e| e.into_inner());
         *dirty = true;
     }
-    {
-        let mut gen = cache.generation.lock().unwrap_or_else(|e| e.into_inner());
-        *gen += 1;
-    }
-
-    let mut sched = cache.flush_scheduled.lock().unwrap_or_else(|e| e.into_inner());
-    if !*sched {
-        *sched = true;
-        let handle = app.app_handle().clone();
-        std::thread::spawn(move || {
-            loop {
-                std::thread::sleep(std::time::Duration::from_secs(2));
-                let Some(c) = handle.try_state::<PersistentCache>() else { break };
-                let Ok(path) = cache_file_path(&handle) else { break };
-                let gen_before = *c.generation.lock().unwrap_or_else(|e| e.into_inner());
-                match c.flush(&path) {
-                    Ok(_) => {
-                        let gen_after = *c.generation.lock().unwrap_or_else(|e| e.into_inner());
-                        if gen_after > gen_before {
-                            continue;
-                        }
-                        *c.flush_scheduled.lock().unwrap_or_else(|e| e.into_inner()) = false;
-                        break;
-                    }
-                    Err(e) => {
-                        eprintln!("[cache] flush error: {e}");
-                        continue;
-                    }
-                }
-            }
-        });
-    }
-
+    schedule_debounced_flush(&cache, &app);
     Ok(())
 }
 
@@ -542,41 +442,8 @@ fn write_cache_entry(webview: Webview, app: AppHandle, cache: tauri::State<'_, P
         let mut dirty = cache.dirty.lock().unwrap_or_else(|e| e.into_inner());
         *dirty = true;
     }
-    {
-        let mut gen = cache.generation.lock().unwrap_or_else(|e| e.into_inner());
-        *gen += 1;
-    }
-
-    let mut sched = cache.flush_scheduled.lock().unwrap_or_else(|e| e.into_inner());
-    if !*sched {
-        *sched = true;
-        let handle = app.app_handle().clone();
-        std::thread::spawn(move || {
-            loop {
-                std::thread::sleep(std::time::Duration::from_secs(2));
-                let Some(c) = handle.try_state::<PersistentCache>() else { break };
-                let Ok(path) = cache_file_path(&handle) else { break };
-                let gen_before = *c.generation.lock().unwrap_or_else(|e| e.into_inner());
-                match c.flush(&path) {
-                    Ok(_) => {
-                        let gen_after = *c.generation.lock().unwrap_or_else(|e| e.into_inner());
-                        if gen_after > gen_before {
-                            continue;
-                        }
-                        *c.flush_scheduled.lock().unwrap_or_else(|e| e.into_inner()) = false;
-                        break;
-                    }
-                    Err(e) => {
-                        eprintln!("[cache] flush error: {e}");
-                        continue;
-                    }
-                }
-            }
-        });
-    }
-
+    schedule_debounced_flush(&cache, &app);
     Ok(())
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 fn logs_dir_path(app: &AppHandle) -> Result<PathBuf, String> {
@@ -623,13 +490,8 @@ fn open_in_shell(arg: &str) -> Result<(), String> {
 
     #[cfg(target_os = "windows")]
     let mut command = {
-<<<<<<< HEAD
-        let mut cmd = Command::new("explorer");
-        cmd.arg(arg);
-=======
         let mut cmd = Command::new("cmd");
         cmd.args(["/c", "start", "", arg]);
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         cmd
     };
 
@@ -637,11 +499,8 @@ fn open_in_shell(arg: &str) -> Result<(), String> {
     let mut command = {
         let mut cmd = Command::new("xdg-open");
         cmd.arg(arg);
-<<<<<<< HEAD
-=======
         cmd.env_remove("LD_LIBRARY_PATH");
         cmd.env_remove("LD_PRELOAD");
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         cmd
     };
 
@@ -656,13 +515,8 @@ fn open_path_in_shell(path: &Path) -> Result<(), String> {
 }
 
 #[tauri::command]
-fn open_url(url: String) -> Result<(), String> {
-<<<<<<< HEAD
-    if !url.starts_with("https://") && !url.starts_with("http://") {
-        return Err("Only http/https URLs are allowed".to_string());
-    }
-    open_in_shell(&url)
-=======
+fn open_url(webview: Webview, url: String) -> Result<(), String> {
+    require_trusted_window(webview.label())?;
     let parsed = Url::parse(&url).map_err(|_| "Invalid URL".to_string())?;
 
     match parsed.scheme() {
@@ -673,7 +527,6 @@ fn open_url(url: String) -> Result<(), String> {
         },
         _ => Err("Only https:// URLs are allowed (http:// only for localhost)".to_string()),
     }
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 fn open_logs_folder_impl(app: &AppHandle) -> Result<PathBuf, String> {
@@ -710,9 +563,6 @@ async fn open_settings_window_command(app: AppHandle) -> Result<(), String> {
 #[tauri::command]
 fn close_settings_window(app: AppHandle) -> Result<(), String> {
     if let Some(window) = app.get_webview_window("settings") {
-<<<<<<< HEAD
-        window.close().map_err(|e| format!("Failed to close settings window: {e}"))?;
-=======
         window
             .close()
             .map_err(|e| format!("Failed to close settings window: {e}"))?;
@@ -722,9 +572,24 @@ fn close_settings_window(app: AppHandle) -> Result<(), String> {
 
 #[tauri::command]
 async fn open_live_channels_window_command(
+    webview: Webview,
     app: AppHandle,
     base_url: Option<String>,
 ) -> Result<(), String> {
+    require_trusted_window(webview.label())?;
+    if let Some(ref url) = base_url {
+        if !url.is_empty() {
+            let parsed = Url::parse(url).map_err(|_| "Invalid base URL".to_string())?;
+            match parsed.scheme() {
+                "http" => match parsed.host_str() {
+                    Some("localhost") | Some("127.0.0.1") => {}
+                    _ => return Err("base_url http only allowed for localhost".to_string()),
+                },
+                "https" => {}
+                _ => return Err("base_url must be http(s)".to_string()),
+            }
+        }
+    }
     open_live_channels_window(&app, base_url)
 }
 
@@ -734,7 +599,6 @@ fn close_live_channels_window(app: AppHandle) -> Result<(), String> {
         window
             .close()
             .map_err(|e| format!("Failed to close live channels window: {e}"))?;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
     Ok(())
 }
@@ -742,23 +606,15 @@ fn close_live_channels_window(app: AppHandle) -> Result<(), String> {
 /// Fetch JSON from Polymarket Gamma API using native TLS (bypasses Cloudflare JA3 blocking).
 /// Called from frontend when browser CORS and sidecar Node.js TLS both fail.
 #[tauri::command]
-<<<<<<< HEAD
-async fn fetch_polymarket(path: String, params: String) -> Result<String, String> {
-=======
-async fn fetch_polymarket(webview: Webview, path: String, params: String) -> Result<String, String> {
+async fn fetch_polymarket(webview: Webview, state: tauri::State<'_, LocalApiState>, path: String, params: String) -> Result<String, String> {
     require_trusted_window(webview.label())?;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     let allowed = ["events", "markets", "tags"];
     let segment = path.trim_start_matches('/');
     if !allowed.iter().any(|a| segment.starts_with(a)) {
         return Err("Invalid Polymarket path".into());
     }
     let url = format!("https://gamma-api.polymarket.com/{}?{}", segment, params);
-    let client = reqwest::Client::builder()
-        .use_native_tls()
-        .build()
-        .map_err(|e| format!("HTTP client error: {e}"))?;
-    let resp = client
+    let resp = state.http_client
         .get(&url)
         .header("Accept", "application/json")
         .timeout(std::time::Duration::from_secs(10))
@@ -768,13 +624,9 @@ async fn fetch_polymarket(webview: Webview, path: String, params: String) -> Res
     if !resp.status().is_success() {
         return Err(format!("Polymarket HTTP {}", resp.status()));
     }
-<<<<<<< HEAD
-    resp.text().await.map_err(|e| format!("Read body failed: {e}"))
-=======
     resp.text()
         .await
         .map_err(|e| format!("Read body failed: {e}"))
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 fn open_settings_window(app: &AppHandle) -> Result<(), String> {
@@ -788,17 +640,11 @@ fn open_settings_window(app: &AppHandle) -> Result<(), String> {
 
     let _settings_window = WebviewWindowBuilder::new(app, "settings", WebviewUrl::App("settings.html".into()))
         .title("World Monitor Settings")
-<<<<<<< HEAD
-        .inner_size(980.0, 760.0)
-        .min_inner_size(820.0, 620.0)
-        .resizable(true)
-        .visible(false)
-=======
+        .title_bar_style(tauri::TitleBarStyle::Overlay)
         .inner_size(980.0, 600.0)
         .min_inner_size(820.0, 480.0)
         .resizable(true)
         .background_color(tauri::webview::Color(26, 28, 30, 255))
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         .build()
         .map_err(|e| format!("Failed to create settings window: {e}"))?;
 
@@ -810,8 +656,6 @@ fn open_settings_window(app: &AppHandle) -> Result<(), String> {
     Ok(())
 }
 
-<<<<<<< HEAD
-=======
 fn open_live_channels_window(app: &AppHandle, base_url: Option<String>) -> Result<(), String> {
     if let Some(window) = app.get_webview_window("live-channels") {
         let _ = window.show();
@@ -834,6 +678,7 @@ fn open_live_channels_window(app: &AppHandle, base_url: Option<String>) -> Resul
 
     let _live_channels_window = WebviewWindowBuilder::new(app, "live-channels", url)
     .title("Channel management - World Monitor")
+    .title_bar_style(tauri::TitleBarStyle::Overlay)
     .inner_size(680.0, 760.0)
     .min_inner_size(520.0, 600.0)
     .resizable(true)
@@ -875,11 +720,11 @@ fn open_youtube_login_window(app: &AppHandle) -> Result<(), String> {
 }
 
 #[tauri::command]
-async fn open_youtube_login(app: AppHandle) -> Result<(), String> {
+async fn open_youtube_login(webview: Webview, app: AppHandle) -> Result<(), String> {
+    require_trusted_window(webview.label())?;
     open_youtube_login_window(&app)
 }
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 fn build_app_menu(handle: &AppHandle) -> tauri::Result<Menu<tauri::Wry>> {
     let settings_item = MenuItem::with_id(
         handle,
@@ -890,17 +735,12 @@ fn build_app_menu(handle: &AppHandle) -> tauri::Result<Menu<tauri::Wry>> {
     )?;
     let separator = PredefinedMenuItem::separator(handle)?;
     let quit_item = PredefinedMenuItem::quit(handle, Some("Quit"))?;
-<<<<<<< HEAD
-    let file_menu =
-        Submenu::with_items(handle, "File", true, &[&settings_item, &separator, &quit_item])?;
-=======
     let file_menu = Submenu::with_items(
         handle,
         "File",
         true,
         &[&settings_item, &separator, &quit_item],
     )?;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     let about_metadata = AboutMetadata {
         name: Some("World Monitor".into()),
@@ -910,12 +750,8 @@ fn build_app_menu(handle: &AppHandle) -> tauri::Result<Menu<tauri::Wry>> {
         website_label: Some("worldmonitor.app".into()),
         ..Default::default()
     };
-<<<<<<< HEAD
-    let about_item = PredefinedMenuItem::about(handle, Some("About World Monitor"), Some(about_metadata))?;
-=======
     let about_item =
         PredefinedMenuItem::about(handle, Some("About World Monitor"), Some(about_metadata))?;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     let github_item = MenuItem::with_id(
         handle,
         MENU_HELP_GITHUB_ID,
@@ -923,16 +759,6 @@ fn build_app_menu(handle: &AppHandle) -> tauri::Result<Menu<tauri::Wry>> {
         true,
         None::<&str>,
     )?;
-<<<<<<< HEAD
-    let devtools_item = MenuItem::with_id(
-        handle,
-        MENU_HELP_DEVTOOLS_ID,
-        "Toggle Developer Tools",
-        true,
-        Some("CmdOrCtrl+Alt+I"),
-    )?;
-    let help_separator = PredefinedMenuItem::separator(handle)?;
-=======
     let help_separator = PredefinedMenuItem::separator(handle)?;
 
     #[cfg(feature = "devtools")]
@@ -953,17 +779,10 @@ fn build_app_menu(handle: &AppHandle) -> tauri::Result<Menu<tauri::Wry>> {
     };
 
     #[cfg(not(feature = "devtools"))]
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     let help_menu = Submenu::with_items(
         handle,
         "Help",
         true,
-<<<<<<< HEAD
-        &[&about_item, &help_separator, &github_item, &devtools_item],
-    )?;
-
-    Menu::with_items(handle, &[&file_menu, &help_menu])
-=======
         &[&about_item, &help_separator, &github_item],
     )?;
 
@@ -984,7 +803,6 @@ fn build_app_menu(handle: &AppHandle) -> tauri::Result<Menu<tauri::Wry>> {
     };
 
     Menu::with_items(handle, &[&file_menu, &edit_menu, &help_menu])
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 fn handle_menu_event(app: &AppHandle, event: tauri::menu::MenuEvent) {
@@ -998,10 +816,7 @@ fn handle_menu_event(app: &AppHandle, event: tauri::menu::MenuEvent) {
         MENU_HELP_GITHUB_ID => {
             let _ = open_in_shell("https://github.com/koala73/worldmonitor");
         }
-<<<<<<< HEAD
-=======
         #[cfg(feature = "devtools")]
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         MENU_HELP_DEVTOOLS_ID => {
             if let Some(window) = app.get_webview_window("main") {
                 if window.is_devtools_open() {
@@ -1015,8 +830,6 @@ fn handle_menu_event(app: &AppHandle, event: tauri::menu::MenuEvent) {
     }
 }
 
-<<<<<<< HEAD
-=======
 /// Strip Windows extended-length path prefixes that `canonicalize()` adds.
 /// Preserve UNC semantics: `\\?\UNC\server\share\...` must become
 /// `\\server\share\...` (not `UNC\server\share\...`).
@@ -1064,7 +877,6 @@ mod sanitize_path_tests {
     }
 }
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 fn local_api_paths(app: &AppHandle) -> (PathBuf, PathBuf) {
     let resource_dir = app
         .path()
@@ -1098,14 +910,6 @@ fn local_api_paths(app: &AppHandle) -> (PathBuf, PathBuf) {
     (sidecar_script, api_dir_root)
 }
 
-<<<<<<< HEAD
-fn resolve_node_binary() -> Option<PathBuf> {
-    if let Ok(explicit) = env::var("LOCAL_API_NODE_BIN") {
-        let explicit_path = PathBuf::from(explicit);
-        if explicit_path.exists() {
-            return Some(explicit_path);
-        }
-=======
 fn resolve_node_binary(app: &AppHandle) -> Option<PathBuf> {
     if let Ok(explicit) = env::var("LOCAL_API_NODE_BIN") {
         let explicit_path = PathBuf::from(explicit);
@@ -1138,18 +942,13 @@ fn resolve_node_binary(app: &AppHandle) -> Option<PathBuf> {
                 }
             }
         }
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
 
     let node_name = if cfg!(windows) { "node.exe" } else { "node" };
     if let Some(path_var) = env::var_os("PATH") {
         for dir in env::split_paths(&path_var) {
             let candidate = dir.join(node_name);
-<<<<<<< HEAD
-            if candidate.exists() {
-=======
             if candidate.is_file() {
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
                 return Some(candidate);
             }
         }
@@ -1169,9 +968,6 @@ fn resolve_node_binary(app: &AppHandle) -> Option<PathBuf> {
         ]
     };
 
-<<<<<<< HEAD
-    common_locations.into_iter().find(|path| path.exists())
-=======
     common_locations.into_iter().find(|path| path.is_file())
 }
 
@@ -1190,7 +986,6 @@ fn read_port_file(path: &Path, timeout_ms: u64) -> Option<u16> {
         std::thread::sleep(interval);
     }
     None
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 fn start_local_api(app: &AppHandle) -> Result<(), String> {
@@ -1203,14 +998,11 @@ fn start_local_api(app: &AppHandle) -> Result<(), String> {
         return Ok(());
     }
 
-<<<<<<< HEAD
-=======
     // Clear port state for fresh start
     if let Ok(mut port_slot) = state.port.lock() {
         *port_slot = None;
     }
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     let (script, resource_root) = local_api_paths(app);
     if !script.exists() {
         return Err(format!(
@@ -1218,12 +1010,6 @@ fn start_local_api(app: &AppHandle) -> Result<(), String> {
             script.display()
         ));
     }
-<<<<<<< HEAD
-    let node_binary = resolve_node_binary().ok_or_else(|| {
-        "Node.js executable not found. Install Node 18+ or set LOCAL_API_NODE_BIN".to_string()
-    })?;
-
-=======
     let node_binary = resolve_node_binary(app).ok_or_else(|| {
         "Node.js executable not found. Install Node 18+ or set LOCAL_API_NODE_BIN".to_string()
     })?;
@@ -1231,7 +1017,6 @@ fn start_local_api(app: &AppHandle) -> Result<(), String> {
     let port_file = logs_dir_path(app)?.join("sidecar.port");
     let _ = fs::remove_file(&port_file);
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     let log_path = sidecar_log_path(app)?;
     let log_file = OpenOptions::new()
         .create(true)
@@ -1252,12 +1037,6 @@ fn start_local_api(app: &AppHandle) -> Result<(), String> {
             log_path.display()
         ),
     );
-<<<<<<< HEAD
-    append_desktop_log(app, "INFO", &format!("resolved node binary={}", node_binary.display()));
-
-    // Generate a unique token for local API auth (prevents other local processes from accessing sidecar)
-    let mut token_slot = state.token.lock().map_err(|_| "Failed to lock token slot")?;
-=======
     append_desktop_log(
         app,
         "INFO",
@@ -1278,7 +1057,6 @@ fn start_local_api(app: &AppHandle) -> Result<(), String> {
         .token
         .lock()
         .map_err(|_| "Failed to lock token slot")?;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     if token_slot.is_none() {
         *token_slot = Some(generate_local_token());
     }
@@ -1286,11 +1064,6 @@ fn start_local_api(app: &AppHandle) -> Result<(), String> {
     drop(token_slot);
 
     let mut cmd = Command::new(&node_binary);
-<<<<<<< HEAD
-    cmd.arg(&script)
-        .env("LOCAL_API_PORT", LOCAL_API_PORT)
-        .env("LOCAL_API_RESOURCE_DIR", resource_root)
-=======
     #[cfg(windows)]
     cmd.creation_flags(0x08000000); // CREATE_NO_WINDOW — hide the node.exe console
                                     // Sanitize paths for Node.js on Windows: strip \\?\ UNC prefix and set
@@ -1311,27 +1084,10 @@ fn start_local_api(app: &AppHandle) -> Result<(), String> {
         .env("LOCAL_API_PORT_FILE", &port_file)
         .env("LOCAL_API_RESOURCE_DIR", &resource_for_node)
         .env("LOCAL_API_DATA_DIR", &data_dir)
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         .env("LOCAL_API_MODE", "tauri-sidecar")
         .env("LOCAL_API_TOKEN", &local_api_token)
         .stdout(Stdio::from(log_file))
         .stderr(Stdio::from(log_file_err));
-<<<<<<< HEAD
-
-    // Pass keychain secrets to sidecar as env vars
-    let mut secret_count = 0u32;
-    for key in SUPPORTED_SECRET_KEYS.iter() {
-        if let Ok(entry) = Entry::new(KEYRING_SERVICE, key) {
-            if let Ok(value) = entry.get_password() {
-                if !value.trim().is_empty() {
-                    cmd.env(key, value.trim());
-                    secret_count += 1;
-                }
-            }
-        }
-    }
-    append_desktop_log(app, "INFO", &format!("injected {secret_count} keychain secrets into sidecar env"));
-=======
     if let Some(parent) = script.parent() {
         cmd.current_dir(parent);
     }
@@ -1357,15 +1113,10 @@ fn start_local_api(app: &AppHandle) -> Result<(), String> {
     } else if let Ok(url) = std::env::var("CONVEX_URL") {
         cmd.env("CONVEX_URL", url);
     }
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     let child = cmd
         .spawn()
         .map_err(|e| format!("Failed to launch local API: {e}"))?;
-<<<<<<< HEAD
-    append_desktop_log(app, "INFO", &format!("local API sidecar started pid={}", child.id()));
-    *slot = Some(child);
-=======
     append_desktop_log(
         app,
         "INFO",
@@ -1395,7 +1146,6 @@ fn start_local_api(app: &AppHandle) -> Result<(), String> {
         }
     }
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     Ok(())
 }
 
@@ -1407,12 +1157,6 @@ fn stop_local_api(app: &AppHandle) {
                 append_desktop_log(app, "INFO", "local API sidecar stopped");
             }
         }
-<<<<<<< HEAD
-    }
-}
-
-fn main() {
-=======
         if let Ok(mut port_slot) = state.port.lock() {
             *port_slot = None;
         }
@@ -1599,21 +1343,10 @@ fn main() {
         }
     }
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     tauri::Builder::default()
         .menu(build_app_menu)
         .on_menu_event(handle_menu_event)
         .manage(LocalApiState::default())
-<<<<<<< HEAD
-        .invoke_handler(tauri::generate_handler![
-            list_supported_secret_keys,
-            get_secret,
-            set_secret,
-            delete_secret,
-            get_local_api_token,
-            read_cache_entry,
-            write_cache_entry,
-=======
         .manage(SecretsCache::load_from_keychain())
         .invoke_handler(tauri::generate_handler![
             list_supported_secret_keys,
@@ -1627,17 +1360,10 @@ fn main() {
             read_cache_entry,
             write_cache_entry,
             delete_cache_entry,
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             open_logs_folder,
             open_sidecar_log_file,
             open_settings_window_command,
             close_settings_window,
-<<<<<<< HEAD
-            open_url,
-            fetch_polymarket
-        ])
-        .setup(|app| {
-=======
             open_live_channels_window_command,
             close_live_channels_window,
             open_url,
@@ -1649,7 +1375,6 @@ fn main() {
             let cache_path = cache_file_path(&app.handle()).unwrap_or_default();
             app.manage(PersistentCache::load(&cache_path));
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             if let Err(err) = start_local_api(&app.handle()) {
                 append_desktop_log(
                     &app.handle(),
@@ -1685,9 +1410,6 @@ fn main() {
                         let _ = w.set_focus();
                     }
                 }
-<<<<<<< HEAD
-                RunEvent::ExitRequested { .. } | RunEvent::Exit => {
-=======
                 // Only macOS needs explicit re-raising to keep settings above the main window.
                 // On Windows, focusing the settings window here can trigger rapid focus churn
                 // between windows and present as a UI hang.
@@ -1709,7 +1431,6 @@ fn main() {
                             let _ = cache.flush(&path);
                         }
                     }
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
                     stop_local_api(app);
                 }
                 _ => {}

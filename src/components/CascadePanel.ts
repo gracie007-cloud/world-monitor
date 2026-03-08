@@ -138,7 +138,7 @@ export class CascadePanel extends Panel {
         ${this.getNodeTypeEmoji(f)} ${f.charAt(0).toUpperCase() + f.slice(1)}s
 =======
     const filterButtons = ['cable', 'pipeline', 'port', 'chokepoint'].map((f) =>
-      `<button class="cascade-filter-btn ${this.filter === f ? 'active' : ''}" data-filter="${f}" role="radio" aria-checked="${this.filter === f}" aria-label="${this.getFilterLabel(f as Exclude<NodeFilter, 'all'>)}">
+      `<button class="panel-tab ${this.filter === f ? 'active' : ''}" data-filter="${f}" role="radio" aria-checked="${this.filter === f}" aria-label="${this.getFilterLabel(f as Exclude<NodeFilter, 'all'>)}">
         ${this.getNodeTypeEmoji(f)} ${this.getFilterLabel(f as Exclude<NodeFilter, 'all'>)}
 >>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </button>`
@@ -165,7 +165,7 @@ export class CascadePanel extends Panel {
 
     return `
       <div class="cascade-selector">
-        <div class="cascade-filters" role="radiogroup" aria-label="Infrastructure type filter">${filterButtons}</div>
+        <div class="panel-tabs panel-tabs--wrap" role="radiogroup" aria-label="Infrastructure type filter">${filterButtons}</div>
         <select class="cascade-select" ${nodes.length === 0 ? 'disabled' : ''}>
           <option value="">${t('components.cascade.selectPrompt', { type: selectedType })}</option>
           ${nodeOptions}
@@ -305,7 +305,7 @@ export class CascadePanel extends Panel {
     this.content.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLElement;
 
-      const filterBtn = target.closest<HTMLElement>('.cascade-filter-btn');
+      const filterBtn = target.closest<HTMLElement>('.panel-tab');
       if (filterBtn) {
         this.filter = filterBtn.getAttribute('data-filter') as NodeFilter;
         this.selectedNode = null;

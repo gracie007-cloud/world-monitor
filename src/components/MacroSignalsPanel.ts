@@ -1,12 +1,9 @@
 import { Panel } from './Panel';
 import { escapeHtml } from '@/utils/sanitize';
-<<<<<<< HEAD
-=======
 import { t } from '@/services/i18n';
 import { EconomicServiceClient } from '@/generated/client/worldmonitor/economic/v1/service_client';
 import type { GetMacroSignalsResponse } from '@/generated/client/worldmonitor/economic/v1/service_client';
 import { getHydratedData } from '@/services/bootstrap';
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 interface MacroSignalData {
   timestamp: string;
@@ -19,12 +16,6 @@ interface MacroSignalData {
     macroRegime: { status: string; qqqRoc20: number | null; xlpRoc20: number | null };
     technicalTrend: { status: string; btcPrice: number | null; sma50: number | null; sma200: number | null; vwap30d: number | null; mayerMultiple: number | null; sparkline: number[] };
     hashRate: { status: string; change30d: number | null };
-<<<<<<< HEAD
-    miningCost: { status: string };
-    fearGreed: { status: string; value: number | null; history: Array<{ value: number; date: string }> };
-  };
-  meta: { qqqSparkline: number[] };
-=======
     priceMomentum: { status: string };
     fearGreed: { status: string; value: number | null; history: Array<{ value: number; date: string }> };
   };
@@ -83,7 +74,6 @@ function mapProtoToData(r: GetMacroSignalsResponse): MacroSignalData {
     meta: { qqqSparkline: r.meta?.qqqSparkline ?? [] },
     unavailable: r.unavailable,
   };
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 function sparklineSvg(data: number[], width = 80, height = 24, color = '#4fc3f7'): string {
@@ -133,35 +123,6 @@ export class MacroSignalsPanel extends Panel {
   private data: MacroSignalData | null = null;
   private loading = true;
   private error: string | null = null;
-<<<<<<< HEAD
-  private refreshInterval: ReturnType<typeof setInterval> | null = null;
-
-  constructor() {
-    super({ id: 'macro-signals', title: 'Market Radar', showCount: false });
-    void this.fetchData();
-    this.refreshInterval = setInterval(() => this.fetchData(), 3 * 60000);
-  }
-
-  public destroy(): void {
-    if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
-      this.refreshInterval = null;
-    }
-  }
-
-  private async fetchData(): Promise<void> {
-    try {
-      const res = await fetch('/api/macro-signals');
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      this.data = await res.json();
-      this.error = null;
-    } catch (err) {
-      this.error = err instanceof Error ? err.message : 'Failed to fetch';
-    } finally {
-      this.loading = false;
-      this.renderPanel();
-    }
-=======
   private lastTimestamp = '';
 
   constructor() {
@@ -188,7 +149,7 @@ export class MacroSignalsPanel extends Panel {
         this.error = null;
 
         if (this.data && this.data.unavailable && attempt < 2) {
-          this.showRetrying();
+          this.showRetrying(undefined, 20);
           await new Promise(r => setTimeout(r, 20_000));
           if (!this.element?.isConnected) return false;
           continue;
@@ -198,12 +159,13 @@ export class MacroSignalsPanel extends Panel {
         if (this.isAbortError(err)) return false;
         if (!this.element?.isConnected) return false;
         if (attempt < 2) {
-          this.showRetrying();
+          this.showRetrying(undefined, 20);
           await new Promise(r => setTimeout(r, 20_000));
           if (!this.element?.isConnected) return false;
           continue;
         }
-        this.error = err instanceof Error ? err.message : 'Failed to fetch';
+        console.warn('[MacroSignals] Fetch error:', err);
+        this.error = null;
       }
     }
     this.loading = false;
@@ -213,30 +175,21 @@ export class MacroSignalsPanel extends Panel {
     const changed = ts !== this.lastTimestamp;
     this.lastTimestamp = ts;
     return changed;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   private renderPanel(): void {
     if (this.loading) {
-<<<<<<< HEAD
-      this.showLoading('Computing signals...');
-=======
       this.showLoading(t('common.computingSignals'));
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return;
     }
 
     if (this.error || !this.data) {
-<<<<<<< HEAD
-      this.showError(this.error || 'No data');
-=======
-      this.showError(this.error || t('common.noDataShort'));
+      this.showError(this.error || t('common.noDataShort'), () => void this.fetchData());
       return;
     }
 
     if (this.data.unavailable) {
-      this.showError(t('common.upstreamUnavailable'));
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+      this.showError(t('common.upstreamUnavailable'), () => void this.fetchData());
       return;
     }
 
@@ -248,19 +201,6 @@ export class MacroSignalsPanel extends Panel {
     const html = `
       <div class="macro-signals-container">
         <div class="macro-verdict ${verdictClass}">
-<<<<<<< HEAD
-          <span class="verdict-label">Overall</span>
-          <span class="verdict-value">${escapeHtml(d.verdict)}</span>
-          <span class="verdict-detail">${d.bullishCount}/${d.totalCount} bullish</span>
-        </div>
-        <div class="signals-grid">
-          ${this.renderSignalCard('Liquidity', s.liquidity.status, formatNum(s.liquidity.value), sparklineSvg(s.liquidity.sparkline, 60, 20, '#4fc3f7'), 'JPY 30d ROC', 'https://www.tradingview.com/symbols/JPYUSD/')}
-          ${this.renderSignalCard('Flow', s.flowStructure.status, `BTC ${formatNum(s.flowStructure.btcReturn5)} / QQQ ${formatNum(s.flowStructure.qqqReturn5)}`, '', '5d returns', null)}
-          ${this.renderSignalCard('Regime', s.macroRegime.status, `QQQ ${formatNum(s.macroRegime.qqqRoc20)} / XLP ${formatNum(s.macroRegime.xlpRoc20)}`, sparklineSvg(d.meta.qqqSparkline, 60, 20, '#ab47bc'), '20d ROC', 'https://www.tradingview.com/symbols/QQQ/')}
-          ${this.renderSignalCard('BTC Trend', s.technicalTrend.status, `$${s.technicalTrend.btcPrice?.toLocaleString() ?? 'N/A'}`, sparklineSvg(s.technicalTrend.sparkline, 60, 20, '#ff9800'), `SMA50: $${s.technicalTrend.sma50?.toLocaleString() ?? '-'} | VWAP: $${s.technicalTrend.vwap30d?.toLocaleString() ?? '-'} | Mayer: ${s.technicalTrend.mayerMultiple ?? '-'}`, 'https://www.tradingview.com/symbols/BTCUSD/')}
-          ${this.renderSignalCard('Hash Rate', s.hashRate.status, formatNum(s.hashRate.change30d), '', '30d change', 'https://mempool.space/mining')}
-          ${this.renderSignalCard('Mining', s.miningCost.status, '', '', 'Hashprice model', null)}
-=======
           <span class="verdict-label">${t('components.macroSignals.overall')}</span>
           <span class="verdict-value">${d.verdict === 'BUY' ? t('components.macroSignals.verdict.buy') : d.verdict === 'CASH' ? t('components.macroSignals.verdict.cash') : escapeHtml(d.verdict)}</span>
           <span class="verdict-detail">${t('components.macroSignals.bullish', { count: String(d.bullishCount), total: String(d.totalCount) })}</span>
@@ -272,7 +212,6 @@ export class MacroSignalsPanel extends Panel {
           ${this.renderSignalCard(t('components.macroSignals.signals.btcTrend'), s.technicalTrend.status, `$${s.technicalTrend.btcPrice?.toLocaleString() ?? 'N/A'}`, sparklineSvg(s.technicalTrend.sparkline, 60, 20, '#ff9800'), `SMA50: $${s.technicalTrend.sma50?.toLocaleString() ?? '-'} | VWAP: $${s.technicalTrend.vwap30d?.toLocaleString() ?? '-'} | Mayer: ${s.technicalTrend.mayerMultiple ?? '-'}`, 'https://www.tradingview.com/symbols/BTCUSD/')}
           ${this.renderSignalCard(t('components.macroSignals.signals.hashRate'), s.hashRate.status, formatNum(s.hashRate.change30d), '', '30d change', 'https://mempool.space/mining')}
           ${this.renderSignalCard(t('components.macroSignals.signals.momentum'), s.priceMomentum.status, '', '', 'Mayer Multiple', null)}
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           ${this.renderFearGreedCard(s.fearGreed)}
         </div>
       </div>
@@ -303,11 +242,7 @@ export class MacroSignalsPanel extends Panel {
     return `
       <div class="signal-card signal-card-fg">
         <div class="signal-header">
-<<<<<<< HEAD
-          <span class="signal-name">Fear & Greed</span>
-=======
           <span class="signal-name">${t('components.macroSignals.signals.fearGreed')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           <span class="signal-badge ${badgeClass}">${escapeHtml(fg.status)}</span>
         </div>
         <div class="signal-body signal-body-fg">

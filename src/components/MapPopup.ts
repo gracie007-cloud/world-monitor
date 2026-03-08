@@ -1,24 +1,12 @@
-<<<<<<< HEAD
-import type { ConflictZone, Hotspot, Earthquake, NewsItem, MilitaryBase, StrategicWaterway, APTGroup, NuclearFacility, EconomicCenter, GammaIrradiator, Pipeline, UnderseaCable, CableAdvisory, RepairShip, InternetOutage, AIDataCenter, AisDisruptionEvent, SocialUnrestEvent, AirportDelayAlert, MilitaryFlight, MilitaryVessel, MilitaryFlightCluster, MilitaryVesselCluster, NaturalEvent, Port, Spaceport, CriticalMineralProject } from '@/types';
-=======
 import type { ConflictZone, Hotspot, NewsItem, MilitaryBase, StrategicWaterway, APTGroup, NuclearFacility, EconomicCenter, GammaIrradiator, Pipeline, UnderseaCable, CableAdvisory, RepairShip, InternetOutage, AIDataCenter, AisDisruptionEvent, SocialUnrestEvent, MilitaryFlight, MilitaryVessel, MilitaryFlightCluster, MilitaryVesselCluster, NaturalEvent, Port, Spaceport, CriticalMineralProject, CyberThreat } from '@/types';
 import type { AirportDelayAlert, PositionSample } from '@/services/aviation';
 import type { Earthquake } from '@/services/earthquakes';
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 import type { WeatherAlert } from '@/services/weather';
 import { UNDERSEA_CABLES } from '@/config';
 import type { StartupHub, Accelerator, TechHQ, CloudRegion } from '@/config/tech-geo';
 import type { TechHubActivity } from '@/services/tech-activity';
 import type { GeoHubActivity } from '@/services/geo-activity';
 import { escapeHtml, sanitizeUrl } from '@/utils/sanitize';
-<<<<<<< HEAD
-import { isMobileDevice } from '@/utils';
-import { fetchHotspotContext, formatArticleDate, extractDomain, type GdeltArticle } from '@/services/gdelt-intel';
-import { getNaturalEventIcon } from '@/services/eonet';
-import { getHotspotEscalation, getEscalationChange24h } from '@/services/hotspot-escalation';
-
-export type PopupType = 'conflict' | 'hotspot' | 'earthquake' | 'weather' | 'base' | 'waterway' | 'apt' | 'nuclear' | 'economic' | 'irradiator' | 'pipeline' | 'cable' | 'cable-advisory' | 'repair-ship' | 'outage' | 'datacenter' | 'datacenterCluster' | 'ais' | 'protest' | 'protestCluster' | 'flight' | 'militaryFlight' | 'militaryVessel' | 'militaryFlightCluster' | 'militaryVesselCluster' | 'natEvent' | 'port' | 'spaceport' | 'mineral' | 'startupHub' | 'cloudRegion' | 'techHQ' | 'accelerator' | 'techEvent' | 'techHQCluster' | 'techEventCluster' | 'techActivity' | 'geoActivity';
-=======
 import { isMobileDevice, getCSSColor } from '@/utils';
 import { t } from '@/services/i18n';
 import { fetchHotspotContext, formatArticleDate, extractDomain, type GdeltArticle } from '@/services/gdelt-intel';
@@ -27,7 +15,6 @@ import { getHotspotEscalation, getEscalationChange24h } from '@/services/hotspot
 import { getCableHealthRecord } from '@/services/cable-health';
 
 export type PopupType = 'conflict' | 'hotspot' | 'earthquake' | 'weather' | 'base' | 'waterway' | 'apt' | 'cyberThreat' | 'nuclear' | 'economic' | 'irradiator' | 'pipeline' | 'cable' | 'cable-advisory' | 'repair-ship' | 'outage' | 'datacenter' | 'datacenterCluster' | 'ais' | 'protest' | 'protestCluster' | 'flight' | 'aircraft' | 'militaryFlight' | 'militaryVessel' | 'militaryFlightCluster' | 'militaryVesselCluster' | 'natEvent' | 'port' | 'spaceport' | 'mineral' | 'startupHub' | 'cloudRegion' | 'techHQ' | 'accelerator' | 'techEvent' | 'techHQCluster' | 'techEventCluster' | 'techActivity' | 'geoActivity' | 'stockExchange' | 'financialCenter' | 'centralBank' | 'commodityHub' | 'iranEvent' | 'gpsJamming';
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 interface TechEventPopupData {
   id: string;
@@ -62,17 +49,14 @@ interface TechEventClusterData {
   sampled?: boolean;
 }
 
-<<<<<<< HEAD
-=======
 interface GpsJammingPopupData {
   h3: string;
   lat: number;
   lon: number;
   level: 'medium' | 'high';
-  pct: number;
-  good: number;
-  bad: number;
-  total: number;
+  npAvg: number;
+  sampleCount: number;
+  aircraftCount: number;
 }
 
 interface IranEventPopupData {
@@ -134,7 +118,6 @@ interface CommodityHubPopupData {
   description?: string;
 }
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 interface ProtestClusterData {
   items: SocialUnrestEvent[];
   country: string;
@@ -160,11 +143,7 @@ interface DatacenterClusterData {
 
 interface PopupData {
   type: PopupType;
-<<<<<<< HEAD
-  data: ConflictZone | Hotspot | Earthquake | WeatherAlert | MilitaryBase | StrategicWaterway | APTGroup | NuclearFacility | EconomicCenter | GammaIrradiator | Pipeline | UnderseaCable | CableAdvisory | RepairShip | InternetOutage | AIDataCenter | AisDisruptionEvent | SocialUnrestEvent | AirportDelayAlert | MilitaryFlight | MilitaryVessel | MilitaryFlightCluster | MilitaryVesselCluster | NaturalEvent | Port | Spaceport | CriticalMineralProject | StartupHub | CloudRegion | TechHQ | Accelerator | TechEventPopupData | TechHQClusterData | TechEventClusterData | ProtestClusterData | DatacenterClusterData | TechHubActivity | GeoHubActivity;
-=======
   data: ConflictZone | Hotspot | Earthquake | WeatherAlert | MilitaryBase | StrategicWaterway | APTGroup | CyberThreat | NuclearFacility | EconomicCenter | GammaIrradiator | Pipeline | UnderseaCable | CableAdvisory | RepairShip | InternetOutage | AIDataCenter | AisDisruptionEvent | SocialUnrestEvent | AirportDelayAlert | PositionSample | MilitaryFlight | MilitaryVessel | MilitaryFlightCluster | MilitaryVesselCluster | NaturalEvent | Port | Spaceport | CriticalMineralProject | StartupHub | CloudRegion | TechHQ | Accelerator | TechEventPopupData | TechHQClusterData | TechEventClusterData | ProtestClusterData | DatacenterClusterData | TechHubActivity | GeoHubActivity | StockExchangePopupData | FinancialCenterPopupData | CentralBankPopupData | CommodityHubPopupData | IranEventPopupData | GpsJammingPopupData;
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   relatedNews?: NewsItem[];
   x: number;
   y: number;
@@ -201,66 +180,6 @@ export class MapPopup {
     // Get container's viewport position for absolute positioning
     const containerRect = this.container.getBoundingClientRect();
 
-<<<<<<< HEAD
-    if (isMobileDevice()) {
-      // On mobile, center the popup horizontally and position in upper area
-      this.popup.style.left = '50%';
-      this.popup.style.transform = 'translateX(-50%)';
-      this.popup.style.top = `${Math.max(60, Math.min(containerRect.top + data.y, window.innerHeight * 0.4))}px`;
-    } else {
-      // Desktop: position near click with smart bounds checking
-      this.popup.style.transform = '';
-      const popupWidth = 380;
-      const bottomBuffer = 50; // Buffer from viewport bottom
-      const topBuffer = 60; // Header height
-
-      // Temporarily append popup off-screen to measure actual height
-      this.popup.style.visibility = 'hidden';
-      this.popup.style.top = '0';
-      this.popup.style.left = '-9999px';
-      document.body.appendChild(this.popup);
-      const popupHeight = this.popup.offsetHeight;
-      document.body.removeChild(this.popup);
-      this.popup.style.visibility = '';
-
-      // Convert container-relative coords to viewport coords
-      const viewportX = containerRect.left + data.x;
-      const viewportY = containerRect.top + data.y;
-
-      // Horizontal positioning (viewport-relative)
-      const maxX = window.innerWidth - popupWidth - 20;
-      let left = viewportX + 20;
-      if (left > maxX) {
-        // Position to the left of click if it would overflow right
-        left = Math.max(10, viewportX - popupWidth - 20);
-      }
-
-      // Vertical positioning - prefer below click, but flip above if needed
-      const availableBelow = window.innerHeight - viewportY - bottomBuffer;
-      const availableAbove = viewportY - topBuffer;
-
-      let top: number;
-      if (availableBelow >= popupHeight) {
-        // Enough space below - position below click
-        top = viewportY + 10;
-      } else if (availableAbove >= popupHeight) {
-        // Not enough below, but enough above - position above click
-        top = viewportY - popupHeight - 10;
-      } else {
-        // Limited space both ways - position at top buffer
-        top = topBuffer;
-      }
-
-      // CRITICAL: Ensure popup never goes above the top buffer (header area)
-      top = Math.max(topBuffer, top);
-
-      this.popup.style.left = `${left}px`;
-      this.popup.style.top = `${top}px`;
-    }
-
-    // Append to body to avoid container overflow clipping
-    document.body.appendChild(this.popup);
-=======
     if (this.isMobileSheet) {
       this.popup.style.left = '';
       this.popup.style.top = '';
@@ -268,7 +187,6 @@ export class MapPopup {
     } else {
       this.positionDesktopPopup(data, containerRect);
     }
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     // Append to body to avoid container overflow clipping
     document.body.appendChild(this.popup);
@@ -279,6 +197,15 @@ export class MapPopup {
       const target = e.target as HTMLElement;
       if (target.closest('.popup-close') || target.closest('.map-popup-sheet-handle')) {
         this.hide();
+        return;
+      }
+      const toggle = target.closest('.cluster-toggle') as HTMLButtonElement | null;
+      if (toggle) {
+        const hidden = toggle.previousElementSibling as HTMLElement | null;
+        if (!hidden) return;
+        const expanded = hidden.style.display !== 'none';
+        hidden.style.display = expanded ? 'none' : '';
+        toggle.textContent = expanded ? (toggle.dataset.more ?? '') : (toggle.dataset.less ?? '');
       }
     });
 
@@ -501,11 +428,8 @@ export class MapPopup {
         return this.renderProtestClusterPopup(data.data as ProtestClusterData);
       case 'flight':
         return this.renderFlightPopup(data.data as AirportDelayAlert);
-<<<<<<< HEAD
-=======
       case 'aircraft':
         return this.renderAircraftPopup(data.data as PositionSample);
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       case 'militaryFlight':
         return this.renderMilitaryFlightPopup(data.data as MilitaryFlight);
       case 'militaryVessel':
@@ -536,8 +460,6 @@ export class MapPopup {
         return this.renderTechHQClusterPopup(data.data as TechHQClusterData);
       case 'techEventCluster':
         return this.renderTechEventClusterPopup(data.data as TechEventClusterData);
-<<<<<<< HEAD
-=======
       case 'stockExchange':
         return this.renderStockExchangePopup(data.data as StockExchangePopupData);
       case 'financialCenter':
@@ -550,7 +472,6 @@ export class MapPopup {
         return this.renderIranEventPopup(data.data as IranEventPopupData);
       case 'gpsJamming':
         return this.renderGpsJammingPopup(data.data as GpsJammingPopupData);
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       default:
         return '';
     }
@@ -559,11 +480,7 @@ export class MapPopup {
 
   private renderConflictPopup(conflict: ConflictZone): string {
     const severityClass = conflict.intensity === 'high' ? 'high' : conflict.intensity === 'medium' ? 'medium' : 'low';
-<<<<<<< HEAD
-    const severityLabel = escapeHtml(conflict.intensity?.toUpperCase() || 'UNKNOWN');
-=======
     const severityLabel = escapeHtml(conflict.intensity?.toUpperCase() || t('popups.unknown').toUpperCase());
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     return `
       <div class="popup-header conflict">
@@ -574,21 +491,6 @@ export class MapPopup {
       <div class="popup-body">
         <div class="popup-stats">
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">START DATE</span>
-            <span class="stat-value">${escapeHtml(conflict.startDate || 'Unknown')}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">CASUALTIES</span>
-            <span class="stat-value">${escapeHtml(conflict.casualties || 'Unknown')}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">DISPLACED</span>
-            <span class="stat-value">${escapeHtml(conflict.displaced || 'Unknown')}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">LOCATION</span>
-=======
             <span class="stat-label">${t('popups.startDate')}</span>
             <span class="stat-value">${escapeHtml(conflict.startDate || t('popups.unknown'))}</span>
           </div>
@@ -602,25 +504,32 @@ export class MapPopup {
           </div>
           <div class="popup-stat">
             <span class="stat-label">${t('popups.location')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${escapeHtml(conflict.location || `${conflict.center[1]}°N, ${conflict.center[0]}°E`)}</span>
           </div>
         </div>
         ${conflict.description ? `<p class="popup-description">${escapeHtml(conflict.description)}</p>` : ''}
         ${conflict.parties && conflict.parties.length > 0 ? `
           <div class="popup-section">
-            <span class="section-label">${t('popups.belligerents')}</span>
-            <div class="popup-tags">
-              ${conflict.parties.map(p => `<span class="popup-tag">${escapeHtml(p)}</span>`).join('')}
-            </div>
+            <details open>
+              <summary>${t('popups.belligerents')}</summary>
+              <div class="popup-section-content">
+                <div class="popup-tags">
+                  ${conflict.parties.map(p => `<span class="popup-tag">${escapeHtml(p)}</span>`).join('')}
+                </div>
+              </div>
+            </details>
           </div>
         ` : ''}
         ${conflict.keyDevelopments && conflict.keyDevelopments.length > 0 ? `
           <div class="popup-section">
-            <span class="section-label">${t('popups.keyDevelopments')}</span>
-            <ul class="popup-list">
-              ${conflict.keyDevelopments.map(d => `<li>${escapeHtml(d)}</li>`).join('')}
-            </ul>
+            <details open>
+              <summary>${t('popups.keyDevelopments')}</summary>
+              <div class="popup-section-content">
+                <ul class="popup-list">
+                  ${conflict.keyDevelopments.map(d => `<li>${escapeHtml(d)}</li>`).join('')}
+                </ul>
+              </div>
+            </details>
           </div>
         ` : ''}
       </div>
@@ -640,22 +549,13 @@ export class MapPopup {
   private renderHotspotPopup(hotspot: Hotspot, relatedNews?: NewsItem[]): string {
     const severityClass = hotspot.level || 'low';
     const severityLabel = escapeHtml((hotspot.level || 'low').toUpperCase());
-<<<<<<< HEAD
-=======
     const localizedSubtext = hotspot.subtext ? this.getLocalizedHotspotSubtext(hotspot.subtext) : '';
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     // Get dynamic escalation score
     const dynamicScore = getHotspotEscalation(hotspot.id);
     const change24h = getEscalationChange24h(hotspot.id);
 
     // Escalation score display
-<<<<<<< HEAD
-    const escalationColors: Record<number, string> = { 1: '#44aa44', 2: '#88aa44', 3: '#ffaa00', 4: '#ff6600', 5: '#ff2222' };
-    const escalationLabels: Record<number, string> = { 1: 'STABLE', 2: 'WATCH', 3: 'ELEVATED', 4: 'HIGH', 5: 'CRITICAL' };
-    const trendIcons: Record<string, string> = { 'escalating': '↑', 'stable': '→', 'de-escalating': '↓' };
-    const trendColors: Record<string, string> = { 'escalating': '#ff4444', 'stable': '#ffaa00', 'de-escalating': '#44aa44' };
-=======
     const escalationColors: Record<number, string> = {
       1: getCSSColor('--semantic-normal'),
       2: getCSSColor('--semantic-normal'),
@@ -672,7 +572,6 @@ export class MapPopup {
     };
     const trendIcons: Record<string, string> = { 'escalating': '↑', 'stable': '→', 'de-escalating': '↓' };
     const trendColors: Record<string, string> = { 'escalating': getCSSColor('--semantic-critical'), 'stable': getCSSColor('--semantic-elevated'), 'de-escalating': getCSSColor('--semantic-normal') };
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     const displayScore = dynamicScore?.combinedScore ?? hotspot.escalationScore ?? 3;
     const displayScoreInt = Math.round(displayScore);
@@ -680,15 +579,6 @@ export class MapPopup {
 
     const escalationSection = `
       <div class="popup-section escalation-section">
-<<<<<<< HEAD
-        <span class="section-label">ESCALATION ASSESSMENT</span>
-        <div class="escalation-display">
-          <div class="escalation-score" style="background: ${escalationColors[displayScoreInt] || '#888'}">
-            <span class="score-value">${displayScore.toFixed(1)}/5</span>
-            <span class="score-label">${escalationLabels[displayScoreInt] || 'UNKNOWN'}</span>
-          </div>
-          <div class="escalation-trend" style="color: ${trendColors[displayTrend] || '#888'}">
-=======
         <span class="section-label">${t('popups.hotspot.escalation')}</span>
         <div class="escalation-display">
           <div class="escalation-score" style="background: ${escalationColors[displayScoreInt] || getCSSColor('--text-dim')}">
@@ -696,7 +586,6 @@ export class MapPopup {
             <span class="score-label">${escalationLabels[displayScoreInt] || t('popups.unknown')}</span>
           </div>
           <div class="escalation-trend" style="color: ${trendColors[displayTrend] || getCSSColor('--text-dim')}">
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="trend-icon">${trendIcons[displayTrend] || ''}</span>
             <span class="trend-label">${escapeHtml(displayTrend.toUpperCase())}</span>
           </div>
@@ -704,11 +593,7 @@ export class MapPopup {
         ${dynamicScore ? `
           <div class="escalation-breakdown">
             <div class="breakdown-header">
-<<<<<<< HEAD
-              <span class="baseline-label">Baseline: ${dynamicScore.staticBaseline}/5</span>
-=======
               <span class="baseline-label">${t('popups.hotspot.baseline')}: ${dynamicScore.staticBaseline}/5</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
               ${change24h ? `
                 <span class="change-label ${change24h.change >= 0 ? 'rising' : 'falling'}">
                   24h: ${change24h.change >= 0 ? '+' : ''}${change24h.change}
@@ -717,44 +602,28 @@ export class MapPopup {
             </div>
             <div class="breakdown-components">
               <div class="breakdown-row">
-<<<<<<< HEAD
-                <span class="component-label">News</span>
-=======
                 <span class="component-label">${t('popups.hotspot.components.news')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
                 <div class="component-bar-bg">
                   <div class="component-bar news" style="width: ${dynamicScore.components.newsActivity}%"></div>
                 </div>
                 <span class="component-value">${Math.round(dynamicScore.components.newsActivity)}</span>
               </div>
               <div class="breakdown-row">
-<<<<<<< HEAD
-                <span class="component-label">CII</span>
-=======
                 <span class="component-label">${t('popups.hotspot.components.cii')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
                 <div class="component-bar-bg">
                   <div class="component-bar cii" style="width: ${dynamicScore.components.ciiContribution}%"></div>
                 </div>
                 <span class="component-value">${Math.round(dynamicScore.components.ciiContribution)}</span>
               </div>
               <div class="breakdown-row">
-<<<<<<< HEAD
-                <span class="component-label">Geo</span>
-=======
                 <span class="component-label">${t('popups.hotspot.components.geo')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
                 <div class="component-bar-bg">
                   <div class="component-bar geo" style="width: ${dynamicScore.components.geoConvergence}%"></div>
                 </div>
                 <span class="component-value">${Math.round(dynamicScore.components.geoConvergence)}</span>
               </div>
               <div class="breakdown-row">
-<<<<<<< HEAD
-                <span class="component-label">Military</span>
-=======
                 <span class="component-label">${t('popups.hotspot.components.military')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
                 <div class="component-bar-bg">
                   <div class="component-bar military" style="width: ${dynamicScore.components.militaryActivity}%"></div>
                 </div>
@@ -774,55 +643,43 @@ export class MapPopup {
     // Historical context section
     const historySection = hotspot.history ? `
       <div class="popup-section history-section">
-<<<<<<< HEAD
-        <span class="section-label">HISTORICAL CONTEXT</span>
-        <div class="history-content">
-          ${hotspot.history.lastMajorEvent ? `
-            <div class="history-event">
-              <span class="history-label">Last Major Event:</span>
-=======
-        <span class="section-label">${t('popups.historicalContext')}</span>
-        <div class="history-content">
-          ${hotspot.history.lastMajorEvent ? `
-            <div class="history-event">
-              <span class="history-label">${t('popups.lastMajorEvent')}:</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
-              <span class="history-value">${escapeHtml(hotspot.history.lastMajorEvent)} ${hotspot.history.lastMajorEventDate ? `(${escapeHtml(hotspot.history.lastMajorEventDate)})` : ''}</span>
+        <details>
+          <summary>${t('popups.historicalContext')}</summary>
+          <div class="popup-section-content">
+            <div class="history-content">
+              ${hotspot.history.lastMajorEvent ? `
+                <div class="history-event">
+                  <span class="history-label">${t('popups.lastMajorEvent')}:</span>
+                  <span class="history-value">${escapeHtml(hotspot.history.lastMajorEvent)} ${hotspot.history.lastMajorEventDate ? `(${escapeHtml(hotspot.history.lastMajorEventDate)})` : ''}</span>
+                </div>
+              ` : ''}
+              ${hotspot.history.precedentDescription ? `
+                <div class="history-event">
+                  <span class="history-label">${t('popups.precedents')}:</span>
+                  <span class="history-value">${escapeHtml(hotspot.history.precedentDescription)}</span>
+                </div>
+              ` : ''}
+              ${hotspot.history.cyclicalRisk ? `
+                <div class="history-event cyclical">
+                  <span class="history-label">${t('popups.cyclicalPattern')}:</span>
+                  <span class="history-value">${escapeHtml(hotspot.history.cyclicalRisk)}</span>
+                </div>
+              ` : ''}
             </div>
-          ` : ''}
-          ${hotspot.history.precedentDescription ? `
-            <div class="history-event">
-<<<<<<< HEAD
-              <span class="history-label">Precedents:</span>
-=======
-              <span class="history-label">${t('popups.precedents')}:</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
-              <span class="history-value">${escapeHtml(hotspot.history.precedentDescription)}</span>
-            </div>
-          ` : ''}
-          ${hotspot.history.cyclicalRisk ? `
-            <div class="history-event cyclical">
-<<<<<<< HEAD
-              <span class="history-label">Cyclical Pattern:</span>
-=======
-              <span class="history-label">${t('popups.cyclicalPattern')}:</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
-              <span class="history-value">${escapeHtml(hotspot.history.cyclicalRisk)}</span>
-            </div>
-          ` : ''}
-        </div>
+          </div>
+        </details>
       </div>
     ` : '';
 
     // "Why it matters" section
     const whyItMattersSection = hotspot.whyItMatters ? `
       <div class="popup-section why-matters-section">
-<<<<<<< HEAD
-        <span class="section-label">WHY IT MATTERS</span>
-=======
-        <span class="section-label">${t('popups.whyItMatters')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
-        <p class="why-matters-text">${escapeHtml(hotspot.whyItMatters)}</p>
+        <details>
+          <summary>${t('popups.whyItMatters')}</summary>
+          <div class="popup-section-content">
+            <p class="why-matters-text">${escapeHtml(hotspot.whyItMatters)}</p>
+          </div>
+        </details>
       </div>
     ` : '';
 
@@ -833,74 +690,59 @@ export class MapPopup {
         <button class="popup-close" aria-label="Close">×</button>
       </div>
       <div class="popup-body">
-<<<<<<< HEAD
-        ${hotspot.subtext ? `<div class="popup-subtitle">${escapeHtml(hotspot.subtext)}</div>` : ''}
-=======
         ${localizedSubtext ? `<div class="popup-subtitle">${escapeHtml(localizedSubtext)}</div>` : ''}
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         ${hotspot.description ? `<p class="popup-description">${escapeHtml(hotspot.description)}</p>` : ''}
         ${escalationSection}
         <div class="popup-stats">
           ${hotspot.location ? `
             <div class="popup-stat">
-<<<<<<< HEAD
-              <span class="stat-label">LOCATION</span>
-=======
               <span class="stat-label">${t('popups.location')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
               <span class="stat-value">${escapeHtml(hotspot.location)}</span>
             </div>
           ` : ''}
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">COORDINATES</span>
-            <span class="stat-value">${escapeHtml(`${hotspot.lat.toFixed(2)}°N, ${hotspot.lon.toFixed(2)}°E`)}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">STATUS</span>
-            <span class="stat-value">${escapeHtml(hotspot.status || 'Monitoring')}</span>
-=======
             <span class="stat-label">${t('popups.coordinates')}</span>
             <span class="stat-value">${escapeHtml(`${hotspot.lat.toFixed(2)}°N, ${hotspot.lon.toFixed(2)}°E`)}</span>
           </div>
           <div class="popup-stat">
             <span class="stat-label">${t('popups.status')}</span>
             <span class="stat-value">${escapeHtml(hotspot.status || t('popups.monitoring'))}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           </div>
         </div>
         ${whyItMattersSection}
         ${historySection}
         ${hotspot.agencies && hotspot.agencies.length > 0 ? `
           <div class="popup-section">
-            <span class="section-label">${t('popups.keyEntities')}</span>
-            <div class="popup-tags">
-              ${hotspot.agencies.map(a => `<span class="popup-tag">${escapeHtml(a)}</span>`).join('')}
-            </div>
+            <details open>
+              <summary>${t('popups.keyEntities')}</summary>
+              <div class="popup-section-content">
+                <div class="popup-tags">
+                  ${hotspot.agencies.map(a => `<span class="popup-tag">${escapeHtml(a)}</span>`).join('')}
+                </div>
+              </div>
+            </details>
           </div>
         ` : ''}
         ${relatedNews && relatedNews.length > 0 ? `
           <div class="popup-section">
-          <div class="popup-section">
-            <span class="section-label">${t('popups.relatedHeadlines')}</span>
-            <div class="popup-news">
-              ${relatedNews.slice(0, 5).map(n => `
-                <div class="popup-news-item">
-                  <span class="news-source">${escapeHtml(n.source)}</span>
-                  <a href="${sanitizeUrl(n.link)}" target="_blank" class="news-title">${escapeHtml(n.title)}</a>
+            <details>
+              <summary>${t('popups.relatedHeadlines')}</summary>
+              <div class="popup-section-content">
+                <div class="popup-news">
+                  ${relatedNews.slice(0, 5).map(n => `
+                    <div class="popup-news-item">
+                      <span class="news-source">${escapeHtml(n.source)}</span>
+                      <a href="${sanitizeUrl(n.link)}" target="_blank" class="news-title">${escapeHtml(n.title)}</a>
+                    </div>
+                  `).join('')}
                 </div>
-              `).join('')}
-            </div>
+              </div>
+            </details>
           </div>
         ` : ''}
         <div class="hotspot-gdelt-context" data-hotspot-id="${escapeHtml(hotspot.id)}">
-<<<<<<< HEAD
-          <div class="hotspot-gdelt-header">Live Intelligence</div>
-          <div class="hotspot-gdelt-loading">Loading global news...</div>
-=======
           <div class="hotspot-gdelt-header">${t('popups.liveIntel')}</div>
           <div class="hotspot-gdelt-loading">${t('popups.loadingNews')}</div>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         </div>
       </div>
     `;
@@ -919,23 +761,14 @@ export class MapPopup {
 
       if (articles.length === 0) {
         container.innerHTML = `
-<<<<<<< HEAD
-          <div class="hotspot-gdelt-header">Live Intelligence</div>
-          <div class="hotspot-gdelt-loading">No recent global coverage</div>
-=======
           <div class="hotspot-gdelt-header">${t('popups.liveIntel')}</div>
           <div class="hotspot-gdelt-loading">${t('popups.noCoverage')}</div>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         `;
         return;
       }
 
       container.innerHTML = `
-<<<<<<< HEAD
-        <div class="hotspot-gdelt-header">Live Intelligence</div>
-=======
         <div class="hotspot-gdelt-header">${t('popups.liveIntel')}</div>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         <div class="hotspot-gdelt-articles">
           ${articles.slice(0, 5).map(article => this.renderGdeltArticle(article)).join('')}
         </div>
@@ -943,13 +776,8 @@ export class MapPopup {
     } catch (error) {
       if (container.isConnected) {
         container.innerHTML = `
-<<<<<<< HEAD
-          <div class="hotspot-gdelt-header">Live Intelligence</div>
-          <div class="hotspot-gdelt-loading">Failed to load</div>
-=======
           <div class="hotspot-gdelt-header">${t('popups.liveIntel')}</div>
           <div class="hotspot-gdelt-loading">${t('common.error')}</div>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         `;
       }
     }
@@ -998,11 +826,7 @@ export class MapPopup {
             <span class="stat-value">${timeAgo}</span>
           </div>
         </div>
-<<<<<<< HEAD
-        <a href="${sanitizeUrl(earthquake.url)}" target="_blank" class="popup-link">View on USGS →</a>
-=======
         <a href="${sanitizeUrl(earthquake.sourceUrl)}" target="_blank" class="popup-link">${t('popups.viewUSGS')} →</a>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
   }
@@ -1026,21 +850,13 @@ export class MapPopup {
       <div class="popup-header weather ${severityClass}">
         <span class="popup-title">${escapeHtml(alert.event.toUpperCase())}</span>
         <span class="popup-badge ${severityClass}">${escapeHtml(alert.severity.toUpperCase())}</span>
-<<<<<<< HEAD
-        <button class="popup-close">×</button>
-=======
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <p class="popup-headline">${escapeHtml(alert.headline)}</p>
         <div class="popup-stats">
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">Area</span>
-=======
             <span class="stat-label">${t('popups.area')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${escapeHtml(alert.areaDesc)}</span>
           </div>
           <div class="popup-stat">
@@ -1053,8 +869,10 @@ export class MapPopup {
     `;
   }
 
-  private getTimeUntil(date: Date): string {
-    const ms = date.getTime() - Date.now();
+  private getTimeUntil(date: Date | string): string {
+    const d = date instanceof Date ? date : new Date(date);
+    if (isNaN(d.getTime())) return '—';
+    const ms = d.getTime() - Date.now();
     if (ms <= 0) return t('popups.expired');
     const hours = Math.floor(ms / (1000 * 60 * 60));
     if (hours < 1) return `${Math.floor(ms / (1000 * 60))}${t('popups.timeUnits.m')}`;
@@ -1130,15 +948,9 @@ export class MapPopup {
   private renderAisPopup(event: AisDisruptionEvent): string {
     const severityClass = escapeHtml(event.severity);
     const severityLabel = escapeHtml(event.severity.toUpperCase());
-<<<<<<< HEAD
-    const typeLabel = event.type === 'gap_spike' ? 'AIS GAP SPIKE' : 'CHOKEPOINT CONGESTION';
-    const changeLabel = event.type === 'gap_spike' ? 'DARKENING' : 'DENSITY';
-    const countLabel = event.type === 'gap_spike' ? 'DARK SHIPS' : 'VESSEL COUNT';
-=======
     const typeLabel = event.type === 'gap_spike' ? t('popups.aisGapSpike') : t('popups.chokepointCongestion');
     const changeLabel = event.type === 'gap_spike' ? t('popups.darkening') : t('popups.density');
     const countLabel = event.type === 'gap_spike' ? t('popups.darkShips') : t('popups.vesselCount');
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const countValue = event.type === 'gap_spike'
       ? event.darkShips?.toString() || '—'
       : event.vesselCount?.toString() || '—';
@@ -1165,11 +977,7 @@ export class MapPopup {
             <span class="stat-value">${event.windowHours}H</span>
           </div>
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">REGION</span>
-=======
             <span class="stat-label">${t('popups.region')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${escapeHtml(event.region || `${event.lat.toFixed(2)}°, ${event.lon.toFixed(2)}°`)}</span>
           </div>
         </div>
@@ -1189,21 +997,13 @@ export class MapPopup {
       ? `<div class="popup-stat"><span class="stat-label">${t('popups.fatalities')}</span><span class="stat-value alert">${event.fatalities}</span></div>`
       : '';
     const actorsSection = event.actors?.length
-<<<<<<< HEAD
-      ? `<div class="popup-stat"><span class="stat-label">ACTORS</span><span class="stat-value">${event.actors.map(a => escapeHtml(a)).join(', ')}</span></div>`
-=======
       ? `<div class="popup-stat"><span class="stat-label">${t('popups.actors')}</span><span class="stat-value">${event.actors.map(a => escapeHtml(a)).join(', ')}</span></div>`
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       : '';
     const tagsSection = event.tags?.length
       ? `<div class="popup-tags">${event.tags.map(t => `<span class="popup-tag">${escapeHtml(t)}</span>`).join('')}</div>`
       : '';
     const relatedHotspots = event.relatedHotspots?.length
-<<<<<<< HEAD
-      ? `<div class="popup-related">Near: ${event.relatedHotspots.map(h => escapeHtml(h)).join(', ')}</div>`
-=======
       ? `<div class="popup-related">${t('popups.near')}: ${event.relatedHotspots.map(h => escapeHtml(h)).join(', ')}</div>`
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       : '';
 
     return `
@@ -1253,11 +1053,7 @@ export class MapPopup {
     const listItems = sortedItems.slice(0, 10).map(event => {
       const icon = event.eventType === 'riot' ? '🔥' : event.eventType === 'strike' ? '✊' : '📢';
       const sevClass = event.severity;
-<<<<<<< HEAD
-      const dateStr = event.time.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-=======
       const dateStr = event.time.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       const city = event.city ? escapeHtml(event.city) : '';
       const title = event.title ? `: ${escapeHtml(event.title.slice(0, 40))}${event.title.length > 40 ? '...' : ''}` : '';
       return `<li class="cluster-item ${sevClass}">${icon} ${dateStr}${city ? ` • ${city}` : ''}${title}</li>`;
@@ -1265,30 +1061,12 @@ export class MapPopup {
 
     const renderedCount = Math.min(10, data.items.length);
     const remainingCount = Math.max(0, totalCount - renderedCount);
-<<<<<<< HEAD
-    const moreCount = remainingCount > 0 ? `<li class="cluster-more">+${remainingCount} more events</li>` : '';
-=======
     const moreCount = remainingCount > 0 ? `<li class="cluster-more">+${remainingCount} ${t('popups.moreEvents')}</li>` : '';
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const headerClass = highSeverity > 0 ? 'high' : riots > 0 ? 'medium' : 'low';
 
     return `
       <div class="popup-header protest ${headerClass} cluster">
         <span class="popup-title">📢 ${escapeHtml(data.country)}</span>
-<<<<<<< HEAD
-        <span class="popup-badge">${totalCount} EVENTS</span>
-        <button class="popup-close">×</button>
-      </div>
-      <div class="popup-body cluster-popup">
-        <div class="cluster-summary">
-          ${riots ? `<span class="summary-item riot">🔥 ${riots} Riots</span>` : ''}
-          ${highSeverity ? `<span class="summary-item high">⚠️ ${highSeverity} High Severity</span>` : ''}
-          ${verified ? `<span class="summary-item verified">✓ ${verified} Verified</span>` : ''}
-          ${totalFatalities > 0 ? `<span class="summary-item fatalities">💀 ${totalFatalities} Fatalities</span>` : ''}
-        </div>
-        <ul class="cluster-list">${listItems}${moreCount}</ul>
-        ${data.sampled ? `<p class="popup-more">Showing a sampled list of ${data.items.length} events.</p>` : ''}
-=======
         <span class="popup-badge">${totalCount} ${t('popups.events').toUpperCase()}</span>
         <button class="popup-close" aria-label="Close">×</button>
       </div>
@@ -1301,7 +1079,6 @@ export class MapPopup {
         </div>
         <ul class="cluster-list">${listItems}${moreCount}</ul>
         ${data.sampled ? `<p class="popup-more">${t('popups.sampledList', { count: data.items.length })}</p>` : ''}
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
   }
@@ -1310,28 +1087,6 @@ export class MapPopup {
     const severityClass = escapeHtml(delay.severity);
     const severityLabel = escapeHtml(delay.severity.toUpperCase());
     const delayTypeLabels: Record<string, string> = {
-<<<<<<< HEAD
-      'ground_stop': 'GROUND STOP',
-      'ground_delay': 'GROUND DELAY PROGRAM',
-      'departure_delay': 'DEPARTURE DELAYS',
-      'arrival_delay': 'ARRIVAL DELAYS',
-      'general': 'DELAYS REPORTED',
-    };
-    const delayTypeLabel = delayTypeLabels[delay.delayType] || 'DELAYS';
-    const icon = delay.delayType === 'ground_stop' ? '🛑' : delay.severity === 'severe' ? '✈️' : '🛫';
-    const sourceLabels: Record<string, string> = {
-      'faa': 'FAA ASWS',
-      'eurocontrol': 'Eurocontrol',
-      'computed': 'Computed',
-    };
-    const sourceLabel = sourceLabels[delay.source] || escapeHtml(delay.source);
-    const regionLabels: Record<string, string> = {
-      'americas': 'Americas',
-      'europe': 'Europe',
-      'apac': 'Asia-Pacific',
-      'mena': 'Middle East',
-      'africa': 'Africa',
-=======
       'ground_stop': t('popups.flight.groundStop'),
       'ground_delay': t('popups.flight.groundDelay'),
       'departure_delay': t('popups.flight.departureDelay'),
@@ -1353,20 +1108,10 @@ export class MapPopup {
       'apac': t('popups.flight.regions.apac'),
       'mena': t('popups.flight.regions.mena'),
       'africa': t('popups.flight.regions.africa'),
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
     const regionLabel = regionLabels[delay.region] || escapeHtml(delay.region);
 
     const avgDelaySection = delay.avgDelayMinutes > 0
-<<<<<<< HEAD
-      ? `<div class="popup-stat"><span class="stat-label">AVG DELAY</span><span class="stat-value alert">+${delay.avgDelayMinutes} min</span></div>`
-      : '';
-    const reasonSection = delay.reason
-      ? `<div class="popup-stat"><span class="stat-label">REASON</span><span class="stat-value">${escapeHtml(delay.reason)}</span></div>`
-      : '';
-    const cancelledSection = delay.cancelledFlights
-      ? `<div class="popup-stat"><span class="stat-label">CANCELLED</span><span class="stat-value alert">${delay.cancelledFlights} flights</span></div>`
-=======
       ? `<div class="popup-stat"><span class="stat-label">${t('popups.flight.avgDelay')}</span><span class="stat-value alert">+${delay.avgDelayMinutes} ${t('popups.timeUnits.m')}</span></div>`
       : '';
     const reasonSection = delay.reason
@@ -1374,7 +1119,6 @@ export class MapPopup {
       : '';
     const cancelledSection = delay.cancelledFlights
       ? `<div class="popup-stat"><span class="stat-label">${t('popups.flight.cancelled')}</span><span class="stat-value alert">${delay.cancelledFlights} ${t('popups.events')}</span></div>`
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       : '';
 
     return `
@@ -1382,11 +1126,7 @@ export class MapPopup {
         <span class="popup-icon">${icon}</span>
         <span class="popup-title">${escapeHtml(delay.iata)} - ${delayTypeLabel}</span>
         <span class="popup-badge ${severityClass}">${severityLabel}</span>
-<<<<<<< HEAD
-        <button class="popup-close">×</button>
-=======
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">${escapeHtml(delay.name)}</div>
@@ -1396,17 +1136,6 @@ export class MapPopup {
           ${reasonSection}
           ${cancelledSection}
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">REGION</span>
-            <span class="stat-value">${regionLabel}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">SOURCE</span>
-            <span class="stat-value">${sourceLabel}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">UPDATED</span>
-=======
             <span class="stat-label">${t('popups.region')}</span>
             <span class="stat-value">${regionLabel}</span>
           </div>
@@ -1416,7 +1145,6 @@ export class MapPopup {
           </div>
           <div class="popup-stat">
             <span class="stat-label">${t('popups.updated')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${delay.updatedAt.toLocaleTimeString()}</span>
           </div>
         </div>
@@ -1424,8 +1152,6 @@ export class MapPopup {
     `;
   }
 
-<<<<<<< HEAD
-=======
   private renderAircraftPopup(pos: PositionSample): string {
     const callsign = escapeHtml(pos.callsign || pos.icao24);
     const onGroundBadge = pos.onGround ? 'low' : 'elevated';
@@ -1471,7 +1197,6 @@ export class MapPopup {
     `;
   }
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   private renderAPTPopup(apt: APTGroup): string {
     return `
       <div class="popup-header apt">
@@ -1762,22 +1487,13 @@ export class MapPopup {
     const advisoryImpact = advisory ? escapeHtml(advisory.impact) : '';
     const advisoryDescription = advisory ? escapeHtml(advisory.description) : '';
     const repairShipName = repairShip ? escapeHtml(repairShip.name) : '';
-<<<<<<< HEAD
-    const repairShipNote = repairShip ? escapeHtml(repairShip.note || 'Repair vessel tracking indicates active deployment toward fault site.') : '';
-=======
     const repairShipNote = repairShip ? escapeHtml(repairShip.note || t('popups.repairShip.note')) : '';
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     return `
       <div class="popup-header cable">
         <span class="popup-title">🌐 ${cableName}</span>
-<<<<<<< HEAD
-        <span class="popup-badge ${statusBadge}">${cable.major ? 'MAJOR' : 'CABLE'}</span>
-        <button class="popup-close">×</button>
-=======
         <span class="popup-badge ${statusBadge}">${cable.major ? t('popups.cable.major') : t('popups.cable.cable')}</span>
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">${t('popups.cable.subtitle')}</div>
@@ -1791,20 +1507,12 @@ export class MapPopup {
             <span class="stat-value">${cable.points.length}</span>
           </div>
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">STATUS</span>
-=======
             <span class="stat-label">${t('popups.status')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${safeStatusLabel}</span>
           </div>
           ${repairEta ? `
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">REPAIR ETA</span>
-=======
             <span class="stat-label">${t('popups.repairEta')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${safeRepairEta}</span>
           </div>
           ` : ''}
@@ -1824,11 +1532,7 @@ export class MapPopup {
             <span class="section-label">${t('popups.cable.repairDeployment')}</span>
             <div class="popup-tags">
               <span class="popup-tag">${repairShipName}</span>
-<<<<<<< HEAD
-              <span class="popup-tag">${repairShip.status === 'on-station' ? 'On Station' : 'En Route'}</span>
-=======
               <span class="popup-tag">${repairShip.status === 'on-station' ? t('popups.cable.repairStatus.onStation') : t('popups.cable.repairStatus.enRoute')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             </div>
             <p class="popup-description">${repairShipNote}</p>
           </div>
@@ -1849,11 +1553,7 @@ export class MapPopup {
   private renderCableAdvisoryPopup(advisory: CableAdvisory): string {
     const cable = UNDERSEA_CABLES.find((item) => item.id === advisory.cableId);
     const timeAgo = this.getTimeAgo(advisory.reported);
-<<<<<<< HEAD
-    const statusLabel = advisory.severity === 'fault' ? 'FAULT' : 'DEGRADED';
-=======
     const statusLabel = advisory.severity === 'fault' ? t('popups.cable.fault') : t('popups.cable.degraded');
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const cableName = escapeHtml(cable?.name.toUpperCase() || advisory.cableId.toUpperCase());
     const advisoryTitle = escapeHtml(advisory.title);
     const advisoryImpact = escapeHtml(advisory.impact);
@@ -1874,20 +1574,12 @@ export class MapPopup {
             <span class="stat-value">${timeAgo}</span>
           </div>
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">IMPACT</span>
-=======
             <span class="stat-label">${t('popups.cableAdvisory.impact')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${advisoryImpact}</span>
           </div>
           ${advisory.repairEta ? `
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">ETA</span>
-=======
             <span class="stat-label">${t('popups.cableAdvisory.eta')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${advisoryEta}</span>
           </div>
           ` : ''}
@@ -1903,22 +1595,13 @@ export class MapPopup {
     const cableLabel = escapeHtml(cable?.name || ship.cableId);
     const shipEta = escapeHtml(ship.eta);
     const shipOperator = ship.operator ? escapeHtml(ship.operator) : '';
-<<<<<<< HEAD
-    const shipNote = escapeHtml(ship.note || 'Repair ship tracking indicates active deployment in support of undersea cable restoration.');
-=======
     const shipNote = escapeHtml(ship.note || t('popups.repairShip.description'));
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     return `
       <div class="popup-header cable">
         <span class="popup-title">🚢 ${shipName}</span>
-<<<<<<< HEAD
-        <span class="popup-badge elevated">REPAIR SHIP</span>
-        <button class="popup-close">×</button>
-=======
         <span class="popup-badge elevated">${t('popups.repairShip.badge')}</span>
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">${cableLabel}</div>
@@ -1928,20 +1611,12 @@ export class MapPopup {
             <span class="stat-value">${ship.status === 'on-station' ? t('popups.repairShip.status.onStation') : t('popups.repairShip.status.enRoute')}</span>
           </div>
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">ETA</span>
-=======
             <span class="stat-label">${t('popups.cableAdvisory.eta')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${shipEta}</span>
           </div>
           ${ship.operator ? `
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">OPERATOR</span>
-=======
             <span class="stat-label">${t('popups.operator')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${shipOperator}</span>
           </div>
           ` : ''}
@@ -1983,23 +1658,14 @@ export class MapPopup {
     return `
       <div class="popup-header outage ${severityClass}">
         <span class="popup-title">📡 ${escapeHtml(outage.country.toUpperCase())}</span>
-<<<<<<< HEAD
-        <span class="popup-badge ${severityColors[outage.severity] || 'low'}">${severityLabels[outage.severity] || 'DISRUPTION'}</span>
-        <button class="popup-close">×</button>
-=======
         <span class="popup-badge ${severityColors[outage.severity] || 'low'}">${severityLabels[outage.severity] || t('popups.outage.levels.disruption')}</span>
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">${escapeHtml(outage.title)}</div>
         <div class="popup-stats">
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">SEVERITY</span>
-=======
             <span class="stat-label">${t('popups.severity')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${escapeHtml(outage.severity.toUpperCase())}</span>
           </div>
           <div class="popup-stat">
@@ -2020,11 +1686,7 @@ export class MapPopup {
           </div>
         ` : ''}
         <p class="popup-description">${escapeHtml(outage.description.slice(0, 250))}${outage.description.length > 250 ? '...' : ''}</p>
-<<<<<<< HEAD
-        <a href="${sanitizeUrl(outage.link)}" target="_blank" class="popup-link">Read full report →</a>
-=======
         <a href="${sanitizeUrl(outage.link)}" target="_blank" class="popup-link">${t('popups.outage.readReport')} →</a>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
   }
@@ -2101,113 +1763,68 @@ export class MapPopup {
         <span class="cluster-item-icon">${dc.status === 'planned' ? '🔨' : '🖥️'}</span>
         <div class="cluster-item-info">
           <span class="cluster-item-name">${escapeHtml(dc.name.slice(0, 40))}${dc.name.length > 40 ? '...' : ''}</span>
-<<<<<<< HEAD
-          <span class="cluster-item-detail">${escapeHtml(dc.owner)} • ${formatNumber(dc.chipCount)} chips</span>
-=======
           <span class="cluster-item-detail">${escapeHtml(dc.owner)} • ${formatNumber(dc.chipCount)} ${t('popups.datacenter.chips')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         </div>
       </div>
     `).join('');
 
     return `
       <div class="popup-header datacenter cluster">
-<<<<<<< HEAD
-        <span class="popup-title">🖥️ ${totalCount} Data Centers</span>
-        <span class="popup-badge elevated">${escapeHtml(data.region)}</span>
-        <button class="popup-close">×</button>
-=======
         <span class="popup-title">🖥️ ${t('popups.datacenter.cluster.title', { count: String(totalCount) })}</span>
         <span class="popup-badge elevated">${escapeHtml(data.region)}</span>
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">${escapeHtml(data.country)}</div>
         <div class="popup-stats">
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">TOTAL CHIPS</span>
-=======
             <span class="stat-label">${t('popups.datacenter.cluster.totalChips')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${formatNumber(totalChips)}</span>
           </div>
           ${totalPower > 0 ? `
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">TOTAL POWER</span>
-=======
             <span class="stat-label">${t('popups.datacenter.cluster.totalPower')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${totalPower.toFixed(0)} MW</span>
           </div>
           ` : ''}
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">OPERATIONAL</span>
-            <span class="stat-value">${existingCount}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">PLANNED</span>
-=======
             <span class="stat-label">${t('popups.datacenter.cluster.operational')}</span>
             <span class="stat-value">${existingCount}</span>
           </div>
           <div class="popup-stat">
             <span class="stat-label">${t('popups.datacenter.cluster.planned')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${plannedCount}</span>
           </div>
         </div>
         <div class="cluster-list">
           ${dcListHtml}
         </div>
-<<<<<<< HEAD
-        ${totalCount > 8 ? `<p class="popup-more">+ ${Math.max(0, totalCount - 8)} more data centers</p>` : ''}
-        ${data.sampled ? `<p class="popup-more">Showing a sampled list of ${data.items.length} sites.</p>` : ''}
-        <div class="popup-attribution">Data: Epoch AI GPU Clusters</div>
-=======
         ${totalCount > 8 ? `<p class="popup-more">${t('popups.datacenter.cluster.moreDataCenters', { count: String(Math.max(0, totalCount - 8)) })}</p>` : ''}
         ${data.sampled ? `<p class="popup-more">${t('popups.datacenter.cluster.sampledSites', { count: String(data.items.length) })}</p>` : ''}
         <div class="popup-attribution">${t('popups.datacenter.attribution')}</div>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
   }
 
   private renderStartupHubPopup(hub: StartupHub): string {
-<<<<<<< HEAD
-    const tierLabels: Record<string, string> = { 'mega': 'MEGA HUB', 'major': 'MAJOR HUB', 'emerging': 'EMERGING' };
-=======
     const tierLabels: Record<string, string> = {
       'mega': t('popups.startupHub.tiers.mega'),
       'major': t('popups.startupHub.tiers.major'),
       'emerging': t('popups.startupHub.tiers.emerging'),
     };
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const tierIcons: Record<string, string> = { 'mega': '🦄', 'major': '🚀', 'emerging': '💡' };
     return `
       <div class="popup-header startup-hub ${hub.tier}">
         <span class="popup-title">${tierIcons[hub.tier] || '🚀'} ${escapeHtml(hub.name)}</span>
-<<<<<<< HEAD
-        <span class="popup-badge ${hub.tier}">${tierLabels[hub.tier] || 'HUB'}</span>
-        <button class="popup-close">×</button>
-=======
         <span class="popup-badge ${hub.tier}">${tierLabels[hub.tier] || t('popups.startupHub.tiers.hub')}</span>
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">${escapeHtml(hub.city)}, ${escapeHtml(hub.country)}</div>
         ${hub.unicorns ? `
         <div class="popup-stats">
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">UNICORNS</span>
-=======
             <span class="stat-label">${t('popups.startupHub.unicorns')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${hub.unicorns}+</span>
           </div>
         </div>
@@ -2223,33 +1840,19 @@ export class MapPopup {
     return `
       <div class="popup-header cloud-region ${region.provider}">
         <span class="popup-title">${providerIcons[region.provider] || '☁️'} ${escapeHtml(region.name)}</span>
-<<<<<<< HEAD
-        <span class="popup-badge ${region.provider}">${region.provider.toUpperCase()}</span>
-        <button class="popup-close">×</button>
-=======
         <span class="popup-badge ${region.provider}">${escapeHtml(region.provider.toUpperCase())}</span>
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">${escapeHtml(region.city)}, ${escapeHtml(region.country)}</div>
         <div class="popup-stats">
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">PROVIDER</span>
-            <span class="stat-value">${providerNames[region.provider] || region.provider}</span>
-          </div>
-          ${region.zones ? `
-          <div class="popup-stat">
-            <span class="stat-label">AVAILABILITY ZONES</span>
-=======
             <span class="stat-label">${t('popups.cloudRegion.provider')}</span>
             <span class="stat-value">${escapeHtml(providerNames[region.provider] || region.provider)}</span>
           </div>
           ${region.zones ? `
           <div class="popup-stat">
             <span class="stat-label">${t('popups.cloudRegion.availabilityZones')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${region.zones}</span>
           </div>
           ` : ''}
@@ -2259,47 +1862,30 @@ export class MapPopup {
   }
 
   private renderTechHQPopup(hq: TechHQ): string {
-<<<<<<< HEAD
-    const typeLabels: Record<string, string> = { 'faang': 'BIG TECH', 'unicorn': 'UNICORN', 'public': 'PUBLIC' };
-=======
     const typeLabels: Record<string, string> = {
       'faang': t('popups.techHQ.types.faang'),
       'unicorn': t('popups.techHQ.types.unicorn'),
       'public': t('popups.techHQ.types.public'),
     };
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const typeIcons: Record<string, string> = { 'faang': '🏛️', 'unicorn': '🦄', 'public': '🏢' };
     return `
       <div class="popup-header tech-hq ${hq.type}">
         <span class="popup-title">${typeIcons[hq.type] || '🏢'} ${escapeHtml(hq.company)}</span>
-<<<<<<< HEAD
-        <span class="popup-badge ${hq.type}">${typeLabels[hq.type] || 'TECH'}</span>
-        <button class="popup-close">×</button>
-=======
         <span class="popup-badge ${hq.type}">${typeLabels[hq.type] || t('popups.techHQ.types.tech')}</span>
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">${escapeHtml(hq.city)}, ${escapeHtml(hq.country)}</div>
         <div class="popup-stats">
           ${hq.marketCap ? `
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">MARKET CAP</span>
-=======
             <span class="stat-label">${t('popups.techHQ.marketCap')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${escapeHtml(hq.marketCap)}</span>
           </div>
           ` : ''}
           ${hq.employees ? `
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">EMPLOYEES</span>
-=======
             <span class="stat-label">${t('popups.techHQ.employees')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${hq.employees.toLocaleString()}</span>
           </div>
           ` : ''}
@@ -2309,48 +1895,31 @@ export class MapPopup {
   }
 
   private renderAcceleratorPopup(acc: Accelerator): string {
-<<<<<<< HEAD
-    const typeLabels: Record<string, string> = { 'accelerator': 'ACCELERATOR', 'incubator': 'INCUBATOR', 'studio': 'STARTUP STUDIO' };
-=======
     const typeLabels: Record<string, string> = {
       'accelerator': t('popups.accelerator.types.accelerator'),
       'incubator': t('popups.accelerator.types.incubator'),
       'studio': t('popups.accelerator.types.studio'),
     };
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const typeIcons: Record<string, string> = { 'accelerator': '🎯', 'incubator': '🔬', 'studio': '🎨' };
     return `
       <div class="popup-header accelerator ${acc.type}">
         <span class="popup-title">${typeIcons[acc.type] || '🎯'} ${escapeHtml(acc.name)}</span>
-<<<<<<< HEAD
-        <span class="popup-badge ${acc.type}">${typeLabels[acc.type] || 'ACCELERATOR'}</span>
-        <button class="popup-close">×</button>
-=======
         <span class="popup-badge ${acc.type}">${typeLabels[acc.type] || t('popups.accelerator.types.accelerator')}</span>
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">${escapeHtml(acc.city)}, ${escapeHtml(acc.country)}</div>
         <div class="popup-stats">
           ${acc.founded ? `
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">FOUNDED</span>
-=======
             <span class="stat-label">${t('popups.accelerator.founded')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${acc.founded}</span>
           </div>
           ` : ''}
         </div>
         ${acc.notable && acc.notable.length > 0 ? `
         <div class="popup-notable">
-<<<<<<< HEAD
-          <span class="notable-label">NOTABLE ALUMNI</span>
-=======
           <span class="notable-label">${t('popups.accelerator.notableAlumni')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           <span class="notable-list">${acc.notable.map(n => escapeHtml(n)).join(', ')}</span>
         </div>
         ` : ''}
@@ -2361,15 +1930,6 @@ export class MapPopup {
   private renderTechEventPopup(event: TechEventPopupData): string {
     const startDate = new Date(event.startDate);
     const endDate = new Date(event.endDate);
-<<<<<<< HEAD
-    const dateStr = startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const endDateStr = endDate > startDate && endDate.toDateString() !== startDate.toDateString()
-      ? ` - ${endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
-      : '';
-
-    const urgencyClass = event.daysUntil <= 7 ? 'urgent' : event.daysUntil <= 30 ? 'soon' : '';
-    const daysLabel = event.daysUntil === 0 ? 'TODAY' : event.daysUntil === 1 ? 'TOMORROW' : `IN ${event.daysUntil} DAYS`;
-=======
     const dateStr = startDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
     const endDateStr = endDate > startDate && endDate.toDateString() !== startDate.toDateString()
       ? ` - ${endDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`
@@ -2381,45 +1941,28 @@ export class MapPopup {
       : event.daysUntil === 1
         ? t('popups.techEvent.days.tomorrow')
         : t('popups.techEvent.days.inDays', { count: String(event.daysUntil) });
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     return `
       <div class="popup-header tech-event ${urgencyClass}">
         <span class="popup-title">📅 ${escapeHtml(event.title)}</span>
         <span class="popup-badge ${urgencyClass}">${daysLabel}</span>
-<<<<<<< HEAD
-        <button class="popup-close">×</button>
-=======
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">📍 ${escapeHtml(event.location)}, ${escapeHtml(event.country)}</div>
         <div class="popup-stats">
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">DATE</span>
-            <span class="stat-value">${dateStr}${endDateStr}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">LOCATION</span>
-=======
             <span class="stat-label">${t('popups.techEvent.date')}</span>
             <span class="stat-value">${dateStr}${endDateStr}</span>
           </div>
           <div class="popup-stat">
             <span class="stat-label">${t('popups.location')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${escapeHtml(event.location)}</span>
           </div>
         </div>
         ${event.url ? `
         <a href="${sanitizeUrl(event.url)}" target="_blank" rel="noopener noreferrer" class="popup-link">
-<<<<<<< HEAD
-          More Information →
-=======
           ${t('popups.techEvent.moreInformation')} →
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         </a>
         ` : ''}
       </div>
@@ -2439,43 +1982,25 @@ export class MapPopup {
 
     const listItems = sortedItems.map(hq => {
       const icon = hq.type === 'faang' ? '🏛️' : hq.type === 'unicorn' ? '🦄' : '🏢';
-<<<<<<< HEAD
-      const marketCap = hq.marketCap ? ` (${hq.marketCap})` : '';
-=======
       const marketCap = hq.marketCap ? ` (${escapeHtml(hq.marketCap)})` : '';
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return `<li class="cluster-item ${hq.type}">${icon} ${escapeHtml(hq.company)}${marketCap}</li>`;
     }).join('');
 
     return `
       <div class="popup-header tech-hq cluster">
         <span class="popup-title">🏙️ ${escapeHtml(data.city)}</span>
-<<<<<<< HEAD
-        <span class="popup-badge">${totalCount} COMPANIES</span>
-        <button class="popup-close">×</button>
-=======
         <span class="popup-badge">${t('popups.techHQCluster.companiesCount', { count: String(totalCount) })}</span>
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body cluster-popup">
         <div class="popup-subtitle">📍 ${escapeHtml(data.city)}, ${escapeHtml(data.country)}</div>
         <div class="cluster-summary">
-<<<<<<< HEAD
-          ${faangCount ? `<span class="summary-item faang">🏛️ ${faangCount} Big Tech</span>` : ''}
-          ${unicornCount ? `<span class="summary-item unicorn">🦄 ${unicornCount} Unicorns</span>` : ''}
-          ${publicCount ? `<span class="summary-item public">🏢 ${publicCount} Public</span>` : ''}
-        </div>
-        <ul class="cluster-list">${listItems}</ul>
-        ${data.sampled ? `<p class="popup-more">Showing a sampled list of ${data.items.length} companies.</p>` : ''}
-=======
           ${faangCount ? `<span class="summary-item faang">🏛️ ${t('popups.techHQCluster.bigTechCount', { count: String(faangCount) })}</span>` : ''}
           ${unicornCount ? `<span class="summary-item unicorn">🦄 ${t('popups.techHQCluster.unicornsCount', { count: String(unicornCount) })}</span>` : ''}
           ${publicCount ? `<span class="summary-item public">🏢 ${t('popups.techHQCluster.publicCount', { count: String(publicCount) })}</span>` : ''}
         </div>
         <ul class="cluster-list">${listItems}</ul>
         ${data.sampled ? `<p class="popup-more">${t('popups.techHQCluster.sampled', { count: String(data.items.length) })}</p>` : ''}
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
   }
@@ -2487,11 +2012,7 @@ export class MapPopup {
 
     const listItems = sortedItems.map(event => {
       const startDate = new Date(event.startDate);
-<<<<<<< HEAD
-      const dateStr = startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-=======
       const dateStr = startDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       const urgencyClass = event.daysUntil <= 7 ? 'urgent' : event.daysUntil <= 30 ? 'soon' : '';
       return `<li class="cluster-item ${urgencyClass}">📅 ${dateStr}: ${escapeHtml(event.title)}</li>`;
     }).join('');
@@ -2499,16 +2020,6 @@ export class MapPopup {
     return `
       <div class="popup-header tech-event cluster">
         <span class="popup-title">📅 ${escapeHtml(data.location)}</span>
-<<<<<<< HEAD
-        <span class="popup-badge">${totalCount} EVENTS</span>
-        <button class="popup-close">×</button>
-      </div>
-      <div class="popup-body cluster-popup">
-        <div class="popup-subtitle">📍 ${escapeHtml(data.location)}, ${escapeHtml(data.country)}</div>
-        ${upcomingSoon ? `<div class="cluster-summary"><span class="summary-item soon">⚡ ${upcomingSoon} upcoming within 2 weeks</span></div>` : ''}
-        <ul class="cluster-list">${listItems}</ul>
-        ${data.sampled ? `<p class="popup-more">Showing a sampled list of ${data.items.length} events.</p>` : ''}
-=======
         <span class="popup-badge">${t('popups.techEventCluster.eventsCount', { count: String(totalCount) })}</span>
         <button class="popup-close" aria-label="Close">×</button>
       </div>
@@ -2517,16 +2028,11 @@ export class MapPopup {
         ${upcomingSoon ? `<div class="cluster-summary"><span class="summary-item soon">⚡ ${t('popups.techEventCluster.upcomingWithin2Weeks', { count: String(upcomingSoon) })}</span></div>` : ''}
         <ul class="cluster-list">${listItems}</ul>
         ${data.sampled ? `<p class="popup-more">${t('popups.techEventCluster.sampled', { count: String(data.items.length) })}</p>` : ''}
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
   }
 
-<<<<<<< HEAD
-  private getMarketStatus(hours: { open: string; close: string; timezone: string }): string {
-=======
   private getMarketStatus(hours: { open: string; close: string; timezone: string }): 'open' | 'closed' | 'unknown' {
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     try {
       const now = new Date();
       const formatter = new Intl.DateTimeFormat(undefined, {
@@ -2568,23 +2074,6 @@ export class MapPopup {
       vks: 'Russian Aerospace',
       iaf: 'Israeli Air Force',
       nato: 'NATO',
-<<<<<<< HEAD
-      other: 'Unknown',
-    };
-    const typeLabels: Record<string, string> = {
-      fighter: 'Fighter',
-      bomber: 'Bomber',
-      transport: 'Transport',
-      tanker: 'Tanker',
-      awacs: 'AWACS/AEW',
-      reconnaissance: 'Reconnaissance',
-      helicopter: 'Helicopter',
-      drone: 'UAV/Drone',
-      patrol: 'Patrol',
-      special_ops: 'Special Operations',
-      vip: 'VIP Transport',
-      unknown: 'Unknown',
-=======
       other: t('popups.unknown'),
     };
     const typeLabels: Record<string, string> = {
@@ -2600,22 +2089,15 @@ export class MapPopup {
       special_ops: t('popups.militaryFlight.types.specialOps'),
       vip: t('popups.militaryFlight.types.vip'),
       unknown: t('popups.unknown'),
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
     const confidenceColors: Record<string, string> = {
       high: 'elevated',
       medium: 'low',
       low: 'low',
     };
-<<<<<<< HEAD
-    const callsign = escapeHtml(flight.callsign || 'Unknown');
-    const aircraftTypeBadge = escapeHtml(flight.aircraftType.toUpperCase());
-    const operatorLabel = escapeHtml(operatorLabels[flight.operator] || flight.operatorCountry || 'Unknown');
-=======
     const callsign = escapeHtml(flight.callsign || t('popups.unknown'));
     const aircraftTypeBadge = escapeHtml(flight.aircraftType.toUpperCase());
     const operatorLabel = escapeHtml(operatorLabels[flight.operator] || flight.operatorCountry || t('popups.unknown'));
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const hexCode = escapeHtml(flight.hexCode || '');
     const aircraftType = escapeHtml(typeLabels[flight.aircraftType] || flight.aircraftType);
     const squawk = flight.squawk ? escapeHtml(flight.squawk) : '';
@@ -2625,35 +2107,12 @@ export class MapPopup {
       <div class="popup-header military-flight ${flight.operator}">
         <span class="popup-title">${callsign}</span>
         <span class="popup-badge ${confidenceColors[flight.confidence] || 'low'}">${aircraftTypeBadge}</span>
-<<<<<<< HEAD
-        <button class="popup-close">×</button>
-=======
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">${operatorLabel}</div>
         <div class="popup-stats">
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">ALTITUDE</span>
-            <span class="stat-value">${flight.altitude > 0 ? `FL${Math.round(flight.altitude / 100)}` : 'Ground'}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">SPEED</span>
-            <span class="stat-value">${flight.speed} kts</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">HEADING</span>
-            <span class="stat-value">${Math.round(flight.heading)}°</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">HEX CODE</span>
-            <span class="stat-value">${hexCode}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">TYPE</span>
-=======
             <span class="stat-label">${t('popups.militaryFlight.altitude')}</span>
             <span class="stat-value">${flight.altitude > 0 ? `FL${Math.round(flight.altitude / 100)}` : t('popups.militaryFlight.ground')}</span>
           </div>
@@ -2671,26 +2130,17 @@ export class MapPopup {
           </div>
           <div class="popup-stat">
             <span class="stat-label">${t('popups.type')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${aircraftType}</span>
           </div>
           ${flight.squawk ? `
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">SQUAWK</span>
-=======
             <span class="stat-label">${t('popups.militaryFlight.squawk')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${squawk}</span>
           </div>
           ` : ''}
         </div>
         ${flight.note ? `<p class="popup-description">${note}</p>` : ''}
-<<<<<<< HEAD
-        <div class="popup-attribution">Source: OpenSky Network</div>
-=======
         <div class="popup-attribution">${t('popups.militaryFlight.attribution')}</div>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
   }
@@ -2705,11 +2155,7 @@ export class MapPopup {
       ruf: 'Russian Navy',
       jmsdf: 'Japan Maritime SDF',
       rokn: 'ROK Navy',
-<<<<<<< HEAD
-      other: 'Unknown',
-=======
       other: t('popups.unknown'),
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
     const typeLabels: Record<string, string> = {
       carrier: 'Aircraft Carrier',
@@ -2722,13 +2168,6 @@ export class MapPopup {
       research: 'Research',
       icebreaker: 'Icebreaker',
       special: 'Special',
-<<<<<<< HEAD
-      unknown: 'Unknown',
-    };
-
-    const darkWarning = vessel.isDark
-      ? '<span class="popup-badge high">AIS DARK</span>'
-=======
       unknown: t('popups.unknown'),
     };
 
@@ -2739,7 +2178,6 @@ export class MapPopup {
     // USNI deployment status badge
     const deploymentBadge = vessel.usniDeploymentStatus && vessel.usniDeploymentStatus !== 'unknown'
       ? `<span class="popup-badge ${vessel.usniDeploymentStatus === 'deployed' ? 'high' : vessel.usniDeploymentStatus === 'underway' ? 'elevated' : 'low'}">${vessel.usniDeploymentStatus.toUpperCase().replace('-', ' ')}</span>`
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       : '';
 
     // Show AIS ship type when military type is unknown
@@ -2749,19 +2187,11 @@ export class MapPopup {
     const badgeType = vessel.vesselType === 'unknown' && vessel.aisShipType
       ? vessel.aisShipType.toUpperCase()
       : vessel.vesselType.toUpperCase();
-<<<<<<< HEAD
-    const vesselName = escapeHtml(vessel.name || `Vessel ${vessel.mmsi}`);
-    const vesselOperator = escapeHtml(operatorLabels[vessel.operator] || vessel.operatorCountry || 'Unknown');
-    const vesselTypeLabel = escapeHtml(displayType);
-    const vesselBadgeType = escapeHtml(badgeType);
-    const vesselMmsi = escapeHtml(vessel.mmsi);
-=======
     const vesselName = escapeHtml(vessel.name || `${t('popups.militaryVessel.vessel')} ${vessel.mmsi}`);
     const vesselOperator = escapeHtml(operatorLabels[vessel.operator] || vessel.operatorCountry || t('popups.unknown'));
     const vesselTypeLabel = escapeHtml(displayType);
     const vesselBadgeType = escapeHtml(badgeType);
     const vesselMmsi = escapeHtml(vessel.mmsi || '—');
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const vesselHull = vessel.hullNumber ? escapeHtml(vessel.hullNumber) : '';
     const vesselNote = vessel.note ? escapeHtml(vessel.note) : '';
 
@@ -2769,39 +2199,14 @@ export class MapPopup {
       <div class="popup-header military-vessel ${vessel.operator}">
         <span class="popup-title">${vesselName}</span>
         ${darkWarning}
-<<<<<<< HEAD
-        <span class="popup-badge elevated">${vesselBadgeType}</span>
-        <button class="popup-close">×</button>
-=======
         ${deploymentBadge}
         <span class="popup-badge elevated">${vesselBadgeType}</span>
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">${vesselOperator}</div>
         <div class="popup-stats">
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">TYPE</span>
-            <span class="stat-value">${vesselTypeLabel}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">SPEED</span>
-            <span class="stat-value">${vessel.speed} kts</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">HEADING</span>
-            <span class="stat-value">${Math.round(vessel.heading)}°</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">MMSI</span>
-            <span class="stat-value">${vesselMmsi}</span>
-          </div>
-          ${vessel.hullNumber ? `
-          <div class="popup-stat">
-            <span class="stat-label">HULL #</span>
-=======
             <span class="stat-label">${t('popups.type')}</span>
             <span class="stat-value">${vesselTypeLabel}</span>
           </div>
@@ -2834,38 +2239,25 @@ export class MapPopup {
           ${vessel.hullNumber ? `
           <div class="popup-stat">
             <span class="stat-label">${t('popups.militaryVessel.hull')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${vesselHull}</span>
           </div>
           ` : ''}
         </div>
-<<<<<<< HEAD
-        ${vessel.note ? `<p class="popup-description">${vesselNote}</p>` : ''}
-        ${vessel.isDark ? '<p class="popup-description alert">⚠ Vessel has gone dark - AIS signal lost. May indicate sensitive operations.</p>' : ''}
-=======
         ${vessel.usniActivityDescription ? `<p class="popup-description"><strong>${t('popups.militaryVessel.usniIntel')}:</strong> ${escapeHtml(vessel.usniActivityDescription)}</p>` : ''}
         ${vessel.note ? `<p class="popup-description">${vesselNote}</p>` : ''}
         ${vessel.isDark ? `<p class="popup-description alert">${t('popups.militaryVessel.darkDescription')}</p>` : ''}
         ${vessel.usniSource ? `<p class="popup-description" style="opacity:0.7;font-size:0.85em">${t('popups.militaryVessel.approximatePosition')}</p>` : ''}
         ${vessel.usniArticleUrl ? `<div class="popup-attribution"><a href="${escapeHtml(vessel.usniArticleUrl)}" target="_blank" rel="noopener">${t('popups.militaryVessel.usniSource')}${vessel.usniArticleDate ? ` (${new Date(vessel.usniArticleDate).toLocaleDateString()})` : ''}</a></div>` : ''}
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
   }
 
   private renderMilitaryFlightClusterPopup(cluster: MilitaryFlightCluster): string {
     const activityLabels: Record<string, string> = {
-<<<<<<< HEAD
-      exercise: 'Military Exercise',
-      patrol: 'Patrol Activity',
-      transport: 'Transport Operations',
-      unknown: 'Military Activity',
-=======
       exercise: t('popups.militaryCluster.flightActivity.exercise'),
       patrol: t('popups.militaryCluster.flightActivity.patrol'),
       transport: t('popups.militaryCluster.flightActivity.transport'),
       unknown: t('popups.militaryCluster.flightActivity.unknown'),
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
     const activityColors: Record<string, string> = {
       exercise: 'high',
@@ -2883,30 +2275,12 @@ export class MapPopup {
       .map(f => `<div class="cluster-flight-item">${escapeHtml(f.callsign)} - ${escapeHtml(f.aircraftType)}</div>`)
       .join('');
     const moreFlights = cluster.flightCount > 5
-<<<<<<< HEAD
-      ? `<div class="cluster-more">+${cluster.flightCount - 5} more aircraft</div>`
-=======
       ? `<div class="cluster-more">${t('popups.militaryCluster.moreAircraft', { count: String(cluster.flightCount - 5) })}</div>`
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       : '';
 
     return `
       <div class="popup-header military-cluster">
         <span class="popup-title">${clusterName}</span>
-<<<<<<< HEAD
-        <span class="popup-badge ${activityColors[activityType] || 'low'}">${cluster.flightCount} AIRCRAFT</span>
-        <button class="popup-close">×</button>
-      </div>
-      <div class="popup-body">
-        <div class="popup-subtitle">${activityLabels[activityType] || 'Military Activity'}</div>
-        <div class="popup-stats">
-          <div class="popup-stat">
-            <span class="stat-label">AIRCRAFT</span>
-            <span class="stat-value">${cluster.flightCount}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">ACTIVITY</span>
-=======
         <span class="popup-badge ${activityColors[activityType] || 'low'}">${t('popups.militaryCluster.aircraftCount', { count: String(cluster.flightCount) })}</span>
         <button class="popup-close" aria-label="Close">×</button>
       </div>
@@ -2919,26 +2293,17 @@ export class MapPopup {
           </div>
           <div class="popup-stat">
             <span class="stat-label">${t('popups.militaryCluster.activity')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${activityTypeLabel}</span>
           </div>
           ${cluster.dominantOperator ? `
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">PRIMARY</span>
-=======
             <span class="stat-label">${t('popups.militaryCluster.primary')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${dominantOperator}</span>
           </div>
           ` : ''}
         </div>
         <div class="popup-section">
-<<<<<<< HEAD
-          <span class="section-label">TRACKED AIRCRAFT</span>
-=======
           <span class="section-label">${t('popups.militaryCluster.trackedAircraft')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           <div class="cluster-flights">
             ${flightSummary}
             ${moreFlights}
@@ -2950,19 +2315,11 @@ export class MapPopup {
 
   private renderMilitaryVesselClusterPopup(cluster: MilitaryVesselCluster): string {
     const activityLabels: Record<string, string> = {
-<<<<<<< HEAD
-      exercise: 'Naval Exercise',
-      deployment: 'Naval Deployment',
-      patrol: 'Patrol Activity',
-      transit: 'Fleet Transit',
-      unknown: 'Naval Activity',
-=======
       exercise: t('popups.militaryCluster.vesselActivity.exercise'),
       deployment: t('popups.militaryCluster.vesselActivity.deployment'),
       patrol: t('popups.militaryCluster.vesselActivity.patrol'),
       transit: t('popups.militaryCluster.vesselActivity.transit'),
       unknown: t('popups.militaryCluster.vesselActivity.unknown'),
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
     const activityColors: Record<string, string> = {
       exercise: 'high',
@@ -2976,35 +2333,27 @@ export class MapPopup {
     const clusterName = escapeHtml(cluster.name);
     const activityTypeLabel = escapeHtml(activityType.toUpperCase());
     const region = cluster.region ? escapeHtml(cluster.region) : '';
-    const vesselSummary = cluster.vessels
+    const visibleVessels = cluster.vessels
       .slice(0, 5)
       .map(v => `<div class="cluster-vessel-item">${escapeHtml(v.name)} - ${escapeHtml(v.vesselType)}</div>`)
       .join('');
-    const moreVessels = cluster.vesselCount > 5
-<<<<<<< HEAD
-      ? `<div class="cluster-more">+${cluster.vesselCount - 5} more vessels</div>`
-=======
-      ? `<div class="cluster-more">${t('popups.militaryCluster.moreVessels', { count: String(cluster.vesselCount - 5) })}</div>`
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+    const hiddenVessels = cluster.vessels.length > 5
+      ? cluster.vessels
+          .slice(5)
+          .map(v => `<div class="cluster-vessel-item">${escapeHtml(v.name)} - ${escapeHtml(v.vesselType)}</div>`)
+          .join('')
       : '';
+    const hiddenCount = cluster.vessels.length - 5;
+    const moreLabel = escapeHtml(t('popups.militaryCluster.moreVessels', { count: String(hiddenCount) }));
+    const lessLabel = escapeHtml(t('popups.militaryCluster.showLess'));
+    const vesselSummary = hiddenVessels
+      ? `${visibleVessels}<div class="cluster-vessels-hidden" style="display:none">${hiddenVessels}</div>`
+        + `<button type="button" class="cluster-toggle" data-more="${moreLabel}" data-less="${lessLabel}">${moreLabel}</button>`
+      : visibleVessels;
 
     return `
       <div class="popup-header military-cluster">
         <span class="popup-title">${clusterName}</span>
-<<<<<<< HEAD
-        <span class="popup-badge ${activityColors[activityType] || 'low'}">${cluster.vesselCount} VESSELS</span>
-        <button class="popup-close">×</button>
-      </div>
-      <div class="popup-body">
-        <div class="popup-subtitle">${activityLabels[activityType] || 'Naval Activity'}</div>
-        <div class="popup-stats">
-          <div class="popup-stat">
-            <span class="stat-label">VESSELS</span>
-            <span class="stat-value">${cluster.vesselCount}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">ACTIVITY</span>
-=======
         <span class="popup-badge ${activityColors[activityType] || 'low'}">${t('popups.militaryCluster.vesselsCount', { count: String(cluster.vesselCount) })}</span>
         <button class="popup-close" aria-label="Close">×</button>
       </div>
@@ -3017,43 +2366,30 @@ export class MapPopup {
           </div>
           <div class="popup-stat">
             <span class="stat-label">${t('popups.militaryCluster.activity')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${activityTypeLabel}</span>
           </div>
           ${cluster.region ? `
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">REGION</span>
-=======
             <span class="stat-label">${t('popups.region')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${region}</span>
           </div>
           ` : ''}
         </div>
         <div class="popup-section">
-<<<<<<< HEAD
-          <span class="section-label">TRACKED VESSELS</span>
-=======
           <span class="section-label">${t('popups.militaryCluster.trackedVessels')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           <div class="cluster-vessels">
             ${vesselSummary}
-            ${moreVessels}
           </div>
         </div>
       </div>
     `;
   }
 
-<<<<<<< HEAD
-=======
   private sanitizeClassToken(value: string | undefined, fallback = 'unknown'): string {
     const token = String(value || '').trim().replace(/[^A-Za-z0-9_-]/g, '').replace(/^[^A-Za-z_]/, '');
     return token || fallback;
   }
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   private renderNaturalEventPopup(event: NaturalEvent): string {
     const categoryColors: Record<string, string> = {
       severeStorms: 'high',
@@ -3072,16 +2408,6 @@ export class MapPopup {
     };
     const icon = getNaturalEventIcon(event.category);
     const severityClass = categoryColors[event.category] || 'low';
-<<<<<<< HEAD
-    const timeAgo = this.getTimeAgo(event.date);
-
-    return `
-      <div class="popup-header nat-event ${event.category}">
-        <span class="popup-icon">${icon}</span>
-        <span class="popup-title">${escapeHtml(event.categoryTitle.toUpperCase())}</span>
-        <span class="popup-badge ${severityClass}">${event.closed ? 'CLOSED' : 'ACTIVE'}</span>
-        <button class="popup-close">×</button>
-=======
     const categoryClass = this.sanitizeClassToken(event.category, 'manmade');
     const timeAgo = this.getTimeAgo(event.date);
 
@@ -3091,77 +2417,46 @@ export class MapPopup {
         <span class="popup-title">${escapeHtml(event.categoryTitle.toUpperCase())}</span>
         <span class="popup-badge ${severityClass}">${event.closed ? t('popups.naturalEvent.closed') : t('popups.naturalEvent.active')}</span>
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">${escapeHtml(event.title)}</div>
         <div class="popup-stats">
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">REPORTED</span>
-            <span class="stat-value">${timeAgo}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">COORDINATES</span>
-=======
             <span class="stat-label">${t('popups.naturalEvent.reported')}</span>
             <span class="stat-value">${timeAgo}</span>
           </div>
           <div class="popup-stat">
             <span class="stat-label">${t('popups.coordinates')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${event.lat.toFixed(2)}°, ${event.lon.toFixed(2)}°</span>
           </div>
           ${event.magnitude ? `
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">MAGNITUDE</span>
-=======
             <span class="stat-label">${t('popups.magnitude')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${event.magnitude}${event.magnitudeUnit ? ` ${escapeHtml(event.magnitudeUnit)}` : ''}</span>
           </div>
           ` : ''}
           ${event.sourceName ? `
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">SOURCE</span>
-=======
             <span class="stat-label">${t('popups.source')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${escapeHtml(event.sourceName)}</span>
           </div>
           ` : ''}
         </div>
         ${event.description ? `<p class="popup-description">${escapeHtml(event.description)}</p>` : ''}
-<<<<<<< HEAD
-        ${event.sourceUrl ? `<a href="${sanitizeUrl(event.sourceUrl)}" target="_blank" class="popup-link">View on ${escapeHtml(event.sourceName || 'source')} →</a>` : ''}
-        <div class="popup-attribution">Data: NASA EONET</div>
-=======
         ${event.sourceUrl ? `<a href="${sanitizeUrl(event.sourceUrl)}" target="_blank" class="popup-link">${t('popups.naturalEvent.viewOnSource', { source: escapeHtml(event.sourceName || t('popups.source')) })} →</a>` : ''}
         <div class="popup-attribution">${t('popups.naturalEvent.attribution')}</div>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
   }
 
   private renderPortPopup(port: Port): string {
     const typeLabels: Record<string, string> = {
-<<<<<<< HEAD
-      container: 'CONTAINER',
-      oil: 'OIL TERMINAL',
-      lng: 'LNG TERMINAL',
-      naval: 'NAVAL PORT',
-      mixed: 'MIXED',
-      bulk: 'BULK',
-=======
       container: t('popups.port.types.container'),
       oil: t('popups.port.types.oil'),
       lng: t('popups.port.types.lng'),
       naval: t('popups.port.types.naval'),
       mixed: t('popups.port.types.mixed'),
       bulk: t('popups.port.types.bulk'),
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
     const typeColors: Record<string, string> = {
       container: 'elevated',
@@ -3181,11 +2476,7 @@ export class MapPopup {
     };
 
     const rankSection = port.rank
-<<<<<<< HEAD
-      ? `<div class="popup-stat"><span class="stat-label">WORLD RANK</span><span class="stat-value">#${port.rank}</span></div>`
-=======
       ? `<div class="popup-stat"><span class="stat-label">${t('popups.port.worldRank')}</span><span class="stat-value">#${port.rank}</span></div>`
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       : '';
 
     return `
@@ -3193,30 +2484,18 @@ export class MapPopup {
         <span class="popup-icon">${typeIcons[port.type] || '🚢'}</span>
         <span class="popup-title">${escapeHtml(port.name.toUpperCase())}</span>
         <span class="popup-badge ${typeColors[port.type] || 'normal'}">${typeLabels[port.type] || port.type.toUpperCase()}</span>
-<<<<<<< HEAD
-        <button class="popup-close">×</button>
-=======
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">${escapeHtml(port.country)}</div>
         <div class="popup-stats">
           ${rankSection}
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">TYPE</span>
-            <span class="stat-value">${typeLabels[port.type] || port.type.toUpperCase()}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">COORDINATES</span>
-=======
             <span class="stat-label">${t('popups.type')}</span>
             <span class="stat-value">${typeLabels[port.type] || port.type.toUpperCase()}</span>
           </div>
           <div class="popup-stat">
             <span class="stat-label">${t('popups.coordinates')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${port.lat.toFixed(2)}°, ${port.lon.toFixed(2)}°</span>
           </div>
         </div>
@@ -3232,15 +2511,9 @@ export class MapPopup {
       'inactive': 'low',
     };
     const statusLabels: Record<string, string> = {
-<<<<<<< HEAD
-      'active': 'ACTIVE',
-      'construction': 'CONSTRUCTION',
-      'inactive': 'INACTIVE',
-=======
       'active': t('popups.spaceport.status.active'),
       'construction': t('popups.spaceport.status.construction'),
       'inactive': t('popups.spaceport.status.inactive'),
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
 
     return `
@@ -3248,27 +2521,12 @@ export class MapPopup {
         <span class="popup-icon">🚀</span>
         <span class="popup-title">${escapeHtml(port.name.toUpperCase())}</span>
         <span class="popup-badge ${statusColors[port.status] || 'normal'}">${statusLabels[port.status] || port.status.toUpperCase()}</span>
-<<<<<<< HEAD
-        <button class="popup-close">×</button>
-=======
         <button class="popup-close" aria-label="Close">×</button>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
       <div class="popup-body">
         <div class="popup-subtitle">${escapeHtml(port.operator)} • ${escapeHtml(port.country)}</div>
         <div class="popup-stats">
           <div class="popup-stat">
-<<<<<<< HEAD
-            <span class="stat-label">LAUNCH ACTIVITY</span>
-            <span class="stat-value">${escapeHtml(port.launches.toUpperCase())}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">COORDINATES</span>
-            <span class="stat-value">${port.lat.toFixed(2)}°, ${port.lon.toFixed(2)}°</span>
-          </div>
-        </div>
-        <p class="popup-description">Strategic space launch facility. Launch cadence and orbit access capabilities are key geopolitical indicators.</p>
-=======
             <span class="stat-label">${t('popups.spaceport.launchActivity')}</span>
             <span class="stat-value">${escapeHtml(port.launches.toUpperCase())}</span>
           </div>
@@ -3278,7 +2536,6 @@ export class MapPopup {
           </div>
         </div>
         <p class="popup-description">${t('popups.spaceport.description')}</p>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
   }
@@ -3290,19 +2547,11 @@ export class MapPopup {
       'exploration': 'low',
     };
     const statusLabels: Record<string, string> = {
-<<<<<<< HEAD
-      'producing': 'PRODUCING',
-      'development': 'DEVELOPMENT',
-      'exploration': 'EXPLORATION',
-    };
-    
-=======
       'producing': t('popups.mineral.status.producing'),
       'development': t('popups.mineral.status.development'),
       'exploration': t('popups.mineral.status.exploration'),
     };
 
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     // Icon based on mineral type
     const icon = mine.mineral === 'Lithium' ? '🔋' : mine.mineral === 'Rare Earths' ? '🧲' : '💎';
 
@@ -3311,23 +2560,6 @@ export class MapPopup {
         <span class="popup-icon">${icon}</span>
         <span class="popup-title">${escapeHtml(mine.name.toUpperCase())}</span>
         <span class="popup-badge ${statusColors[mine.status] || 'normal'}">${statusLabels[mine.status] || mine.status.toUpperCase()}</span>
-<<<<<<< HEAD
-        <button class="popup-close">×</button>
-      </div>
-      <div class="popup-body">
-        <div class="popup-subtitle">${escapeHtml(mine.mineral.toUpperCase())} PROJECT</div>
-        <div class="popup-stats">
-          <div class="popup-stat">
-            <span class="stat-label">OPERATOR</span>
-            <span class="stat-value">${escapeHtml(mine.operator)}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">COUNTRY</span>
-            <span class="stat-value">${escapeHtml(mine.country)}</span>
-          </div>
-          <div class="popup-stat">
-            <span class="stat-label">COORDINATES</span>
-=======
         <button class="popup-close" aria-label="Close">×</button>
       </div>
       <div class="popup-body">
@@ -3343,7 +2575,6 @@ export class MapPopup {
           </div>
           <div class="popup-stat">
             <span class="stat-label">${t('popups.coordinates')}</span>
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="stat-value">${mine.lat.toFixed(2)}°, ${mine.lon.toFixed(2)}°</span>
           </div>
         </div>
@@ -3351,8 +2582,6 @@ export class MapPopup {
       </div>
     `;
   }
-<<<<<<< HEAD
-=======
 
   private renderStockExchangePopup(exchange: StockExchangePopupData): string {
     const tierLabel = exchange.tier.toUpperCase();
@@ -3481,7 +2710,7 @@ export class MapPopup {
       const rSev = this.normalizeSeverity(r.severity);
       const rTime = r.timestamp ? this.getTimeAgo(new Date(r.timestamp)) : '';
       const rTitle = r.title.length > 60 ? r.title.slice(0, 60) + '…' : r.title;
-      return `<li class="cluster-item"><span class="popup-badge ${rSev}" style="font-size:9px;padding:1px 4px;">${escapeHtml(rSev.toUpperCase())}</span> ${escapeHtml(rTitle)}${rTime ? ` <span style="color:var(--text-muted);font-size:10px;">${escapeHtml(rTime)}</span>` : ''}</li>`;
+      return `<li class="cluster-item"><span class="popup-badge ${rSev}">${escapeHtml(rSev.toUpperCase())}</span> ${escapeHtml(rTitle)}${rTime ? ` <span style="color:var(--text-muted);font-size:10px;">${escapeHtml(rTime)}</span>` : ''}</li>`;
     }).join('')}
           </ul>
         </div>` : '';
@@ -3526,16 +2755,16 @@ export class MapPopup {
       <div class="popup-body">
         <div class="popup-stats">
           <div class="popup-stat">
-            <span class="stat-label">${t('popups.gpsJamming.interference')}</span>
-            <span class="stat-value">${data.pct}%</span>
+            <span class="stat-label">${t('popups.gpsJamming.navPerformance')}</span>
+            <span class="stat-value">${Number(data.npAvg).toFixed(2)}</span>
           </div>
           <div class="popup-stat">
-            <span class="stat-label">${t('popups.gpsJamming.aircraftAffected')}</span>
-            <span class="stat-value">${data.bad} / ${data.total}</span>
+            <span class="stat-label">${t('popups.gpsJamming.samples')}</span>
+            <span class="stat-value">${data.sampleCount}</span>
           </div>
           <div class="popup-stat">
-            <span class="stat-label">${t('popups.gpsJamming.aircraftNormal')}</span>
-            <span class="stat-value">${data.good}</span>
+            <span class="stat-label">${t('popups.gpsJamming.aircraft')}</span>
+            <span class="stat-value">${data.aircraftCount}</span>
           </div>
           <div class="popup-stat">
             <span class="stat-label">${t('popups.gpsJamming.h3Hex')}</span>
@@ -3545,5 +2774,4 @@ export class MapPopup {
       </div>
     `;
   }
->>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
