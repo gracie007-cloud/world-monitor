@@ -78,11 +78,16 @@ class ParallelAnalysisService {
   private analysisCount = 0;
 
   async analyzeHeadlines(clusters: ClusteredEvent[]): Promise<AnalysisReport> {
+<<<<<<< HEAD
     const startTime = performance.now();
     this.analysisCount++;
 
     console.group(`%c🔬 Parallel Analysis #${this.analysisCount}`, 'color: #6b8afd; font-weight: bold; font-size: 14px');
     console.log(`%cAnalyzing ${clusters.length} headlines...`, 'color: #888');
+=======
+
+    this.analysisCount++;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     const analyzed: AnalyzedHeadline[] = [];
     const titles = clusters.map(c => c.primaryTitle);
@@ -100,12 +105,15 @@ class ParallelAnalysisService {
       sentiments = s;
       entities = e;
       embeddings = emb;
+<<<<<<< HEAD
 
       console.log(`%c✓ ML models loaded`, 'color: #4ade80');
       if (entities) console.log(`%c  → NER extracted ${entities.flat().length} entities`, 'color: #888');
       if (embeddings) console.log(`%c  → Embeddings computed for ${embeddings.length} headlines`, 'color: #888');
     } else {
       console.log(`%c⚠ ML not available, using keyword-only analysis`, 'color: #f59e0b');
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
 
     for (let i = 0; i < clusters.length; i++) {
@@ -191,9 +199,12 @@ class ParallelAnalysisService {
     };
 
     this.lastReport = report;
+<<<<<<< HEAD
     this.logReport(report, performance.now() - startTime);
     console.groupEnd();
 
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     return report;
   }
 
@@ -508,6 +519,7 @@ class ParallelAnalysisService {
     return mlWorker.embedTexts(titles);
   }
 
+<<<<<<< HEAD
   private logReport(report: AnalysisReport, durationMs: number): void {
     console.log(`%c⏱ Analysis completed in ${durationMs.toFixed(0)}ms`, 'color: #888');
 
@@ -550,6 +562,8 @@ class ParallelAnalysisService {
     });
   }
 
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   getLastReport(): AnalysisReport | null {
     return this.lastReport;
   }

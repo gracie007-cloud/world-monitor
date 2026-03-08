@@ -79,10 +79,19 @@ export async function fetchRecentAwards(options: {
   if (awardTypes.includes('grant')) awardTypeCodes.push('02', '03', '04', '05', '06', '10');
   if (awardTypes.includes('loan')) awardTypeCodes.push('07', '08');
 
+<<<<<<< HEAD
+=======
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20000);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   try {
     const response = await fetch(`${API_BASE}/search/spending_by_award/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+<<<<<<< HEAD
+=======
+      signal: controller.signal,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       body: JSON.stringify({
         filters: {
           time_period: [{ start_date: periodStart, end_date: periodEnd }],
@@ -144,6 +153,11 @@ export async function fetchRecentAwards(options: {
       periodEnd,
       fetchedAt: new Date(),
     };
+<<<<<<< HEAD
+=======
+  } finally {
+    clearTimeout(timeout);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 }
 

@@ -1,4 +1,5 @@
 import { Panel } from './Panel';
+<<<<<<< HEAD
 import { escapeHtml, sanitizeUrl } from '@/utils/sanitize';
 
 interface TechEventCoords {
@@ -32,14 +33,34 @@ interface TechEventsResponse {
 
 type ViewMode = 'upcoming' | 'conferences' | 'earnings' | 'all';
 
+=======
+import { t } from '@/services/i18n';
+import { sanitizeUrl } from '@/utils/sanitize';
+import { h, replaceChildren } from '@/utils/dom-utils';
+import { isDesktopRuntime } from '@/services/runtime';
+import { ResearchServiceClient } from '@/generated/client/worldmonitor/research/v1/service_client';
+import type { TechEvent } from '@/generated/client/worldmonitor/research/v1/service_client';
+import type { NewsItem, DeductContextDetail } from '@/types';
+import { buildNewsContext } from '@/utils/news-context';
+
+type ViewMode = 'upcoming' | 'conferences' | 'earnings' | 'all';
+
+const researchClient = new ResearchServiceClient('', { fetch: (...args) => globalThis.fetch(...args) });
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 export class TechEventsPanel extends Panel {
   private viewMode: ViewMode = 'upcoming';
   private events: TechEvent[] = [];
   private loading = true;
   private error: string | null = null;
 
+<<<<<<< HEAD
   constructor(id: string) {
     super({ id, title: 'Tech Events', showCount: true });
+=======
+  constructor(id: string, private getLatestNews?: () => NewsItem[]) {
+    super({ id, title: t('panels.events'), showCount: true });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     this.element.classList.add('panel-tall');
     void this.fetchEvents();
   }
@@ -49,6 +70,7 @@ export class TechEventsPanel extends Panel {
     this.error = null;
     this.render();
 
+<<<<<<< HEAD
     try {
       const res = await fetch('/api/tech-events?days=180&limit=100');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -65,20 +87,69 @@ export class TechEventsPanel extends Panel {
       this.loading = false;
       this.render();
     }
+=======
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const data = await researchClient.listTechEvents({
+          type: '',
+          mappable: false,
+          days: 180,
+          limit: 100,
+        });
+        if (!this.element?.isConnected) return;
+        if (!data.success) throw new Error(data.error || 'Unknown error');
+
+        this.events = data.events;
+        this.setCount(data.conferenceCount);
+        this.error = null;
+
+        if (this.events.length === 0 && attempt < 2) {
+          this.showRetrying();
+          await new Promise(r => setTimeout(r, 15_000));
+          if (!this.element?.isConnected) return;
+          continue;
+        }
+        break;
+      } catch (err) {
+        if (this.isAbortError(err)) return;
+        if (!this.element?.isConnected) return;
+        if (attempt < 2) {
+          this.showRetrying();
+          await new Promise(r => setTimeout(r, 15_000));
+          if (!this.element?.isConnected) return;
+          continue;
+        }
+        this.error = err instanceof Error ? err.message : 'Failed to fetch events';
+        console.error('[TechEvents] Fetch error:', err);
+      }
+    }
+    this.loading = false;
+    this.render();
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   protected render(): void {
     if (this.loading) {
+<<<<<<< HEAD
       this.content.innerHTML = `
         <div class="tech-events-loading">
           <div class="loading-spinner"></div>
           <span>Loading tech events...</span>
         </div>
       `;
+=======
+      replaceChildren(this.content,
+        h('div', { className: 'tech-events-loading' },
+          h('div', { className: 'loading-spinner' }),
+          h('span', null, t('components.techEvents.loading')),
+        ),
+      );
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return;
     }
 
     if (this.error) {
+<<<<<<< HEAD
       this.content.innerHTML = `
         <div class="tech-events-error">
           <span class="error-icon">⚠️</span>
@@ -86,6 +157,15 @@ export class TechEventsPanel extends Panel {
           <button class="retry-btn" onclick="this.closest('.panel').querySelector('.panel-content').__panel?.refresh()">Retry</button>
         </div>
       `;
+=======
+      replaceChildren(this.content,
+        h('div', { className: 'tech-events-error' },
+          h('span', { className: 'error-icon' }, '⚠️'),
+          h('span', { className: 'error-text' }, this.error),
+          h('button', { className: 'retry-btn', onClick: () => this.refresh() }, t('common.retry')),
+        ),
+      );
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return;
     }
 
@@ -93,6 +173,7 @@ export class TechEventsPanel extends Panel {
     const upcomingConferences = this.events.filter(e => e.type === 'conference' && new Date(e.startDate) >= new Date());
     const mappableCount = upcomingConferences.filter(e => e.coords && !e.coords.virtual).length;
 
+<<<<<<< HEAD
     this.content.innerHTML = `
       <div class="tech-events-panel">
         <div class="tech-events-tabs">
@@ -135,6 +216,38 @@ export class TechEventsPanel extends Panel {
         this.panToLocation(lat, lng);
       });
     });
+=======
+    const tabEntries: [ViewMode, string][] = [
+      ['upcoming', t('components.techEvents.upcoming')],
+      ['conferences', t('components.techEvents.conferences')],
+      ['earnings', t('components.techEvents.earnings')],
+      ['all', t('components.techEvents.all')],
+    ];
+
+    replaceChildren(this.content,
+      h('div', { className: 'tech-events-panel' },
+        h('div', { className: 'tech-events-tabs' },
+          ...tabEntries.map(([view, label]) =>
+            h('button', {
+              className: `tab ${this.viewMode === view ? 'active' : ''}`,
+              dataset: { view },
+              onClick: () => { this.viewMode = view; this.render(); },
+            }, label),
+          ),
+        ),
+        h('div', { className: 'tech-events-stats' },
+          h('span', { className: 'stat' }, `📅 ${t('components.techEvents.conferencesCount', { count: String(upcomingConferences.length) })}`),
+          h('span', { className: 'stat' }, `📍 ${t('components.techEvents.onMap', { count: String(mappableCount) })}`),
+          h('a', { href: 'https://www.techmeme.com/events', target: '_blank', rel: 'noopener', className: 'source-link' }, t('components.techEvents.techmemeEvents')),
+        ),
+        h('div', { className: 'tech-events-list' },
+          ...(filteredEvents.length > 0
+            ? filteredEvents.map(e => this.buildEvent(e))
+            : [h('div', { className: 'empty-state' }, t('components.techEvents.noEvents'))]),
+        ),
+      ),
+    );
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   private getFilteredEvents(): TechEvent[] {
@@ -162,13 +275,21 @@ export class TechEventsPanel extends Panel {
     }
   }
 
+<<<<<<< HEAD
   private renderEvent(event: TechEvent): string {
+=======
+  private buildEvent(event: TechEvent): HTMLElement {
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const startDate = new Date(event.startDate);
     const endDate = new Date(event.endDate);
     const now = new Date();
 
     const isToday = startDate.toDateString() === now.toDateString();
+<<<<<<< HEAD
     const isSoon = !isToday && startDate <= new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000); // Within 2 days
+=======
+    const isSoon = !isToday && startDate <= new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const isThisWeek = startDate <= new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
     const dateStr = startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -190,6 +311,7 @@ export class TechEventsPanel extends Panel {
       other: 'type-other',
     };
 
+<<<<<<< HEAD
     const mapLink = event.coords && !event.coords.virtual
       ? `<button class="event-map-link" data-lat="${event.coords.lat}" data-lng="${event.coords.lng}" title="Show on map">📍</button>`
       : '';
@@ -225,6 +347,74 @@ export class TechEventsPanel extends Panel {
         </div>
       </div>
     `;
+=======
+    const className = [
+      'tech-event',
+      typeClasses[event.type],
+      isToday ? 'is-today' : '',
+      isSoon ? 'is-soon' : '',
+      isThisWeek ? 'is-this-week' : '',
+    ].filter(Boolean).join(' ');
+
+    const safeEventUrl = sanitizeUrl(event.url || '');
+
+    return h('div', { className },
+      h('div', { className: 'event-date' },
+        h('span', { className: 'event-month' }, startDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()),
+        h('span', { className: 'event-day' }, String(startDate.getDate())),
+        isToday ? h('span', { className: 'today-badge' }, t('components.techEvents.today')) : false,
+        isSoon ? h('span', { className: 'soon-badge' }, t('components.techEvents.soon')) : false,
+      ),
+      h('div', { className: 'event-content' },
+        h('div', { className: 'event-header' },
+          h('span', { className: 'event-icon' }, typeIcons[event.type] ?? '📌'),
+          h('span', { className: 'event-title' }, event.title),
+          safeEventUrl
+            ? h('a', { href: safeEventUrl, target: '_blank', rel: 'noopener', className: 'event-url', title: t('components.techEvents.moreInfo') }, '↗')
+            : false,
+        ),
+        h('div', { className: 'event-meta' },
+          h('span', { className: 'event-dates' }, `${dateStr}${endDateStr}`),
+          event.location
+            ? h('span', { className: 'event-location' }, event.location)
+            : false,
+          isDesktopRuntime() ? h('button', {
+            className: 'event-deduce-link',
+            title: 'Deduce Situation with AI',
+            style: 'background: none; border: none; cursor: pointer; opacity: 0.7; font-size: 1.1em; transition: opacity 0.2s; margin-left: auto; padding-right: 4px;',
+            onClick: (e: Event) => {
+              e.preventDefault();
+              e.stopPropagation();
+
+              let geoContext = `Event details: ${event.title} (${event.type}) taking place from ${dateStr}${endDateStr}. Location: ${event.location || 'Unknown/Virtual'}.`;
+
+              if (this.getLatestNews) {
+                const newsCtx = buildNewsContext(this.getLatestNews);
+                if (newsCtx) geoContext += `\n\n${newsCtx}`;
+              }
+
+              const detail: DeductContextDetail = {
+                query: `What is the expected impact of the tech event: ${event.title}?`,
+                geoContext,
+                autoSubmit: true,
+              };
+              document.dispatchEvent(new CustomEvent('wm:deduct-context', { detail }));
+            },
+          }, '\u{1F9E0}') : false,
+          event.coords && !event.coords.virtual
+            ? h('button', {
+              className: 'event-map-link',
+              title: t('components.techEvents.showOnMap'),
+              onClick: (e: Event) => {
+                e.preventDefault();
+                this.panToLocation(event.coords!.lat, event.coords!.lng);
+              },
+            }, '📍')
+            : false,
+        ),
+      ),
+    );
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   private panToLocation(lat: number, lng: number): void {

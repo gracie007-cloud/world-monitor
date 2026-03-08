@@ -1,25 +1,25 @@
+<<<<<<< HEAD
 import type { Earthquake } from '@/types';
 import { API_URLS } from '@/config';
 import { createCircuitBreaker } from '@/utils';
 import { getPersistentCache, setPersistentCache } from './persistent-cache';
+=======
+import {
+  SeismologyServiceClient,
+  type Earthquake,
+  type ListEarthquakesResponse,
+} from '@/generated/client/worldmonitor/seismology/v1/service_client';
+import { createCircuitBreaker } from '@/utils';
+import { getHydratedData } from '@/services/bootstrap';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
-interface USGSFeature {
-  id: string;
-  properties: {
-    place: string;
-    mag: number;
-    time: number;
-    url: string;
-  };
-  geometry: {
-    coordinates: [number, number, number];
-  };
-}
+// Re-export the proto Earthquake type as the domain's public type
+export type { Earthquake };
 
-interface USGSResponse {
-  features: USGSFeature[];
-}
+const client = new SeismologyServiceClient('', { fetch: (...args) => globalThis.fetch(...args) });
+const breaker = createCircuitBreaker<ListEarthquakesResponse>({ name: 'Seismology', cacheTtlMs: 30 * 60 * 1000, persistCache: true });
 
+<<<<<<< HEAD
 const OVERLAY_CACHE_KEY = 'map-overlay:earthquakes';
 const breaker = createCircuitBreaker<Earthquake[]>({ name: 'USGS Earthquakes' });
 
@@ -64,4 +64,16 @@ export function getEarthquakesStatus(): string {
 
 export function getEarthquakesDataState() {
   return breaker.getDataState();
+=======
+const emptyFallback: ListEarthquakesResponse = { earthquakes: [] };
+
+export async function fetchEarthquakes(): Promise<Earthquake[]> {
+  const hydrated = getHydratedData('earthquakes') as ListEarthquakesResponse | undefined;
+  if (hydrated?.earthquakes?.length) return hydrated.earthquakes;
+
+  const response = await breaker.execute(async () => {
+    return client.listEarthquakes({ minMagnitude: 0, start: 0, end: 0, pageSize: 0, cursor: '' });
+  }, emptyFallback);
+  return response.earthquakes;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }

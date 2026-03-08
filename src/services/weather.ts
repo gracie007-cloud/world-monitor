@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { createCircuitBreaker } from '@/utils';
+=======
+import { createCircuitBreaker, getCSSColor } from '@/utils';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export interface WeatherAlert {
   id: string;
@@ -35,7 +39,11 @@ interface NWSResponse {
 }
 
 const NWS_API = 'https://api.weather.gov/alerts/active';
+<<<<<<< HEAD
 const breaker = createCircuitBreaker<WeatherAlert[]>({ name: 'NWS Weather' });
+=======
+const breaker = createCircuitBreaker<WeatherAlert[]>({ name: 'NWS Weather', cacheTtlMs: 30 * 60 * 1000, persistCache: true });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export async function fetchWeatherAlerts(): Promise<WeatherAlert[]> {
   return breaker.execute(async () => {
@@ -103,10 +111,10 @@ function calculateCentroid(coords: [number, number][]): [number, number] | undef
 
 export function getSeverityColor(severity: WeatherAlert['severity']): string {
   switch (severity) {
-    case 'Extreme': return '#ff0000';
-    case 'Severe': return '#ff6600';
-    case 'Moderate': return '#ffaa00';
-    case 'Minor': return '#ffff00';
-    default: return '#888888';
+    case 'Extreme': return getCSSColor('--semantic-critical');
+    case 'Severe': return getCSSColor('--semantic-high');
+    case 'Moderate': return getCSSColor('--semantic-elevated');
+    case 'Minor': return getCSSColor('--semantic-elevated');
+    default: return getCSSColor('--text-dim');
   }
 }

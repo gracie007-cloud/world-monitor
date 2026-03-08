@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # World Monitor v2
 
 AI-powered real-time global intelligence dashboard aggregating news, markets, geopolitical data, and infrastructure monitoring into a unified situation awareness interface.
@@ -14,6 +15,35 @@ AI-powered real-time global intelligence dashboard aggregating news, markets, ge
 ## Platform Variants
 
 World Monitor runs two specialized variants from a single codebase, each optimized for different monitoring needs:
+=======
+# World Monitor — Full Documentation
+
+AI-powered real-time global intelligence dashboard aggregating news, markets, geopolitical data, and infrastructure monitoring into a unified situation awareness interface.
+
+[Live Demo: worldmonitor.app](https://worldmonitor.app) | [Tech Variant: tech.worldmonitor.app](https://tech.worldmonitor.app) | [Finance Variant: finance.worldmonitor.app](https://finance.worldmonitor.app) | [Happy Variant: happy.worldmonitor.app](https://happy.worldmonitor.app)
+
+## Documentation Index
+
+| Document | Description |
+|---|---|
+| [README](../README.md) | Project overview, quick start, and self-hosting guide |
+| [Algorithms](./ALGORITHMS.md) | Scoring formulas, detection algorithms, classification pipelines |
+| [Data Sources](./DATA_SOURCES.md) | All 31+ data sources, feed tiers, and collection methods |
+| [Architecture](./ARCHITECTURE.md) | System design, caching, bootstrap hydration, edge functions |
+| [Map Engine](./MAP_ENGINE.md) | 3D globe and flat map rendering details |
+| [AI Intelligence](./AI_INTELLIGENCE.md) | LLM chains, RAG, threat classification, deduction |
+| [Desktop App](./DESKTOP_APP.md) | Tauri architecture, sidecar, secret management |
+| [Finance Data](./FINANCE_DATA.md) | Market radar, Gulf FDI, stablecoins, BIS, WTO |
+| [API Reference](./api/) | OpenAPI specs for all 22 services |
+| [Adding Endpoints](./ADDING_ENDPOINTS.md) | Guide for adding new RPC endpoints |
+| [Release Packaging](./RELEASE_PACKAGING.md) | Desktop build and release process |
+
+---
+
+## Platform Variants
+
+World Monitor runs four specialized variants from a single codebase, each optimized for different monitoring needs:
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 | Variant | URL | Focus |
 |---------|-----|-------|
@@ -29,6 +59,10 @@ A compact **variant switcher** in the header allows seamless navigation between 
 The primary variant focuses on geopolitical intelligence, military tracking, and infrastructure security monitoring.
 
 ### Key Capabilities
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Conflict Monitoring** - Active war zones, hotspots, and crisis areas with real-time escalation tracking
 - **Military Intelligence** - 220+ military bases, flight tracking, naval vessel monitoring, surge detection
 - **Infrastructure Security** - Undersea cables, pipelines, datacenters, internet outages
@@ -37,6 +71,10 @@ The primary variant focuses on geopolitical intelligence, military tracking, and
 - **AI-Powered Analysis** - Focal point detection, country instability scoring, infrastructure cascade analysis
 
 ### Intelligence Panels
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 | Panel | Purpose |
 |-------|---------|
 | **AI Insights** | LLM-synthesized world brief with focal point detection |
@@ -47,6 +85,10 @@ The primary variant focuses on geopolitical intelligence, military tracking, and
 | **Live Intelligence** | GDELT-powered topic feeds (Military, Cyber, Nuclear, Sanctions) |
 
 ### News Coverage
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 80+ curated sources across geopolitics, defense, energy, think tanks, and regional news (Middle East, Africa, Latin America, Asia-Pacific).
 
 ---
@@ -56,6 +98,10 @@ The primary variant focuses on geopolitical intelligence, military tracking, and
 The tech variant ([tech.worldmonitor.app](https://tech.worldmonitor.app)) provides specialized layers for technology sector monitoring.
 
 ### Tech Ecosystem Layers
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 | Layer | Description |
 |-------|-------------|
 | **Tech HQs** | Headquarters of major tech companies (Big Tech, unicorns, public companies) |
@@ -65,6 +111,10 @@ The tech variant ([tech.worldmonitor.app](https://tech.worldmonitor.app)) provid
 | **Tech Events** | Upcoming conferences and tech events with countdown timers |
 
 ### Tech Infrastructure Layers
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 | Layer | Description |
 |-------|-------------|
 | **AI Datacenters** | 111 major AI compute clusters (≥10,000 GPUs) |
@@ -72,6 +122,10 @@ The tech variant ([tech.worldmonitor.app](https://tech.worldmonitor.app)) provid
 | **Internet Outages** | Network disruptions affecting tech operations |
 
 ### Tech News Categories
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Startups & VC** - Funding rounds, acquisitions, startup news
 - **Cybersecurity** - Security vulnerabilities, breaches, threat intelligence
 - **Cloud & Infrastructure** - AWS, Azure, GCP announcements, outages
@@ -99,6 +153,10 @@ The tech variant ([tech.worldmonitor.app](https://tech.worldmonitor.app)) provid
 ## Features
 
 ### Interactive Global Map
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Zoom & Pan** - Smooth navigation with mouse/trackpad gestures
 - **Regional Focus** - 8 preset views for rapid navigation (Global, Americas, Europe, MENA, Asia, Latin America, Africa, Oceania)
 - **Layer System** - Toggle visibility of 20+ data layers organized by category
@@ -111,12 +169,20 @@ The tech variant ([tech.worldmonitor.app](https://tech.worldmonitor.app)) provid
 Dense regions with many data points use intelligent clustering to prevent visual clutter:
 
 **How It Works**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Markers within a pixel radius (adaptive to zoom level) merge into cluster badges
 - Cluster badges show the count of grouped items
 - Clicking a cluster opens a popup listing all grouped items
 - Zooming in reduces cluster radius, eventually showing individual markers
 
 **Grouping Logic**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Protests**: Cluster within same country only (riots sorted first, high severity prioritized)
 - **Tech HQs**: Cluster within same city (Big Tech sorted before unicorns before public companies)
 - **Tech Events**: Cluster within same location (sorted by date, soonest first)
@@ -167,9 +233,16 @@ Layers are organized into logical groups for efficient monitoring:
 | **Natural** | USGS earthquakes (M4.5+) + NASA EONET events (storms, wildfires, volcanoes, floods) |
 | **Weather** | NWS severe weather warnings |
 
+<<<<<<< HEAD
 **Economic & Labels**
 | Layer | Description |
 |-------|-------------|
+=======
+**Overlays & Labels**
+| Layer | Description |
+|-------|-------------|
+| **Day/Night** | Real-time solar terminator overlay showing day and night zones (updates every 5 minutes) |
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 | **Economic** | Tabbed economic panel with FRED indicators, EIA oil analytics, and USASpending.gov government contracts |
 | **Countries** | Country boundary labels |
 | **Waterways** | Strategic waterways and chokepoints |
@@ -192,6 +265,10 @@ These panels transform raw signals into actionable intelligence by applying scor
 ### News Aggregation
 
 Multi-source RSS aggregation across categories:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **World / Geopolitical** - BBC, Reuters, AP, Guardian, NPR, Politico, The Diplomat
 - **Middle East / MENA** - Al Jazeera, BBC ME, Guardian ME, Al Arabiya, Times of Israel
 - **Africa** - BBC Africa, News24, Google News aggregation (regional & Sahel coverage)
@@ -213,6 +290,10 @@ Multi-source RSS aggregation across categories:
 The **📡 SOURCES** button in the header opens a global source management modal, enabling fine-grained control over which news sources appear in the dashboard.
 
 **Capabilities:**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Search**: Filter the source list by name to quickly find specific outlets
 - **Individual Toggle**: Click any source to enable/disable it
 - **Bulk Actions**: "Select All" and "Select None" for quick adjustments
@@ -220,12 +301,20 @@ The **📡 SOURCES** button in the header opens a global source management modal
 - **Persistence**: Settings are saved to localStorage and persist across sessions
 
 **Use Cases:**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Noise Reduction**: Disable high-volume aggregators (Google News) to focus on primary sources
 - **Regional Focus**: Enable only sources relevant to a specific geographic area
 - **Source Quality**: Disable sources with poor signal-to-noise ratio
 - **Bias Management**: Balance coverage by enabling/disabling sources with known editorial perspectives
 
 **Technical Details:**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Disabled sources are filtered at fetch time (not display time), reducing bandwidth and API calls
 - Affects all news panels simultaneously—disable BBC once, it's gone everywhere
 - Panels with all sources disabled show "All sources disabled" message
@@ -260,6 +349,10 @@ Embedded YouTube live streams from major news networks with channel switching:
 | **Al Jazeera** | Middle East & international news |
 
 **Core Features:**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Channel Switcher** - One-click switching between networks
 - **Live Indicator** - Blinking dot shows stream status, click to pause/play
 - **Mute Toggle** - Audio control (muted by default)
@@ -290,6 +383,10 @@ To conserve resources, the panel implements automatic idle pausing:
 This prevents background tabs from consuming bandwidth while preserving user preference for manually-paused streams.
 
 ### Market Data
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Stocks** - Major indices and tech stocks via Finnhub (Yahoo Finance backup)
 - **Commodities** - Oil, gold, natural gas, copper, VIX
 - **Crypto** - Bitcoin, Ethereum, Solana via CoinGecko
@@ -299,11 +396,21 @@ This prevents background tabs from consuming bandwidth while preserving user pre
 - **Government Spending** - USASpending.gov: Recent federal contracts and awards
 
 ### Prediction Markets
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Polymarket integration for event probability tracking
 - Correlation analysis with news events
 
 ### Search (⌘K)
+<<<<<<< HEAD
 Universal search across all data sources:
+=======
+
+Universal search across all data sources:
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - News articles
 - Geographic hotspots and conflicts
 - Infrastructure (pipelines, cables, datacenters)
@@ -311,6 +418,10 @@ Universal search across all data sources:
 - Markets and predictions
 
 ### Data Export
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - CSV and JSON export of current dashboard state
 - Historical playback from snapshots
 
@@ -330,6 +441,10 @@ The header displays an **Intelligence Findings** badge that consolidates two typ
 | **Unified Alerts** | Module-generated alerts | CII spikes, geographic convergence, infrastructure cascades |
 
 **Interaction**: Clicking the badge—or clicking an individual alert—opens a detail modal showing:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Full alert description and context
 - Component breakdown (for composite alerts)
 - Affected countries or regions
@@ -378,6 +493,10 @@ The system detects 12 distinct signal types across news, markets, military, and 
 ### How It Works
 
 The correlation engine maintains rolling snapshots of:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - News topic frequency (by keyword extraction)
 - Market price changes
 - Prediction market probabilities
@@ -566,6 +685,10 @@ The dashboard visually flags sources with known state affiliations or propaganda
 **Display Locations**
 
 Propaganda risk badges appear in:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Cluster primary source**: Badge next to the main source name
 - **Top sources list**: Small badge next to each flagged source
 - **Cluster view**: Visible when expanding multi-source clusters
@@ -634,6 +757,10 @@ When a market symbol moves significantly, the system searches news clusters for 
 4. **Result** - "Market Move Explained" or "Silent Divergence" signal
 
 This enables signals like:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Explained**: "AVGO +5.2% — Broadcom mentioned in 3 news clusters (AI chip demand)"
 - **Silent**: "AVGO +5.2% — No correlated news after entity search"
 
@@ -677,6 +804,10 @@ similarity(A, B) = |A ∩ B| / |A ∪ B|
 ```
 
 **Tokenization**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Headlines are lowercased and split on word boundaries
 - Stop words removed: "the", "a", "an", "in", "on", "at", "to", "for", "of", "and", "or"
 - Short tokens (<3 characters) filtered out
@@ -691,6 +822,10 @@ Rather than O(n²) pairwise comparison, the algorithm uses an inverted index:
 4. This reduces comparisons from ~10,000 to ~500 for typical news loads
 
 **Clustering Rules**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Articles with similarity ≥ 0.5 are grouped into clusters
 - Clusters are sorted by source tier, then recency
 - The most authoritative source becomes the "primary" headline
@@ -750,6 +885,10 @@ The entity index pre-builds five lookup maps for O(1) access:
    - Example: AVGO move also searches for NVDA, INTC, AMD news
 
 **Performance**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Index builds once on first access (cached singleton)
 - Alias map has ~300 entries for 100+ entities
 - Keyword map has ~400 entries
@@ -764,6 +903,10 @@ The system maintains rolling baselines for news volume per topic:
 - **Z-score** = (current - mean) / stddev
 
 Deviation levels:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Spike**: Z > 2.5 (statistically rare increase)
 - **Elevated**: Z > 1.5
 - **Normal**: -2 < Z < 1.5
@@ -830,6 +973,10 @@ final_score = (static_baseline × 0.30 + dynamic_score × 0.70) × proximity_boo
 **Trend Detection**
 
 The system maintains 48-point history (24 hours at 30-minute intervals) per hotspot:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Linear regression** calculates slope of recent scores
 - **Rising**: Slope > +0.1 points per interval
 - **Falling**: Slope < -0.1 points per interval
@@ -838,6 +985,10 @@ The system maintains 48-point history (24 hours at 30-minute intervals) per hots
 **Signal Generation**
 
 Escalation signals (`hotspot_escalation`) are emitted when:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 1. Final score exceeds threshold (typically 60)
 2. At least 2 hours since last signal for this hotspot (cooldown)
 3. Trend is rising or score is critical (>80)
@@ -998,6 +1149,10 @@ The floor applies *after* the standard calculation—if the computed score excee
 ### Trend Detection
 
 The CII tracks 24-hour changes to identify trajectory:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Rising**: Score increased by ≥5 points (escalating situation)
 - **Stable**: Change within ±5 points (steady state)
 - **Falling**: Score decreased by ≥5 points (de-escalation)
@@ -1013,15 +1168,27 @@ Beyond the base component scores, several contextual factors can boost a country
 | **Focal Point** | 8 | AI focal point detection on country | Multi-source convergence indicator |
 
 **Hotspot Boost Calculation**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Hotspot activity (0-100) scaled by 1.5× then capped at 10
 - Zero boost for countries with no associated hotspot activity
 
 **News Urgency Boost Tiers**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Information ≥70: +5 points
 - Information ≥50: +3 points
 - Information <50: +0 points
 
 **Focal Point Boost Tiers**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Critical urgency: +8 points
 - Elevated urgency: +4 points
 - Normal urgency: +0 points
@@ -1039,6 +1206,10 @@ On dashboard startup, the CII system enters **Learning Mode**—a 15-minute cali
 **Note**: Server-side pre-computation now provides immediate scores to new users—Learning Mode primarily affects client-side dynamic adjustments and alert generation rather than initial score display.
 
 **Why 15 minutes?** Real-world testing showed that CII scores stabilize after approximately 10-20 minutes of data collection. The 15-minute window provides sufficient time for:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Multiple refresh cycles across all data sources
 - Trend detection to establish direction (rising/stable/falling)
 - Cross-source correlation to normalize bias
@@ -1073,6 +1244,10 @@ This ensures users understand that early scores are provisional while preventing
 ### Keyword Attribution
 
 Countries are matched to data via keyword lists:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Russia**: `russia`, `moscow`, `kremlin`, `putin`
 - **China**: `china`, `beijing`, `xi jinping`, `prc`
 - **Taiwan**: `taiwan`, `taipei`
@@ -1117,12 +1292,20 @@ convergence_score = min(100, type_score + count_boost)
 ### Example Scenarios
 
 **Taiwan Strait Buildup**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Cell: `25°N, 121°E`
 - Events: Military flights (3), Naval vessels (2), Protests (1)
 - Score: 75 + 12 = 87 (Critical)
 - Signal: "Geographic Convergence (3 types) - military flights, naval vessels, protests"
 
 **Middle East Flashpoint**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Cell: `32°N, 35°E`
 - Events: Military flights (5), Protests (8), Earthquake (1)
 - Score: 75 + 25 = 100 (Critical)
@@ -1169,6 +1352,10 @@ When a user selects an infrastructure asset for analysis, a **breadth-first casc
 ### Redundancy Modeling
 
 The system accounts for alternative routes:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Cables with high redundancy show reduced impact
 - Countries with multiple cable landings show lower vulnerability
 - Alternative routes are displayed with capacity percentages
@@ -1234,6 +1421,10 @@ The system parses NGA (National Geospatial-Intelligence Agency) maritime warning
 ### Repair Ship Tracking
 
 When a cableship is mentioned in warnings, the system extracts:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Vessel name**: CS Reliance, Cable Innovator, etc.
 - **Status**: "En route" or "On station"
 - **Location**: Current working area
@@ -1244,6 +1435,10 @@ This enables monitoring of ongoing repair operations before official carrier ann
 ### Why This Matters
 
 Undersea cables carry 95% of intercontinental data traffic. A cable cut can:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Cause regional internet outages
 - Disrupt financial transactions
 - Impact military communications
@@ -1308,6 +1503,10 @@ Priority: Critical
 ### Trend Detection
 
 The system tracks the composite score over time:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - First measurement establishes baseline (shows "Stable")
 - Subsequent changes of ±5 points trigger trend changes
 - This prevents false "escalating" signals on initialization
@@ -1352,6 +1551,10 @@ The indicator also displays geopolitical tension scores from GDELT (Global Datab
 | Russia ↔ Ukraine | Active conflict zone |
 
 Each pair shows:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Current tension score** (GDELT's normalized metric)
 - **7-day trend** (rising, falling, stable)
 - **Percentage change** from previous period
@@ -1395,6 +1598,10 @@ Up to 3 assets per type are displayed, sorted by proximity.
 ### Example Context
 
 A news cluster about "pipeline explosion in Germany" would show:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Pipelines**: Nord Stream (23km), Yamal-Europe (156km)
 - **Cables**: TAT-14 landing (89km)
 - **Bases**: Ramstein (234km)
@@ -1484,6 +1691,10 @@ The system monitors eight critical maritime chokepoints where disruptions could 
 ### Density Analysis
 
 Vessel positions are aggregated into a 2° grid to calculate traffic density. Each cell tracks:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Current vessel count
 - Historical baseline (30-minute rolling window)
 - Change percentage from baseline
@@ -1493,6 +1704,10 @@ Density changes of ±30% trigger alerts, indicating potential congestion, divers
 ### Dark Ship Detection
 
 The system monitors for AIS gaps—vessels that stop transmitting their position. An AIS gap exceeding 60 minutes in monitored regions may indicate:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Sanctions evasion (ship-to-ship transfers)
 - Illegal fishing
 - Military activity
@@ -1530,11 +1745,19 @@ Browser → Railway Relay → External APIs
 | `/health` | Status check | None |
 
 **Environment Variables** (Railway):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - `AISSTREAM_API_KEY` - AIS data access
 - `OPENSKY_CLIENT_ID` - OAuth2 client ID
 - `OPENSKY_CLIENT_SECRET` - OAuth2 client secret
 
 **Why Railway?**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Residential IP ranges (not blocked like cloud providers)
 - WebSocket support for persistent connections
 - Global edge deployment for low latency
@@ -1614,22 +1837,38 @@ Vessels within 50km of these bases are flagged, enabling detection of unusual ac
 Military aircraft are tracked via the OpenSky Network using ADS-B data. OpenSky blocks unauthenticated requests from cloud provider IPs (Vercel, Railway, AWS), so aircraft tracking requires a relay server with credentials.
 
 **Authentication**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Register for a free account at [opensky-network.org](https://opensky-network.org)
 - Create an API client in account settings to get `OPENSKY_CLIENT_ID` and `OPENSKY_CLIENT_SECRET`
 - The relay uses **OAuth2 client credentials flow** to obtain Bearer tokens
 - Tokens are cached (30-minute expiry) and automatically refreshed
 
 **Identification Methods**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Callsign matching**: Known military callsign patterns (RCH, REACH, DUKE, etc.)
 - **ICAO hex ranges**: Military aircraft use assigned hex code blocks by country
 - **Altitude/speed profiles**: Unusual flight characteristics
 
 **Tracked Metrics**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Position history (20-point trails over 5-minute windows)
 - Altitude and ground speed
 - Heading and track
 
 **Activity Detection**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Formations (multiple military aircraft in proximity)
 - Unusual patterns (holding, reconnaissance orbits)
 - Chokepoint transits
@@ -1673,6 +1912,10 @@ Aircraft are categorized by callsign pattern matching:
 **Baseline Calculation**
 
 The system maintains rolling 48-hour activity baselines per theater:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Minimum 6 data samples required for reliable baseline
 - Default baselines when data insufficient: 3 transport, 2 fighter, 1 reconnaissance
 - Activity below 50% of baseline indicates stand-down
@@ -1721,6 +1964,10 @@ The system tracks 18 strategically significant geographic areas:
 **Detection Logic**
 
 For each sensitive region, the system:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 1. Identifies all military aircraft within the region boundary
 2. Groups aircraft by operating nation
 3. Excludes "home region" operators (e.g., Russian VKS in Baltic excluded from alert)
@@ -1771,17 +2018,33 @@ When an aircraft is detected via OpenSky ADS-B, the system queries Wingbits for:
 The enrichment service analyzes owner and operator fields against curated keyword lists:
 
 **Confirmed Military** (owner/operator match):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Government: "United States Air Force", "Department of Defense", "Royal Air Force"
 - International: "NATO", "Ministry of Defence", "Bundeswehr"
 
 **Likely Military** (operator ICAO codes):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - `AIO` (Air Mobility Command), `RRR` (Royal Air Force), `GAF` (German Air Force)
 - `RCH` (REACH flights), `CNV` (Convoy flights), `DOD` (Department of Defense)
 
 **Possible Military** (defense contractors):
+<<<<<<< HEAD
 - Northrop Grumman, Lockheed Martin, General Atomics, Raytheon, Boeing Defense, L3Harris
 
 **Aircraft Type Matching**:
+=======
+
+- Northrop Grumman, Lockheed Martin, General Atomics, Raytheon, Boeing Defense, L3Harris
+
+**Aircraft Type Matching**:
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Transport: C-17, C-130, C-5, KC-135, KC-46
 - Reconnaissance: RC-135, U-2, RQ-4, E-3, E-8
 - Combat: F-15, F-16, F-22, F-35, B-52, B-2
@@ -1834,6 +2097,10 @@ The Spaceports layer displays global launch facilities for monitoring space-rela
 ### Why This Matters
 
 Space launches are geopolitically significant:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Military implications**: Many launches are dual-use (civilian/military)
 - **Technology competition**: Launch cadence indicates space program advancement
 - **Supply chain**: Satellite services affect communications, GPS, reconnaissance
@@ -1867,6 +2134,10 @@ The Minerals layer displays strategic mineral extraction sites essential for mod
 ### Supply Chain Risks
 
 Critical minerals are geopolitically concentrated:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Cobalt**: 70% from DRC, significant artisanal mining concerns
 - **Rare Earths**: 60% from China, processing nearly monopolized
 - **Lithium**: Expanding production but demand outpacing supply
@@ -1895,6 +2166,10 @@ Cyber operations often correlate with geopolitical tensions. When news reports r
 ### Visual Indicators
 
 APT markers appear as warning triangles (⚠) with distinct styling. Clicking a marker shows:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Official designation** and common aliases
 - **State sponsor** and intelligence agency
 - **Primary targeting sectors**
@@ -1908,6 +2183,10 @@ The Protests layer aggregates civil unrest data from two independent sources, pr
 ### ACLED (Armed Conflict Location & Event Data)
 
 Academic-grade conflict data with human-verified events:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Coverage**: Global, 30-day rolling window
 - **Event types**: Protests, riots, strikes, demonstrations
 - **Metadata**: Actors involved, fatalities, detailed notes
@@ -1916,6 +2195,10 @@ Academic-grade conflict data with human-verified events:
 ### GDELT (Global Database of Events, Language, and Tone)
 
 Real-time news-derived event data:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Coverage**: Global, 7-day rolling window
 - **Event types**: Geocoded protest mentions from news
 - **Volume**: Reports per location (signal strength)
@@ -1924,6 +2207,10 @@ Real-time news-derived event data:
 ### Multi-Source Corroboration
 
 Events from both sources are deduplicated using a 0.5° spatial grid and date matching. When both ACLED and GDELT report events in the same area:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Confidence is elevated to "high"
 - ACLED data takes precedence (higher accuracy)
 - Source list shows corroboration
@@ -1977,6 +2264,10 @@ The Flights layer tracks airport delays and ground stops at major US airports us
 ### Monitored Airports
 
 The 30 largest US airports are tracked:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Major hubs: JFK, LAX, ORD, ATL, DFW, DEN, SFO
 - International gateways with high traffic volume
 - Airports frequently affected by weather or congestion
@@ -1999,6 +2290,10 @@ sanitizeUrl(url) // Allows only http/https protocols
 ```
 
 This applies to:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - News headlines and sources (RSS feeds)
 - Search results and highlights
 - Monitor keywords (user input)
@@ -2044,6 +2339,10 @@ Normal → Failure #1 → Failure #2 → OPEN (cooldown)
 ```
 
 **Behavior during cooldown:**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - New requests return cached data (if available)
 - UI shows "temporarily unavailable" status
 - No API calls are made (prevents hammering)
@@ -2068,6 +2367,10 @@ RSS feeds use per-feed circuit breakers—one failing feed doesn't affect others
 ### Graceful Degradation
 
 When a service enters cooldown:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 1. Cached data continues to display (stale but available)
 2. Status panel shows service health
 3. Automatic recovery when cooldown expires
@@ -2105,6 +2408,10 @@ The status panel lists all data feeds with their current state:
 ### Per-Feed Information
 
 Each feed entry shows:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Source name** - The data provider
 - **Last update** - Time since last successful fetch
 - **Next refresh** - Countdown to next scheduled fetch
@@ -2113,6 +2420,10 @@ Each feed entry shows:
 ### Why This Matters
 
 External APIs are unreliable. The status panel helps you understand:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Data freshness** - Is the news feed current or stale?
 - **Coverage gaps** - Which sources are currently unavailable?
 - **Recovery timeline** - When will failed sources retry?
@@ -2151,6 +2462,10 @@ Each data source has calibrated freshness expectations:
 ### Visual Indicators
 
 The status panel displays freshness for each source:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Colored dot** indicates freshness level
 - **Time since update** shows exact staleness
 - **Next refresh countdown** shows when data will update
@@ -2158,6 +2473,10 @@ The status panel displays freshness for each source:
 ### Why This Matters
 
 Understanding data freshness is critical for decision-making:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - A "fresh" earthquake feed means recent events are displayed
 - A "stale" news feed means you may be missing breaking stories
 - A "critical" AIS stream means vessel positions are unreliable
@@ -2210,11 +2529,19 @@ API calls are expensive. The system only fetches data for **enabled layers**, re
 ### Layer-Aware Loading
 
 When a layer is toggled OFF:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - No API calls for that data source
 - No refresh interval scheduled
 - WebSocket connections closed (for AIS)
 
 When a layer is toggled ON:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Data is fetched immediately
 - Refresh interval begins
 - Loading indicator shown on toggle button
@@ -2222,6 +2549,10 @@ When a layer is toggled ON:
 ### Unconfigured Services
 
 Some data sources require API keys (AIS relay, Cloudflare Radar). If credentials are not configured:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - The layer toggle is hidden entirely
 - No failed requests pollute the console
 - Users see only functional layers
@@ -2245,6 +2576,10 @@ CPU-intensive operations run in a dedicated Web Worker to avoid blocking the mai
 | DOM rendering | O(n) | ❌ Main thread |
 
 The worker manager implements:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Lazy initialization**: Worker spawns on first use
 - **10-second ready timeout**: Rejects if worker fails to initialize
 - **30-second request timeout**: Prevents hanging on stuck operations
@@ -2255,11 +2590,19 @@ The worker manager implements:
 Large lists (100+ news items) use virtualized rendering:
 
 **Fixed-Height Mode** (VirtualList):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Only renders items visible in viewport + 3-item overscan buffer
 - Element pooling—reuses DOM nodes rather than creating new ones
 - Invisible spacers maintain scroll position without rendering all items
 
 **Variable-Height Mode** (WindowedList):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Chunk-based rendering (10 items per chunk)
 - Renders chunks on-scroll with 1-chunk buffer
 - CSS containment for performance isolation
@@ -2269,6 +2612,10 @@ This reduces DOM node count from thousands to ~30, dramatically improving scroll
 ### Request Deduplication
 
 Identical requests within a short window are deduplicated:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Market quotes batch multiple symbols into single API call
 - Concurrent layer toggles don't spawn duplicate fetches
 - `Promise.allSettled` ensures one failing request doesn't block others
@@ -2276,6 +2623,10 @@ Identical requests within a short window are deduplicated:
 ### Efficient Data Updates
 
 When refreshing data:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Incremental updates**: Only changed items trigger re-renders
 - **Stale-while-revalidate**: Old data displays while fetch completes
 - **Delta compression**: Baselines store 7-day/30-day deltas, not raw history
@@ -2289,6 +2640,10 @@ The Prediction Markets panel focuses on **geopolitically relevant** markets, fil
 ### Inclusion Keywords
 
 Markets matching these topics are displayed:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Conflicts**: war, military, invasion, ceasefire, NATO, nuclear
 - **Countries**: Russia, Ukraine, China, Taiwan, Iran, Israel, Gaza
 - **Leaders**: Putin, Zelensky, Trump, Biden, Xi Jinping, Netanyahu
@@ -2298,6 +2653,10 @@ Markets matching these topics are displayed:
 ### Exclusion Keywords
 
 Markets matching these are filtered out:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Sports**: NBA, NFL, FIFA, World Cup, championships, playoffs
 - **Entertainment**: Oscars, movies, celebrities, TikTok, streaming
 
@@ -2391,6 +2750,10 @@ The mobile experience focuses on the most essential intelligence layers:
 | **Weather** | Severe weather warnings |
 
 Layers disabled by default on mobile (but available on desktop):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Military bases, nuclear facilities, spaceports, minerals
 - Undersea cables, pipelines, datacenters
 - AIS vessels, military flights
@@ -2547,6 +2910,10 @@ User requests summary
 ### Lazy Loading
 
 Models are loaded on-demand to minimize initial page load:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Models download only when first needed
 - Progress indicator shows download status
 - Once cached, models load instantly from IndexedDB
@@ -2554,6 +2921,10 @@ Models are loaded on-demand to minimize initial page load:
 ### Worker Isolation
 
 All ML inference runs in a dedicated Web Worker:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Main thread remains responsive during inference
 - 30-second timeout prevents hanging
 - Automatic cleanup on errors
@@ -2653,15 +3024,27 @@ FOCAL POINTS (entities across news + signals):
 Not all news is equally important. Headlines are scored to identify the most significant stories for the briefing:
 
 **Score Boosters** (high weight):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Military keywords: war, invasion, airstrike, missile, deployment, mobilization
 - Violence indicators: killed, casualties, clashes, massacre, crackdown
 - Civil unrest: protest, uprising, coup, riot, martial law
 
 **Geopolitical Multipliers**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Flashpoint regions: Iran, Russia, China, Taiwan, Ukraine, North Korea, Gaza
 - Critical actors: NATO, Pentagon, Kremlin, Hezbollah, Hamas, Wagner
 
 **Score Reducers** (demoted):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Business context: CEO, earnings, stock, revenue, startup, data center
 - Entertainment: celebrity, movie, streaming
 
@@ -2696,6 +3079,10 @@ The Focal Point Detector is the intelligence synthesis layer that correlates new
 ### The Problem It Solves
 
 Without synthesis, intelligence streams operate in silos:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - News feeds show 80+ sources with thousands of headlines
 - Map layers display military flights, protests, outages independently
 - No automated way to see that IRAN appears in news AND has military activity AND an internet outage
@@ -2754,6 +3141,10 @@ Focal points display icons indicating which signal types are active:
 ### Example Output
 
 A focal point for IRAN might show:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Display**: "Iran [CRITICAL] ✈️📢🌐"
 - **News**: 12 mentions, velocity 0.5/hour
 - **Signals**: 5 military flights, 3 protests, 1 outage
@@ -2763,6 +3154,10 @@ A focal point for IRAN might show:
 ### Integration with CII
 
 Focal point urgency levels feed into the Country Instability Index:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Critical** focal point → CII score boost for that country
 - Ensures countries with multi-source convergence are properly flagged
 - Prevents "silent" instability when news alone wouldn't trigger alerts
@@ -2809,6 +3204,10 @@ Near-real-time natural event detection from satellite observation:
 ### Multi-Source Deduplication
 
 When both GDACS and EONET report the same event:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 1. Events within 100km and 48 hours are considered duplicates
 2. GDACS severity takes precedence (human-verified)
 3. EONET geometry provides more precise coordinates
@@ -2817,6 +3216,10 @@ When both GDACS and EONET report the same event:
 ### Filtering Logic
 
 To prevent map clutter, natural events are filtered:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Wildfires**: Only events < 48 hours old (older fires are either contained or well-known)
 - **Earthquakes**: M4.5+ globally, lower threshold for populated areas
 - **Storms**: Only named storms or those with warnings
@@ -2928,6 +3331,10 @@ Nine geographic theaters are monitored continuously, each with custom thresholds
 Beyond raw counts, the system assesses whether forces in a theater constitute an **offensive strike package**—the combination of assets required for sustained combat operations.
 
 **Strike-Capable Criteria**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Aerial refueling tankers (KC-135, KC-10, A330 MRTT)
 - Airborne command and control (E-3 AWACS, E-7 Wedgetail)
 - Combat aircraft (fighters, strike aircraft)
@@ -3083,6 +3490,10 @@ The Service Status panel tracks the operational health of external services that
 ### Why This Matters
 
 External service outages can affect:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - AI summarization (Groq, OpenRouter outages)
 - Deployment pipelines (Vercel, GitHub outages)
 - API availability (Cloudflare, AWS outages)
@@ -3154,12 +3565,20 @@ Historical filtering is client-side—all data is fetched but filtered for displ
 The map uses a hybrid rendering strategy optimized for each platform:
 
 **Desktop (deck.gl + MapLibre GL)**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - WebGL-accelerated layers handle thousands of markers smoothly
 - MapLibre GL provides base map tiles (OpenStreetMap)
 - GeoJSON, Scatterplot, Path, and Icon layers for different data types
 - GPU-based clustering and picking for responsive interaction
 
 **Mobile (D3.js + TopoJSON)**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - SVG rendering for battery efficiency
 - Reduced marker count and simplified layers
 - Touch-optimized interaction with larger hit targets
@@ -3202,13 +3621,23 @@ const header = `World Monitor v${__APP_VERSION__}`;
 
 ## Installation
 
+<<<<<<< HEAD
+=======
+**Requirements:** Go 1.21+ and Node.js 18+.
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 ```bash
 # Clone the repository
 git clone https://github.com/koala73/worldmonitor.git
 cd worldmonitor
 
+<<<<<<< HEAD
 # Install dependencies
 npm install
+=======
+# Install everything (buf, sebuf plugins, npm deps, proto deps)
+make install
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 # Start development server
 npm run dev
@@ -3217,6 +3646,17 @@ npm run dev
 npm run build
 ```
 
+<<<<<<< HEAD
+=======
+If you modify any `.proto` files, regenerate before building or pushing:
+
+```bash
+make generate   # regenerate TypeScript clients, servers, and OpenAPI docs
+```
+
+See [ADDING_ENDPOINTS.md](ADDING_ENDPOINTS.md) for the full proto workflow.
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 ## API Dependencies
 
 The dashboard fetches data from various public APIs and data sources:
@@ -3375,12 +3815,20 @@ api/                          # Vercel Edge serverless proxies
 ## Usage
 
 ### Keyboard Shortcuts
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - `⌘K` / `Ctrl+K` - Open search
 - `↑↓` - Navigate search results
 - `Enter` - Select result
 - `Esc` - Close modals
 
 ### Map Controls
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Scroll** - Zoom in/out
 - **Drag** - Pan the map
 - **Click markers** - Show detailed popup with full context
@@ -3403,12 +3851,20 @@ Infrastructure markers (nuclear facilities, economic centers, ports) display wit
 This design prioritizes geographic awareness over label density—users can quickly scan for markers and then interact for context.
 
 ### Panel Management
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Drag panels** - Reorder layout
 - **Settings (⚙)** - Toggle panel visibility
 
 ### Shareable Links
 
 The current view state is encoded in the URL, enabling:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Bookmarking**: Save specific views for quick access
 - **Sharing**: Send colleagues a link to your exact map position and layer configuration
 - **Deep linking**: Link directly to a specific region or feature
@@ -3429,9 +3885,17 @@ Values are validated and clamped to prevent invalid states.
 ## Data Sources
 
 ### News Feeds
+<<<<<<< HEAD
 Aggregates **70+ RSS feeds** from major news outlets, government sources, and specialty publications with source-tier prioritization. Categories include world news, MENA, Africa, Latin America, Asia-Pacific, energy, technology, AI/ML, finance, government releases, defense/intel, think tanks, and international crisis organizations.
 
 ### Geospatial Data
+=======
+
+Aggregates **70+ RSS feeds** from major news outlets, government sources, and specialty publications with source-tier prioritization. Categories include world news, MENA, Africa, Latin America, Asia-Pacific, energy, technology, AI/ML, finance, government releases, defense/intel, think tanks, and international crisis organizations.
+
+### Geospatial Data
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Hotspots**: 30+ global intelligence hotspots with keyword correlation (including Sahel, Haiti, Horn of Africa)
 - **Conflicts**: 10+ active conflict zones with involved parties
 - **Military Bases**: 220+ installations from US, NATO, Russia, China, and allies
@@ -3443,6 +3907,10 @@ Aggregates **70+ RSS feeds** from major news outlets, government sources, and sp
 - **Ports**: 61 strategic ports (container, oil/LNG, naval, chokepoint)
 
 ### Live APIs
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **USGS**: Earthquake feed (M4.5+ global)
 - **NASA EONET**: Natural events (storms, wildfires, volcanoes, floods)
 - **NWS**: Severe weather alerts (US)
@@ -3460,30 +3928,54 @@ Aggregates **70+ RSS feeds** from major news outlets, government sources, and sp
 This project uses data from the following sources. Please respect their terms of use.
 
 ### Aircraft Tracking
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 Data provided by [The OpenSky Network](https://opensky-network.org). If you use this data in publications, please cite:
 
 > Matthias Schäfer, Martin Strohmeier, Vincent Lenders, Ivan Martinovic and Matthias Wilhelm. "Bringing Up OpenSky: A Large-scale ADS-B Sensor Network for Research". In *Proceedings of the 13th IEEE/ACM International Symposium on Information Processing in Sensor Networks (IPSN)*, pages 83-94, April 2014.
 
 ### Conflict & Protest Data
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **ACLED**: Armed Conflict Location & Event Data. Source: [ACLED](https://acleddata.com). Data must be attributed per their [Attribution Policy](https://acleddata.com/attributionpolicy/).
 - **GDELT**: Global Database of Events, Language, and Tone. Source: [The GDELT Project](https://www.gdeltproject.org/).
 
 ### Financial Data
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Stock Quotes**: Powered by [Finnhub](https://finnhub.io/) (primary), with [Yahoo Finance](https://finance.yahoo.com/) as backup for indices and commodities
 - **Cryptocurrency**: Powered by [CoinGecko API](https://www.coingecko.com/en/api)
 - **Economic Indicators**: Data from [FRED](https://fred.stlouisfed.org/), Federal Reserve Bank of St. Louis
 
 ### Geophysical Data
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Earthquakes**: [U.S. Geological Survey](https://earthquake.usgs.gov/), ANSS Comprehensive Catalog
 - **Natural Events**: [NASA EONET](https://eonet.gsfc.nasa.gov/) - Earth Observatory Natural Event Tracker (storms, wildfires, volcanoes, floods)
 - **Weather Alerts**: [National Weather Service](https://www.weather.gov/) - Open data, free to use
 
 ### Infrastructure & Transport
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Airport Delays**: [FAA Air Traffic Control System Command Center](https://www.fly.faa.gov/)
 - **Vessel Tracking**: [AISstream](https://aisstream.io/) real-time AIS data
 - **Internet Outages**: [Cloudflare Radar](https://radar.cloudflare.com/) (CC BY-NC 4.0)
 
 ### Other Sources
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Prediction Markets**: [Polymarket](https://polymarket.com/)
 
 ## Acknowledgments
@@ -3503,6 +3995,10 @@ This project is a **proof of concept** demonstrating what's possible with public
 ### Data Completeness
 
 Some data sources require paid accounts for full access:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **ACLED**: Free tier has API restrictions; Research tier required for programmatic access
 - **OpenSky Network**: Rate-limited; commercial tiers offer higher quotas
 - **Satellite AIS**: Global coverage requires commercial providers (Spire, Kpler, etc.)
@@ -3512,6 +4008,10 @@ The dashboard works with free tiers but may have gaps in coverage or update freq
 ### AIS Coverage Bias
 
 The Ships layer uses terrestrial AIS receivers via [AISStream.io](https://aisstream.io). This creates a **geographic bias**:
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Strong coverage**: European waters, Atlantic, major ports
 - **Weak coverage**: Middle East, open ocean, remote regions
 
@@ -3520,6 +4020,10 @@ Terrestrial receivers only detect vessels within ~50km of shore. Satellite AIS (
 ### Blocked Data Sources
 
 Some publishers block requests from cloud providers (Vercel, Railway, AWS):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - RSS feeds from certain outlets may fail with 403 errors
 - This is a common anti-bot measure, not a bug in the dashboard
 - Affected feeds are automatically disabled via circuit breakers
@@ -3530,7 +4034,11 @@ The system degrades gracefully—blocked sources are skipped while others contin
 
 ## Roadmap
 
+<<<<<<< HEAD
 See [ROADMAP.md](ROADMAP.md) for detailed planning. Recent intelligence enhancements:
+=======
+See [ROADMAP.md](../.planning/ROADMAP.md) for detailed planning. Recent intelligence enhancements:
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 ### Completed
 
@@ -3569,21 +4077,37 @@ See [ROADMAP.md](ROADMAP.md) for detailed planning. Recent intelligence enhancem
 ### Planned
 
 **High Priority:**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Temporal Anomaly Detection** - Flag activity unusual for time of day/week/year (e.g., "military flights 3x normal for Tuesday")
 - **Trade Route Risk Scoring** - Real-time supply chain vulnerability for major shipping routes (Asia→Europe, Middle East→Europe, etc.)
 
 **Medium Priority:**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Historical Playback** - Review past dashboard states with timeline scrubbing
 - **Election Calendar Integration** - Auto-boost sensitivity 30 days before major elections
 - **Choropleth CII Map Layer** - Country-colored overlay showing instability scores
 
 **Future Enhancements:**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - **Alert Webhooks** - Push critical alerts to Slack, Discord, email
 - **Custom Country Watchlists** - User-defined Tier-2 country monitoring
 - **Additional Data Sources** - World Bank, IMF, OFAC sanctions, UNHCR refugee data, FAO food security
 - **Think Tank Feeds** - RUSI, Chatham House, ECFR, CFR, Wilson Center, CNAS, Arms Control Association
 
+<<<<<<< HEAD
 The full [ROADMAP.md](ROADMAP.md) documents implementation details, API endpoints, and 30+ free data sources for future integration.
+=======
+The full [ROADMAP.md](../.planning/ROADMAP.md) documents implementation details, API endpoints, and 30+ free data sources for future integration.
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 ---
 
@@ -3675,17 +4199,29 @@ Different data types refresh at different intervals based on volatility and API 
 The system implements defense-in-depth for external service failures:
 
 **Circuit Breakers**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Each external service has an independent circuit breaker
 - After 3 consecutive failures, the circuit opens for 60 seconds
 - Partial failures don't cascade to other services
 - Status panel shows exact failure states
 
 **Graceful Degradation**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Stale cached data displays during outages (with timestamp warning)
 - Failed services are automatically retried on next cycle
 - Critical data (news, markets) has backup sources
 
 **User Feedback**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Real-time status indicators in the header
 - Specific error messages in the status panel
 - No silent failures—every data source state is visible
@@ -3695,16 +4231,28 @@ The system implements defense-in-depth for external service failures:
 The project uses Vite for optimal production builds:
 
 **Code Splitting**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Web Worker code is bundled separately
 - Config files (tech-geo.ts, pipelines.ts) are tree-shaken
 - Lazy-loaded panels reduce initial bundle size
 
 **Variant Builds**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - `npm run build` - Standard geopolitical dashboard
 - `npm run build:tech` - Tech sector variant with different defaults
 - Both share the same codebase, configured via environment variables
 
 **Asset Optimization**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - TopoJSON geography data is pre-compressed
 - Static config data is inlined at build time
 - CSS is minified and autoprefixed
@@ -3712,16 +4260,28 @@ The project uses Vite for optimal production builds:
 ### Security Considerations
 
 **Client-Side Security**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - All user input is sanitized via `escapeHtml()` before rendering
 - URLs are validated via `sanitizeUrl()` before href assignment
 - No `innerHTML` with user-controllable content
 
 **API Security**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Sensitive API keys are stored server-side only
 - Proxy functions validate and sanitize parameters
 - Geographic coordinates are clamped to valid ranges
 
 **Privacy**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - No user accounts or cloud storage
 - All preferences stored in localStorage
 - No telemetry beyond basic Vercel analytics (page views only)
@@ -3758,27 +4318,47 @@ Contributions are welcome! Whether you're fixing bugs, adding features, improvin
 This project follows specific patterns to maintain consistency:
 
 **TypeScript**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Strict type checking enabled—avoid `any` where possible
 - Use interfaces for data structures, types for unions
 - Prefer `const` over `let`, never use `var`
 
 **Architecture**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Services (`src/services/`) handle data fetching and business logic
 - Components (`src/components/`) handle UI rendering
 - Config (`src/config/`) contains static data and constants
 - Utils (`src/utils/`) contain shared helper functions
 
 **Security**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Always use `escapeHtml()` when rendering user-controlled or external data
 - Use `sanitizeUrl()` for any URLs from external sources
 - Validate and clamp parameters in API proxy endpoints
 
 **Performance**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Expensive computations should run in the Web Worker
 - Use virtual scrolling for lists with 50+ items
 - Implement circuit breakers for external API calls
 
 **No Comments Policy**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Code should be self-documenting through clear naming
 - Only add comments for non-obvious algorithms or workarounds
 - Never commit commented-out code
@@ -3825,26 +4405,46 @@ This project follows specific patterns to maintain consistency:
 ### Types of Contributions
 
 **🐛 Bug Fixes**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Found something broken? Fix it and submit a PR
 - Include steps to reproduce in the PR description
 
 **✨ New Features**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - New data layers (with public API sources)
 - UI/UX improvements
 - Performance optimizations
 - New signal detection algorithms
 
 **📊 Data Sources**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Additional RSS feeds for news aggregation
 - New geospatial datasets (bases, infrastructure, etc.)
 - Alternative APIs for existing data
 
 **📝 Documentation**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Clarify existing documentation
 - Add examples and use cases
 - Fix typos and improve readability
 
 **🔒 Security**
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - Report vulnerabilities via GitHub Issues (non-critical) or email (critical)
 - XSS prevention improvements
 - Input validation enhancements
@@ -3860,6 +4460,7 @@ PRs that don't follow the code style or introduce security issues will be asked 
 
 ### Development Tips
 
+<<<<<<< HEAD
 **Adding a New Data Layer**
 
 1. Create service in `src/services/` for data fetching
@@ -3874,6 +4475,26 @@ PRs that don't follow the code style or introduce security issues will be asked 
 2. Implement input validation (see existing proxies)
 3. Add appropriate cache headers
 4. Document any required environment variables
+=======
+**Adding or Modifying API Endpoints**
+
+All JSON API endpoints **must** use sebuf. Do not create standalone `api/*.js` files — the legacy pattern is deprecated.
+
+See **[docs/ADDING_ENDPOINTS.md](ADDING_ENDPOINTS.md)** for the complete guide covering:
+
+- Adding an RPC to an existing service
+- Adding an entirely new service
+- Proto conventions (validation, time fields, shared types)
+- Generated OpenAPI documentation
+
+**Adding a New Data Layer**
+
+1. Define the proto contract and generate code (see [ADDING_ENDPOINTS.md](ADDING_ENDPOINTS.md))
+2. Implement the handler in `server/worldmonitor/{domain}/v1/`
+3. Create the frontend service wrapper in `src/services/`
+4. Add layer toggle in `src/components/Map.ts`
+5. Add rendering logic for map markers/overlays
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 **Debugging**
 

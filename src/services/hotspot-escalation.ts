@@ -1,5 +1,9 @@
 import type { Hotspot, EscalationTrend, MilitaryFlight, MilitaryVessel } from '@/types';
 import { INTEL_HOTSPOTS } from '@/config/geo';
+<<<<<<< HEAD
+=======
+import { getHotspotCountries } from '@/config/countries';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export interface DynamicEscalationScore {
   hotspotId: string;
@@ -28,6 +32,7 @@ interface EscalationInputs {
   vesselsNearby: number;
 }
 
+<<<<<<< HEAD
 const HOTSPOT_COUNTRY_MAP: Record<string, string | string[] | null> = {
   tehran: 'IR',
   moscow: 'RU',
@@ -53,6 +58,8 @@ const HOTSPOT_COUNTRY_MAP: Record<string, string | string[] | null> = {
   caracas: 'VE',
 };
 
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 const COMPONENT_WEIGHTS = {
   news: 0.35,
   cii: 0.25,
@@ -84,6 +91,7 @@ function getStaticBaseline(hotspot: Hotspot): number {
 function getCIIForHotspot(hotspotId: string): number | null {
   if (!ciiGetter) return null;
 
+<<<<<<< HEAD
   const mapping = HOTSPOT_COUNTRY_MAP[hotspotId];
   if (!mapping) return null;
 
@@ -93,6 +101,13 @@ function getCIIForHotspot(hotspotId: string): number | null {
   }
 
   return ciiGetter(mapping);
+=======
+  const countryCodes = getHotspotCountries(hotspotId);
+  if (countryCodes.length === 0) return null;
+
+  const scores = countryCodes.map(code => ciiGetter!(code)).filter((s): s is number => s !== null);
+  return scores.length > 0 ? Math.max(...scores) : null;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 function getGeoAlertForHotspot(hotspot: Hotspot): { score: number; types: number } | null {

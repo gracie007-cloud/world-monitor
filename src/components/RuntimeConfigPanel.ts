@@ -1,6 +1,10 @@
 import { Panel } from './Panel';
 import {
   RUNTIME_FEATURES,
+<<<<<<< HEAD
+=======
+  getEffectiveSecrets,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   getRuntimeConfigSnapshot,
   getSecretState,
   isFeatureAvailable,
@@ -8,12 +12,20 @@ import {
   setFeatureToggle,
   setSecretValue,
   subscribeRuntimeConfig,
+<<<<<<< HEAD
   type RuntimeFeatureDefinition,
+=======
+  validateSecret,
+  verifySecretWithApi,
+  type RuntimeFeatureDefinition,
+  type RuntimeFeatureId,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   type RuntimeSecretKey,
 } from '@/services/runtime-config';
 import { invokeTauri } from '@/services/tauri-bridge';
 import { escapeHtml } from '@/utils/sanitize';
 import { isDesktopRuntime } from '@/services/runtime';
+<<<<<<< HEAD
 
 const SIGNUP_URLS: Partial<Record<RuntimeSecretKey, string>> = {
   GROQ_API_KEY: 'https://console.groq.com/keys',
@@ -27,22 +39,44 @@ const SIGNUP_URLS: Partial<Record<RuntimeSecretKey, string>> = {
   OPENSKY_CLIENT_ID: 'https://opensky-network.org/login?view=registration',
   OPENSKY_CLIENT_SECRET: 'https://opensky-network.org/login?view=registration',
 };
+=======
+import { t } from '@/services/i18n';
+import { trackFeatureToggle } from '@/services/analytics';
+import { SIGNUP_URLS, PLAINTEXT_KEYS, MASKED_SENTINEL } from '@/services/settings-constants';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 interface RuntimeConfigPanelOptions {
   mode?: 'full' | 'alert';
   buffered?: boolean;
+<<<<<<< HEAD
+=======
+  featureFilter?: RuntimeFeatureId[];
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 export class RuntimeConfigPanel extends Panel {
   private unsubscribe: (() => void) | null = null;
   private readonly mode: 'full' | 'alert';
   private readonly buffered: boolean;
+<<<<<<< HEAD
   private pendingSecrets = new Map<RuntimeSecretKey, string>();
 
   constructor(options: RuntimeConfigPanelOptions = {}) {
     super({ id: 'runtime-config', title: 'Desktop Configuration', showCount: false });
     this.mode = options.mode ?? (isDesktopRuntime() ? 'alert' : 'full');
     this.buffered = options.buffered ?? false;
+=======
+  private readonly featureFilter?: RuntimeFeatureId[];
+  private pendingSecrets = new Map<RuntimeSecretKey, string>();
+  private validatedKeys = new Map<RuntimeSecretKey, boolean>();
+  private validationMessages = new Map<RuntimeSecretKey, string>();
+
+  constructor(options: RuntimeConfigPanelOptions = {}) {
+    super({ id: 'runtime-config', title: t('modals.runtimeConfig.title'), showCount: false });
+    this.mode = options.mode ?? (isDesktopRuntime() ? 'alert' : 'full');
+    this.buffered = options.buffered ?? false;
+    this.featureFilter = options.featureFilter;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     this.unsubscribe = subscribeRuntimeConfig(() => this.render());
     this.render();
   }
@@ -52,39 +86,201 @@ export class RuntimeConfigPanel extends Panel {
       await setSecretValue(key, value);
     }
     this.pendingSecrets.clear();
+<<<<<<< HEAD
+=======
+    this.validatedKeys.clear();
+    this.validationMessages.clear();
+  }
+
+  public async commitVerifiedSecrets(): Promise<void> {
+    for (const [key, value] of this.pendingSecrets) {
+      if (this.validatedKeys.get(key) !== false) {
+        await setSecretValue(key, value);
+        this.pendingSecrets.delete(key);
+        this.validatedKeys.delete(key);
+        this.validationMessages.delete(key);
+      }
+    }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   public hasPendingChanges(): boolean {
     return this.pendingSecrets.size > 0;
   }
 
+<<<<<<< HEAD
+=======
+  private getFilteredFeatures(): RuntimeFeatureDefinition[] {
+    return this.featureFilter
+      ? RUNTIME_FEATURES.filter(f => this.featureFilter!.includes(f.id))
+      : RUNTIME_FEATURES;
+  }
+
+  /** Returns missing required secrets for enabled features that have at least one pending key. */
+  public getMissingRequiredSecrets(): string[] {
+    const missing: string[] = [];
+    for (const feature of this.getFilteredFeatures()) {
+      if (!isFeatureEnabled(feature.id)) continue;
+      const secrets = getEffectiveSecrets(feature);
+      const hasPending = secrets.some(k => this.pendingSecrets.has(k));
+      if (!hasPending) continue;
+      for (const key of secrets) {
+        if (!getSecretState(key).valid && !this.pendingSecrets.has(key)) {
+          missing.push(key);
+        }
+      }
+    }
+    return missing;
+  }
+
+  public getValidationErrors(): string[] {
+    const errors: string[] = [];
+    for (const [key, value] of this.pendingSecrets) {
+      const result = validateSecret(key, value);
+      if (!result.valid) errors.push(`${key}: ${result.hint || 'Invalid format'}`);
+    }
+    return errors;
+  }
+
+  public async verifyPendingSecrets(): Promise<string[]> {
+    this.captureUnsavedInputs();
+    const errors: string[] = [];
+    const context = Object.fromEntries(this.pendingSecrets.entries()) as Partial<Record<RuntimeSecretKey, string>>;
+
+    // Split into local-only failures vs keys needing remote verification
+    const toVerifyRemotely: Array<[RuntimeSecretKey, string]> = [];
+    for (const [key, value] of this.pendingSecrets) {
+      const localResult = validateSecret(key, value);
+      if (!localResult.valid) {
+        this.validatedKeys.set(key, false);
+        this.validationMessages.set(key, localResult.hint || 'Invalid format');
+        errors.push(`${key}: ${localResult.hint || 'Invalid format'}`);
+      } else {
+        toVerifyRemotely.push([key, value]);
+      }
+    }
+
+    // Run all remote verifications in parallel with a 15s global timeout
+    if (toVerifyRemotely.length > 0) {
+      const results = await Promise.race([
+        Promise.all(toVerifyRemotely.map(async ([key, value]) => {
+          const result = await verifySecretWithApi(key, value, context);
+          return { key, result };
+        })),
+        new Promise<Array<{ key: RuntimeSecretKey; result: { valid: boolean; message?: string } }>>(resolve =>
+          setTimeout(() => resolve(toVerifyRemotely.map(([key]) => ({
+            key, result: { valid: true, message: 'Saved (verification timed out)' },
+          }))), 15000)
+        ),
+      ]);
+      for (const { key, result: verifyResult } of results) {
+        this.validatedKeys.set(key, verifyResult.valid);
+        if (!verifyResult.valid) {
+          this.validationMessages.set(key, verifyResult.message || 'Verification failed');
+          errors.push(`${key}: ${verifyResult.message || 'Verification failed'}`);
+        } else {
+          this.validationMessages.delete(key);
+        }
+      }
+    }
+
+    if (this.pendingSecrets.size > 0) {
+      this.render();
+    }
+
+    return errors;
+  }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   public destroy(): void {
     this.unsubscribe?.();
     this.unsubscribe = null;
   }
 
+<<<<<<< HEAD
   protected render(): void {
     const snapshot = getRuntimeConfigSnapshot();
     const desktop = isDesktopRuntime();
 
+=======
+  private captureUnsavedInputs(): void {
+    if (!this.buffered) return;
+    this.content.querySelectorAll<HTMLInputElement>('input[data-secret]').forEach((input) => {
+      const key = input.dataset.secret as RuntimeSecretKey | undefined;
+      if (!key) return;
+      const raw = input.value.trim();
+      if (!raw || raw === MASKED_SENTINEL) return;
+      // Skip plaintext keys whose value hasn't changed from stored value
+      if (PLAINTEXT_KEYS.has(key) && !this.pendingSecrets.has(key)) {
+        const stored = getRuntimeConfigSnapshot().secrets[key]?.value || '';
+        if (raw === stored) return;
+      }
+      this.pendingSecrets.set(key, raw);
+      const result = validateSecret(key, raw);
+      if (!result.valid) {
+        this.validatedKeys.set(key, false);
+        this.validationMessages.set(key, result.hint || 'Invalid format');
+      }
+    });
+    // Capture model from select or manual input
+    const modelSelect = this.content.querySelector<HTMLSelectElement>('select[data-model-select]');
+    const modelManual = this.content.querySelector<HTMLInputElement>('input[data-model-manual]');
+    const modelValue = (modelManual && !modelManual.classList.contains('hidden-input') ? modelManual.value.trim() : modelSelect?.value) || '';
+    if (modelValue && !this.pendingSecrets.has('OLLAMA_MODEL')) {
+      this.pendingSecrets.set('OLLAMA_MODEL', modelValue);
+      this.validatedKeys.set('OLLAMA_MODEL', true);
+    }
+  }
+
+  protected render(): void {
+    this.captureUnsavedInputs();
+    const snapshot = getRuntimeConfigSnapshot();
+    const desktop = isDesktopRuntime();
+
+    const features = this.getFilteredFeatures();
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     if (desktop && this.mode === 'alert') {
       const totalFeatures = RUNTIME_FEATURES.length;
       const availableFeatures = RUNTIME_FEATURES.filter((feature) => isFeatureAvailable(feature.id)).length;
       const missingFeatures = Math.max(0, totalFeatures - availableFeatures);
       const configuredCount = Object.keys(snapshot.secrets).length;
+<<<<<<< HEAD
       const alertTitle = configuredCount > 0
         ? (missingFeatures > 0 ? 'Some features need API keys' : 'Desktop settings configured')
         : 'Configure API keys to unlock features';
       const alertClass = missingFeatures > 0 ? 'warn' : 'ok';
 
+=======
+
+      if (missingFeatures === 0 && configuredCount >= totalFeatures) {
+        this.hide();
+        return;
+      }
+
+      const alertTitle = configuredCount > 0
+        ? (missingFeatures > 0 ? t('modals.runtimeConfig.alertTitle.some') : t('modals.runtimeConfig.alertTitle.configured'))
+        : t('modals.runtimeConfig.alertTitle.needsKeys');
+      const alertClass = missingFeatures > 0 ? 'warn' : 'ok';
+
+      this.show();
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       this.content.innerHTML = `
         <section class="runtime-alert runtime-alert-${alertClass}">
           <h3>${alertTitle}</h3>
           <p>
+<<<<<<< HEAD
             ${availableFeatures}/${totalFeatures} features available${configuredCount > 0 ? ` · ${configuredCount} secrets configured` : ''}.
           </p>
           <button type="button" class="runtime-open-settings-btn" data-open-settings>
             Open Settings
+=======
+            ${availableFeatures}/${totalFeatures} ${t('modals.runtimeConfig.summary.available')}${configuredCount > 0 ? ` · ${configuredCount} ${t('modals.runtimeConfig.summary.secrets')}` : ''}.
+          </p>
+          <p class="runtime-alert-skip">${t('modals.runtimeConfig.skipSetup')}</p>
+          <button type="button" class="runtime-open-settings-btn" data-open-settings>
+            ${t('modals.runtimeConfig.openSettings')}
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           </button>
         </section>
       `;
@@ -94,10 +290,17 @@ export class RuntimeConfigPanel extends Panel {
 
     this.content.innerHTML = `
       <div class="runtime-config-summary">
+<<<<<<< HEAD
         ${desktop ? 'Desktop mode' : 'Web mode (read-only, server-managed credentials)'} · ${Object.keys(snapshot.secrets).length} local secrets configured · ${RUNTIME_FEATURES.filter(f => isFeatureAvailable(f.id)).length}/${RUNTIME_FEATURES.length} features available
       </div>
       <div class="runtime-config-list">
         ${RUNTIME_FEATURES.map(feature => this.renderFeature(feature)).join('')}
+=======
+        ${desktop ? t('modals.runtimeConfig.summary.desktop') : t('modals.runtimeConfig.summary.web')} · ${features.filter(f => isFeatureAvailable(f.id)).length}/${features.length} ${t('modals.runtimeConfig.summary.available')}
+      </div>
+      <div class="runtime-config-list">
+        ${features.map(feature => this.renderFeature(feature)).join('')}
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
 
@@ -107,18 +310,37 @@ export class RuntimeConfigPanel extends Panel {
   private renderFeature(feature: RuntimeFeatureDefinition): string {
     const enabled = isFeatureEnabled(feature.id);
     const available = isFeatureAvailable(feature.id);
+<<<<<<< HEAD
     const secrets = feature.requiredSecrets.map((key) => this.renderSecretRow(key)).join('');
     const desktop = isDesktopRuntime();
     const fallbackHtml = available ? '' : `<p class="runtime-feature-fallback fallback">${escapeHtml(feature.fallback)}</p>`;
 
     return `
       <section class="runtime-feature ${available ? 'available' : 'degraded'}">
+=======
+    const effectiveSecrets = getEffectiveSecrets(feature);
+    const allStaged = !available && effectiveSecrets.every(
+      (k) => getSecretState(k).valid || (this.pendingSecrets.has(k) && this.validatedKeys.get(k) !== false)
+    );
+    const pillClass = available ? 'ok' : allStaged ? 'staged' : 'warn';
+    const pillLabel = available ? t('modals.runtimeConfig.status.ready') : allStaged ? t('modals.runtimeConfig.status.staged') : t('modals.runtimeConfig.status.needsKeys');
+    const secrets = effectiveSecrets.map((key) => this.renderSecretRow(key)).join('');
+    const desktop = isDesktopRuntime();
+    const fallbackHtml = available || allStaged ? '' : `<p class="runtime-feature-fallback fallback">${escapeHtml(feature.fallback)}</p>`;
+
+    return `
+      <section class="runtime-feature ${available ? 'available' : allStaged ? 'staged' : 'degraded'}">
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         <header class="runtime-feature-header">
           <label>
             <input type="checkbox" data-toggle="${feature.id}" ${enabled ? 'checked' : ''} ${desktop ? '' : 'disabled'}>
             <span>${escapeHtml(feature.name)}</span>
           </label>
+<<<<<<< HEAD
           <span class="runtime-pill ${available ? 'ok' : 'warn'}">${available ? 'Ready' : 'Needs Keys'}</span>
+=======
+          <span class="runtime-pill ${pillClass}">${pillLabel}</span>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         </header>
         <div class="runtime-secrets">${secrets}</div>
         ${fallbackHtml}
@@ -128,6 +350,7 @@ export class RuntimeConfigPanel extends Panel {
 
   private renderSecretRow(key: RuntimeSecretKey): string {
     const state = getSecretState(key);
+<<<<<<< HEAD
     const status = !state.present ? 'Missing' : state.valid ? `Valid (${state.source})` : 'Looks invalid';
     const signupUrl = SIGNUP_URLS[key];
     const linkHtml = signupUrl
@@ -138,6 +361,62 @@ export class RuntimeConfigPanel extends Panel {
         <div class="runtime-secret-key"><code>${escapeHtml(key)}</code>${linkHtml}</div>
         <span class="runtime-secret-status ${state.valid ? 'ok' : 'warn'}">${escapeHtml(status)}</span>
         <input type="password" data-secret="${key}" placeholder="Set secret" autocomplete="off" ${isDesktopRuntime() ? '' : 'disabled'}>
+=======
+    const pending = this.pendingSecrets.has(key);
+    const pendingValid = pending ? this.validatedKeys.get(key) : undefined;
+    const status = pending
+      ? (pendingValid === false ? t('modals.runtimeConfig.status.invalid') : t('modals.runtimeConfig.status.staged'))
+      : !state.present ? t('modals.runtimeConfig.status.missing') : state.valid ? t('modals.runtimeConfig.status.valid') : t('modals.runtimeConfig.status.looksInvalid');
+    const statusClass = pending
+      ? (pendingValid === false ? 'warn' : 'staged')
+      : state.valid ? 'ok' : 'warn';
+    const signupUrl = SIGNUP_URLS[key];
+    const helpKey = `modals.runtimeConfig.help.${key}`;
+    const helpRaw = t(helpKey);
+    const helpText = helpRaw !== helpKey ? helpRaw : '';
+    const showGetKey = signupUrl && !state.present && !pending;
+    const validated = this.validatedKeys.get(key);
+    const inputClass = pending ? (validated === false ? 'invalid' : 'valid-staged') : '';
+    const checkClass = validated === true ? 'visible' : '';
+    const hintText = pending && validated === false
+      ? (this.validationMessages.get(key) || validateSecret(key, this.pendingSecrets.get(key) || '').hint || 'Invalid value')
+      : null;
+
+    if (key === 'OLLAMA_MODEL') {
+      const storedModel = pending
+        ? this.pendingSecrets.get(key) || ''
+        : getRuntimeConfigSnapshot().secrets[key]?.value || '';
+      return `
+        <div class="runtime-secret-row">
+          <div class="runtime-secret-key"><code>${escapeHtml(key)}</code></div>
+          <span class="runtime-secret-status ${statusClass}">${escapeHtml(status)}</span>
+          <span class="runtime-secret-check ${checkClass}">&#x2713;</span>
+          ${helpText ? `<div class="runtime-secret-meta">${escapeHtml(helpText)}</div>` : ''}
+          <select data-model-select class="${inputClass}" ${isDesktopRuntime() ? '' : 'disabled'}>
+            ${storedModel ? `<option value="${escapeHtml(storedModel)}" selected>${escapeHtml(storedModel)}</option>` : '<option value="" selected disabled>Loading models...</option>'}
+          </select>
+          <input type="text" data-model-manual class="${inputClass} hidden-input" placeholder="Or type model name" autocomplete="off" ${isDesktopRuntime() ? '' : 'disabled'} ${storedModel ? `value="${escapeHtml(storedModel)}"` : ''}>
+          ${hintText ? `<span class="runtime-secret-hint">${escapeHtml(hintText)}</span>` : ''}
+        </div>
+      `;
+    }
+
+    const getKeyHtml = showGetKey
+      ? `<a href="#" data-signup-url="${signupUrl}" class="runtime-secret-link">Get key</a>`
+      : '';
+
+    return `
+      <div class="runtime-secret-row">
+        <div class="runtime-secret-key"><code>${escapeHtml(key)}</code></div>
+        <span class="runtime-secret-status ${statusClass}">${escapeHtml(status)}</span>
+        <span class="runtime-secret-check ${checkClass}">&#x2713;</span>
+        ${helpText ? `<div class="runtime-secret-meta">${escapeHtml(helpText)}</div>` : ''}
+        <div class="runtime-input-wrapper${showGetKey ? ' has-suffix' : ''}">
+          <input type="${PLAINTEXT_KEYS.has(key) ? 'text' : 'password'}" data-secret="${key}" placeholder="${pending ? t('modals.runtimeConfig.placeholder.staged') : t('modals.runtimeConfig.placeholder.setSecret')}" autocomplete="off" ${isDesktopRuntime() ? '' : 'disabled'} class="${inputClass}" ${pending ? `value="${PLAINTEXT_KEYS.has(key) ? escapeHtml(this.pendingSecrets.get(key) || '') : MASKED_SENTINEL}"` : (PLAINTEXT_KEYS.has(key) && state.present ? `value="${escapeHtml(getRuntimeConfigSnapshot().secrets[key]?.value || '')}"` : '')}>
+          ${getKeyHtml}
+        </div>
+        ${hintText ? `<span class="runtime-secret-hint">${escapeHtml(hintText)}</span>` : ''}
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
   }
@@ -167,15 +446,39 @@ export class RuntimeConfigPanel extends Panel {
       return;
     }
 
+<<<<<<< HEAD
+=======
+    // Ollama model dropdown: fetch models and handle selection
+    const modelSelect = this.content.querySelector<HTMLSelectElement>('select[data-model-select]');
+    if (modelSelect) {
+      modelSelect.addEventListener('change', () => {
+        const model = modelSelect.value;
+        if (model && this.buffered) {
+          this.pendingSecrets.set('OLLAMA_MODEL', model);
+          this.validatedKeys.set('OLLAMA_MODEL', true);
+          modelSelect.classList.remove('invalid');
+          modelSelect.classList.add('valid-staged');
+          this.updateFeatureCardStatus('OLLAMA_MODEL');
+        }
+      });
+      void this.fetchOllamaModels(modelSelect);
+    }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     this.content.querySelectorAll<HTMLInputElement>('input[data-toggle]').forEach((input) => {
       input.addEventListener('change', () => {
         const featureId = input.dataset.toggle as RuntimeFeatureDefinition['id'] | undefined;
         if (!featureId) return;
+<<<<<<< HEAD
+=======
+        trackFeatureToggle(featureId, input.checked);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         setFeatureToggle(featureId, input.checked);
       });
     });
 
     this.content.querySelectorAll<HTMLInputElement>('input[data-secret]').forEach((input) => {
+<<<<<<< HEAD
       input.addEventListener('change', () => {
         const key = input.dataset.secret as RuntimeSecretKey | undefined;
         if (!key || !input.value) return;
@@ -185,9 +488,213 @@ export class RuntimeConfigPanel extends Panel {
           input.placeholder = 'Pending (save with OK)';
         } else {
           void setSecretValue(key, input.value);
+=======
+      input.addEventListener('input', () => {
+        const key = input.dataset.secret as RuntimeSecretKey | undefined;
+        if (!key) return;
+        if (this.buffered && this.pendingSecrets.has(key) && input.value.startsWith(MASKED_SENTINEL)) {
+          input.value = input.value.slice(MASKED_SENTINEL.length);
+        }
+        this.validatedKeys.delete(key);
+        this.validationMessages.delete(key);
+        const check = input.closest('.runtime-secret-row')?.querySelector('.runtime-secret-check');
+        check?.classList.remove('visible');
+        input.classList.remove('valid-staged', 'invalid');
+        const hint = input.closest('.runtime-secret-row')?.querySelector('.runtime-secret-hint');
+        if (hint) hint.remove();
+      });
+
+      input.addEventListener('blur', () => {
+        const key = input.dataset.secret as RuntimeSecretKey | undefined;
+        if (!key) return;
+        const raw = input.value.trim();
+        if (!raw) {
+          if (this.buffered && this.pendingSecrets.has(key)) {
+            this.pendingSecrets.delete(key);
+            this.validatedKeys.delete(key);
+            this.validationMessages.delete(key);
+            this.render();
+          }
+          return;
+        }
+        if (raw === MASKED_SENTINEL) return;
+        if (this.buffered) {
+          this.pendingSecrets.set(key, raw);
+          const result = validateSecret(key, raw);
+          if (result.valid) {
+            this.validatedKeys.delete(key);
+            this.validationMessages.delete(key);
+          } else {
+            this.validatedKeys.set(key, false);
+            this.validationMessages.set(key, result.hint || 'Invalid format');
+          }
+          if (PLAINTEXT_KEYS.has(key)) {
+            input.value = raw;
+          } else {
+            input.type = 'password';
+            input.value = MASKED_SENTINEL;
+          }
+          input.placeholder = t('modals.runtimeConfig.placeholder.staged');
+          const row = input.closest('.runtime-secret-row');
+          const check = row?.querySelector('.runtime-secret-check');
+          input.classList.remove('valid-staged', 'invalid');
+          if (result.valid) {
+            check?.classList.remove('visible');
+            input.classList.add('valid-staged');
+          } else {
+            check?.classList.remove('visible');
+            input.classList.add('invalid');
+            const existingHint = row?.querySelector('.runtime-secret-hint');
+            if (existingHint) existingHint.remove();
+            if (result.hint) {
+              const hint = document.createElement('span');
+              hint.className = 'runtime-secret-hint';
+              hint.textContent = result.hint;
+              row?.appendChild(hint);
+            }
+          }
+          this.updateFeatureCardStatus(key);
+
+          // Update inline status text to reflect staged state
+          const statusEl = input.closest('.runtime-secret-row')?.querySelector('.runtime-secret-status');
+          if (statusEl) {
+            statusEl.textContent = result.valid ? t('modals.runtimeConfig.status.staged') : t('modals.runtimeConfig.status.invalid');
+            statusEl.className = `runtime-secret-status ${result.valid ? 'staged' : 'warn'}`;
+          }
+
+          // When Ollama URL is staged, auto-fetch available models
+          if (key === 'OLLAMA_API_URL' && result.valid) {
+            const modelSelect = this.content.querySelector<HTMLSelectElement>('select[data-model-select]');
+            if (modelSelect) void this.fetchOllamaModels(modelSelect);
+          }
+        } else {
+          void setSecretValue(key, raw);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           input.value = '';
         }
       });
     });
   }
+<<<<<<< HEAD
+=======
+
+  private updateFeatureCardStatus(secretKey: RuntimeSecretKey): void {
+    const feature = RUNTIME_FEATURES.find(f => getEffectiveSecrets(f).includes(secretKey));
+    if (!feature) return;
+    const section = Array.from(this.content.querySelectorAll('.runtime-feature')).find(el => {
+      const toggle = el.querySelector<HTMLInputElement>(`input[data-toggle="${feature.id}"]`);
+      return !!toggle;
+    });
+    if (!section) return;
+    const available = isFeatureAvailable(feature.id);
+    const effectiveSecrets = getEffectiveSecrets(feature);
+    const allStaged = !available && effectiveSecrets.every(
+      (k) => getSecretState(k).valid || (this.pendingSecrets.has(k) && this.validatedKeys.get(k) !== false)
+    );
+    section.className = `runtime-feature ${available ? 'available' : allStaged ? 'staged' : 'degraded'}`;
+    const pill = section.querySelector('.runtime-pill');
+    if (pill) {
+      pill.className = `runtime-pill ${available ? 'ok' : allStaged ? 'staged' : 'warn'}`;
+      pill.textContent = available ? t('modals.runtimeConfig.status.ready') : allStaged ? t('modals.runtimeConfig.status.staged') : t('modals.runtimeConfig.status.needsKeys');
+    }
+    const fallback = section.querySelector('.runtime-feature-fallback');
+    if (available || allStaged) {
+      fallback?.remove();
+    }
+  }
+
+  private static makeTimeout(ms: number): AbortSignal {
+    if (typeof AbortSignal.timeout === 'function') return AbortSignal.timeout(ms);
+    const ctrl = new AbortController();
+    setTimeout(() => ctrl.abort(), ms);
+    return ctrl.signal;
+  }
+
+  private showManualModelInput(select: HTMLSelectElement): void {
+    const manual = select.parentElement?.querySelector<HTMLInputElement>('input[data-model-manual]');
+    if (!manual) return;
+    select.style.display = 'none';
+    manual.classList.remove('hidden-input');
+    manual.addEventListener('blur', () => {
+      const model = manual.value.trim();
+      if (model && this.buffered) {
+        this.pendingSecrets.set('OLLAMA_MODEL', model);
+        this.validatedKeys.set('OLLAMA_MODEL', true);
+        manual.classList.remove('invalid');
+        manual.classList.add('valid-staged');
+        this.updateFeatureCardStatus('OLLAMA_MODEL');
+      }
+    });
+  }
+
+  private async fetchOllamaModels(select: HTMLSelectElement): Promise<void> {
+    const snapshot = getRuntimeConfigSnapshot();
+    const ollamaUrl = this.pendingSecrets.get('OLLAMA_API_URL')
+      || snapshot.secrets['OLLAMA_API_URL']?.value
+      || '';
+    if (!ollamaUrl) {
+      select.innerHTML = '<option value="" disabled selected>Set Ollama URL first</option>';
+      return;
+    }
+
+    const currentModel = this.pendingSecrets.get('OLLAMA_MODEL')
+      || snapshot.secrets['OLLAMA_MODEL']?.value
+      || '';
+
+    try {
+      // Try Ollama-native /api/tags first, fall back to OpenAI-compatible /v1/models
+      let models: string[] = [];
+      try {
+        const res = await fetch(new URL('/api/tags', ollamaUrl).toString(), {
+          signal: RuntimeConfigPanel.makeTimeout(5000),
+        });
+        if (res.ok) {
+          const data = await res.json() as { models?: Array<{ name: string }> };
+          models = (data.models?.map(m => m.name) || []).filter(n => !n.includes('embed'));
+        }
+      } catch { /* Ollama endpoint not available, try OpenAI format */ }
+
+      if (!select.isConnected) return;
+
+      if (models.length === 0) {
+        try {
+          const res = await fetch(new URL('/v1/models', ollamaUrl).toString(), {
+            signal: RuntimeConfigPanel.makeTimeout(5000),
+          });
+          if (res.ok) {
+            const data = await res.json() as { data?: Array<{ id: string }> };
+            models = (data.data?.map(m => m.id) || []).filter(n => !n.includes('embed'));
+          }
+        } catch { /* OpenAI endpoint also unavailable */ }
+      }
+
+      if (!select.isConnected) return;
+
+      if (models.length === 0) {
+        // No models discovered — show manual text input as fallback
+        this.showManualModelInput(select);
+        return;
+      }
+
+      select.innerHTML = models.map(name =>
+        `<option value="${escapeHtml(name)}" ${name === currentModel ? 'selected' : ''}>${escapeHtml(name)}</option>`
+      ).join('');
+
+      // Auto-select first model if none stored
+      if (!currentModel && models.length > 0) {
+        const first = models[0]!;
+        select.value = first;
+        if (this.buffered) {
+          this.pendingSecrets.set('OLLAMA_MODEL', first);
+          this.validatedKeys.set('OLLAMA_MODEL', true);
+          select.classList.add('valid-staged');
+          this.updateFeatureCardStatus('OLLAMA_MODEL');
+        }
+      }
+    } catch {
+      // Complete failure — fall back to manual input
+      this.showManualModelInput(select);
+    }
+  }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }

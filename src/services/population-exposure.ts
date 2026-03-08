@@ -1,5 +1,6 @@
 import { createCircuitBreaker } from '@/utils';
 import type { CountryPopulation, PopulationExposure } from '@/types';
+<<<<<<< HEAD
 
 interface CountriesResponse {
   success: boolean;
@@ -8,12 +9,31 @@ interface CountriesResponse {
 
 interface ExposureResponse {
   success: boolean;
+=======
+import { DisplacementServiceClient } from '@/generated/client/worldmonitor/displacement/v1/service_client';
+import type { GetPopulationExposureResponse } from '@/generated/client/worldmonitor/displacement/v1/service_client';
+
+const client = new DisplacementServiceClient('', { fetch: (...args) => globalThis.fetch(...args) });
+
+const countriesBreaker = createCircuitBreaker<GetPopulationExposureResponse>({ name: 'WorldPop Countries', cacheTtlMs: 30 * 60 * 1000, persistCache: true });
+
+export async function fetchCountryPopulations(): Promise<CountryPopulation[]> {
+  const result = await countriesBreaker.execute(async () => {
+    return client.getPopulationExposure({ mode: 'countries', lat: 0, lon: 0, radius: 0 });
+  }, { success: false, countries: [] });
+
+  return result.countries;
+}
+
+interface ExposureResponse {
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   exposedPopulation: number;
   exposureRadiusKm: number;
   nearestCountry: string;
   densityPerKm2: number;
 }
 
+<<<<<<< HEAD
 const countriesBreaker = createCircuitBreaker<CountriesResponse>({ name: 'WorldPop Countries' });
 
 export async function fetchCountryPopulations(): Promise<CountryPopulation[]> {
@@ -36,6 +56,13 @@ export async function fetchExposure(lat: number, lon: number, radiusKm: number):
     );
     if (!response.ok) return null;
     return response.json();
+=======
+export async function fetchExposure(lat: number, lon: number, radiusKm: number): Promise<ExposureResponse | null> {
+  try {
+    const result = await client.getPopulationExposure({ mode: 'exposure', lat, lon, radius: radiusKm });
+    if (!result.exposure) return null;
+    return result.exposure;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   } catch {
     return null;
   }

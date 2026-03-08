@@ -6,7 +6,13 @@ import {
   isKnownMilitaryHex,
   getNearbyHotspot,
   MILITARY_HOTSPOTS,
+<<<<<<< HEAD
 } from '@/config/military';
+=======
+  MILITARY_QUERY_REGIONS,
+} from '@/config/military';
+import type { QueryRegion } from '@/config/military';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 import {
   getAircraftDetailsBatch,
   analyzeAircraftDetails,
@@ -14,6 +20,7 @@ import {
 } from './wingbits';
 import { isFeatureAvailable } from './runtime-config';
 
+<<<<<<< HEAD
 // OpenSky Network API - use Railway relay (Vercel is blocked by OpenSky)
 // Convert WebSocket URL to HTTP URL for the same Railway server
 const wsRelayUrl = import.meta.env.VITE_WS_RELAY_URL || '';
@@ -23,19 +30,39 @@ const OPENSKY_BASE_URL = wsRelayUrl
 
 // Cache configuration
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes - match refresh interval
+=======
+// OpenSky API path — route through Vercel so Railway secret never reaches the browser.
+const OPENSKY_PROXY_URL = '/api/opensky';
+const wsRelayUrl = import.meta.env.VITE_WS_RELAY_URL || '';
+const DIRECT_OPENSKY_BASE_URL = wsRelayUrl
+  ? wsRelayUrl.replace('wss://', 'https://').replace('ws://', 'http://').replace(/\/$/, '') + '/opensky'
+  : '';
+const isLocalhostRuntime = typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname);
+
+// Cache configuration
+const CACHE_TTL = 15 * 60 * 1000; // 15 minutes - reduce upstream API pressure
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 let flightCache: { data: MilitaryFlight[]; timestamp: number } | null = null;
 
 // Track flight history for trails
 const flightHistory = new Map<string, { positions: [number, number][]; lastUpdate: number }>();
 const HISTORY_MAX_POINTS = 20;
 const HISTORY_CLEANUP_INTERVAL = 5 * 60 * 1000; // 5 minutes
+<<<<<<< HEAD
+=======
+let historyCleanupIntervalId: ReturnType<typeof setInterval> | null = null;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 // Circuit breaker for API calls
 const breaker = createCircuitBreaker<{ flights: MilitaryFlight[]; clusters: MilitaryFlightCluster[] }>({
   name: 'Military Flight Tracking',
   maxFailures: 3,
   cooldownMs: 5 * 60 * 1000, // 5 minute cooldown
+<<<<<<< HEAD
   cacheTtlMs: 5 * 60 * 1000, // 5 minute cache
+=======
+  cacheTtlMs: 10 * 60 * 1000,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 });
 
 // OpenSky API returns arrays in this order:
@@ -255,6 +282,7 @@ function parseOpenSkyResponse(data: OpenSkyResponse): MilitaryFlight[] {
   return flights;
 }
 
+<<<<<<< HEAD
 /**
  * Fetch flights for a single hotspot region
  */
@@ -317,6 +345,81 @@ async function fetchFromOpenSky(): Promise<MilitaryFlight[]> {
   }
 
   console.log(`[Military Flights] Found ${allFlights.length} military aircraft from ${MILITARY_HOTSPOTS.length} regions`);
+=======
+interface RegionResult {
+  name: string;
+  flights: MilitaryFlight[];
+  ok: boolean;
+}
+
+async function fetchQueryRegion(region: QueryRegion): Promise<RegionResult> {
+  const query = `lamin=${region.lamin}&lamax=${region.lamax}&lomin=${region.lomin}&lomax=${region.lomax}`;
+  const urls = [`${OPENSKY_PROXY_URL}?${query}`];
+  if (isLocalhostRuntime && DIRECT_OPENSKY_BASE_URL) {
+    urls.push(`${DIRECT_OPENSKY_BASE_URL}?${query}`);
+  }
+
+  try {
+    for (const url of urls) {
+      const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      if (!response.ok) {
+        if (response.status === 429) {
+          console.warn(`[Military Flights] Rate limited for ${region.name}`);
+        }
+        continue;
+      }
+      const data: OpenSkyResponse = await response.json();
+      return { name: region.name, flights: parseOpenSkyResponse(data), ok: true };
+    }
+    return { name: region.name, flights: [], ok: false };
+  } catch {
+    return { name: region.name, flights: [], ok: false };
+  }
+}
+
+const STALE_MAX_AGE_MS = 10 * 60 * 1000;
+const regionCache = new Map<string, { flights: MilitaryFlight[]; timestamp: number }>();
+
+async function fetchFromOpenSky(): Promise<MilitaryFlight[]> {
+  const allFlights: MilitaryFlight[] = [];
+  const seenHexCodes = new Set<string>();
+  let allFailed = true;
+
+  const results = await Promise.all(
+    MILITARY_QUERY_REGIONS.map(region => fetchQueryRegion(region))
+  );
+
+  for (const result of results) {
+    let flights: MilitaryFlight[];
+
+    if (result.ok) {
+      allFailed = false;
+      regionCache.set(result.name, { flights: result.flights, timestamp: Date.now() });
+      flights = result.flights;
+    } else {
+      const stale = regionCache.get(result.name);
+      if (stale && (Date.now() - stale.timestamp < STALE_MAX_AGE_MS)) {
+        console.warn(`[Military Flights] ${result.name} failed, using stale data (${Math.round((Date.now() - stale.timestamp) / 1000)}s old)`);
+        flights = stale.flights;
+      } else {
+        console.warn(`[Military Flights] ${result.name} failed, no usable stale data`);
+        flights = [];
+      }
+    }
+
+    for (const flight of flights) {
+      if (!seenHexCodes.has(flight.hexCode)) {
+        seenHexCodes.add(flight.hexCode);
+        allFlights.push(flight);
+      }
+    }
+  }
+
+  if (allFailed && allFlights.length === 0) {
+    throw new Error('All regions failed — upstream may be down');
+  }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   return allFlights;
 }
 
@@ -329,12 +432,20 @@ async function enrichFlightsWithWingbits(flights: MilitaryFlight[]): Promise<Mil
   // Check if Wingbits is configured
   const isConfigured = await checkWingbitsStatus();
   if (!isConfigured) {
+<<<<<<< HEAD
     console.log('[Military Flights] Wingbits not configured, skipping enrichment');
     return flights;
   }
 
   // Get hex codes for all flights
   const hexCodes = flights.map(f => f.hexCode.toLowerCase());
+=======
+    return flights;
+  }
+
+  // Use deterministic ordering to improve cache locality across refreshes.
+  const hexCodes = Array.from(new Set(flights.map((f) => f.hexCode.toLowerCase()))).sort();
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
   // Batch fetch aircraft details
   const detailsMap = await getAircraftDetailsBatch(hexCodes);
@@ -343,8 +454,11 @@ async function enrichFlightsWithWingbits(flights: MilitaryFlight[]): Promise<Mil
     return flights;
   }
 
+<<<<<<< HEAD
   console.log(`[Military Flights] Enriching ${detailsMap.size} of ${flights.length} aircraft with Wingbits data`);
 
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   // Enrich each flight
   return flights.map(flight => {
     const details = detailsMap.get(flight.hexCode.toLowerCase());
@@ -486,7 +600,19 @@ function cleanupFlightHistory(): void {
 
 // Set up periodic cleanup
 if (typeof window !== 'undefined') {
+<<<<<<< HEAD
   setInterval(cleanupFlightHistory, HISTORY_CLEANUP_INTERVAL);
+=======
+  historyCleanupIntervalId = setInterval(cleanupFlightHistory, HISTORY_CLEANUP_INTERVAL);
+}
+
+/** Stop the periodic flight-history cleanup (for teardown / testing). */
+export function stopFlightHistoryCleanup(): void {
+  if (historyCleanupIntervalId) {
+    clearInterval(historyCleanupIntervalId);
+    historyCleanupIntervalId = null;
+  }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 /**
@@ -523,7 +649,10 @@ export async function fetchMilitaryFlights(): Promise<{
     // Generate clusters
     const clusters = clusterFlights(flights);
 
+<<<<<<< HEAD
     console.log(`[Military Flights] Total: ${flights.length} flights, ${clusters.length} clusters`);
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     return { flights, clusters };
   }, { flights: [], clusters: [] });
 }

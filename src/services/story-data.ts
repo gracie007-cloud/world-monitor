@@ -1,6 +1,7 @@
 import { calculateCII, type CountryScore } from './country-instability';
 import type { ClusteredEvent } from '@/types';
 import type { ThreatLevel } from './threat-classifier';
+<<<<<<< HEAD
 
 const COUNTRY_KEYWORDS: Record<string, string[]> = {
   US: ['united states', 'usa', 'america', 'washington', 'biden', 'trump', 'pentagon'],
@@ -24,6 +25,10 @@ const COUNTRY_KEYWORDS: Record<string, string[]> = {
   MM: ['myanmar', 'burma', 'rangoon'],
   VE: ['venezuela', 'caracas', 'maduro'],
 };
+=======
+import { CURATED_COUNTRIES } from '@/config/countries';
+import { tokenizeForMatch, matchKeyword } from '@/utils/keyword-match';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export interface StoryData {
   countryCode: string;
@@ -65,6 +70,10 @@ export interface StoryData {
     militaryFlights: number;
     militaryVessels: number;
     outages: number;
+<<<<<<< HEAD
+=======
+    gpsJammingHexes: number;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   };
   convergence: {
     score: number;
@@ -79,16 +88,27 @@ export function collectStoryData(
   allNews: ClusteredEvent[],
   theaterPostures: Array<{ theaterId: string; theaterName: string; shortName: string; targetNation: string | null; postureLevel: string; totalAircraft: number; totalVessels: number; fighters: number; tankers: number; awacs: number; strikeCapable: boolean }>,
   predictionMarkets: Array<{ title: string; yesPrice: number }>,
+<<<<<<< HEAD
   signals?: { protests: number; militaryFlights: number; militaryVessels: number; outages: number },
+=======
+  signals?: { protests: number; militaryFlights: number; militaryVessels: number; outages: number; gpsJammingHexes: number },
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   convergence?: { score: number; signalTypes: string[]; regionalDescriptions: string[] } | null,
 ): StoryData {
   const scores = calculateCII();
   const countryScore = scores.find(s => s.code === countryCode) || null;
 
+<<<<<<< HEAD
   const keywords = COUNTRY_KEYWORDS[countryCode] || [countryName.toLowerCase()];
   const countryNews = allNews.filter(e => {
     const lower = e.primaryTitle.toLowerCase();
     return keywords.some(kw => lower.includes(kw));
+=======
+  const keywords = CURATED_COUNTRIES[countryCode]?.scoringKeywords || [countryName.toLowerCase()];
+  const countryNews = allNews.filter(e => {
+    const tokens = tokenizeForMatch(e.primaryTitle);
+    return keywords.some(kw => matchKeyword(tokens, kw));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   });
 
   const sortedNews = [...countryNews].sort((a, b) => {
@@ -104,8 +124,13 @@ export function collectStoryData(
   ) || null;
 
   const countryMarkets = predictionMarkets.filter(m => {
+<<<<<<< HEAD
     const lower = m.title.toLowerCase();
     return keywords.some(kw => lower.includes(kw));
+=======
+    const mTokens = tokenizeForMatch(m.title);
+    return keywords.some(kw => matchKeyword(mTokens, kw));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   });
 
   const threatCounts = { critical: 0, high: 0, medium: 0, categories: new Set<string>() };
@@ -154,7 +179,11 @@ export function collectStoryData(
       medium: threatCounts.medium,
       categories: [...threatCounts.categories],
     },
+<<<<<<< HEAD
     signals: signals || { protests: 0, militaryFlights: 0, militaryVessels: 0, outages: 0 },
+=======
+    signals: signals || { protests: 0, militaryFlights: 0, militaryVessels: 0, outages: 0, gpsJammingHexes: 0 },
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     convergence: convergence || null,
   };
 }

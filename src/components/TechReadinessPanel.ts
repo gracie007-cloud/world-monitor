@@ -1,5 +1,10 @@
 import { Panel } from './Panel';
+<<<<<<< HEAD
 import { getTechReadinessRankings, type TechReadinessScore } from '@/services/worldbank';
+=======
+import { t } from '@/services/i18n';
+import { getTechReadinessRankings, type TechReadinessScore } from '@/services/economic';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 import { escapeHtml } from '@/utils/sanitize';
 
 const COUNTRY_FLAGS: Record<string, string> = {
@@ -26,6 +31,7 @@ export class TechReadinessPanel extends Panel {
   constructor() {
     super({
       id: 'tech-readiness',
+<<<<<<< HEAD
       title: 'Tech Readiness Index',
       showCount: true,
       infoTooltip: `
@@ -39,6 +45,11 @@ export class TechReadinessPanel extends Panel {
         <em>— = No recent data available</em><br>
         <em>Source: World Bank Open Data (2019-2024)</em>
       `,
+=======
+      title: t('panels.techReadiness'),
+      showCount: true,
+      infoTooltip: t('components.techReadiness.infoTooltip'),
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     });
   }
 
@@ -53,12 +64,22 @@ export class TechReadinessPanel extends Panel {
 
     try {
       this.rankings = await getTechReadinessRankings();
+<<<<<<< HEAD
+=======
+      if (!this.element?.isConnected) return;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       this.lastFetch = Date.now();
       this.setCount(this.rankings.length);
       this.render();
     } catch (error) {
+<<<<<<< HEAD
       console.error('[TechReadinessPanel] Error fetching data:', error);
       this.showError('Failed to load tech readiness data');
+=======
+      if (!this.element?.isConnected) return;
+      console.error('[TechReadinessPanel] Error fetching data:', error);
+      this.showError(t('common.failedTechReadiness'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     } finally {
       this.loading = false;
     }
@@ -71,30 +92,54 @@ export class TechReadinessPanel extends Panel {
           <div class="tech-globe-ring"></div>
           <span class="tech-globe">🌐</span>
         </div>
+<<<<<<< HEAD
         <div class="tech-fetch-title">Fetching World Bank Data</div>
         <div class="tech-fetch-indicators">
           <div class="tech-indicator-item" style="animation-delay: 0s">
             <span class="tech-indicator-icon">🌐</span>
             <span class="tech-indicator-name">Internet Users</span>
+=======
+        <div class="tech-fetch-title">${t('components.techReadiness.fetchingData')}</div>
+        <div class="tech-fetch-indicators">
+          <div class="tech-indicator-item" style="animation-delay: 0s">
+            <span class="tech-indicator-icon">🌐</span>
+            <span class="tech-indicator-name">${t('components.techReadiness.internetUsersIndicator')}</span>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="tech-indicator-status"></span>
           </div>
           <div class="tech-indicator-item" style="animation-delay: 0.2s">
             <span class="tech-indicator-icon">📱</span>
+<<<<<<< HEAD
             <span class="tech-indicator-name">Mobile Subscriptions</span>
+=======
+            <span class="tech-indicator-name">${t('components.techReadiness.mobileSubscriptionsIndicator')}</span>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="tech-indicator-status"></span>
           </div>
           <div class="tech-indicator-item" style="animation-delay: 0.4s">
             <span class="tech-indicator-icon">📡</span>
+<<<<<<< HEAD
             <span class="tech-indicator-name">Broadband Access</span>
+=======
+            <span class="tech-indicator-name">${t('components.techReadiness.broadbandAccess')}</span>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="tech-indicator-status"></span>
           </div>
           <div class="tech-indicator-item" style="animation-delay: 0.6s">
             <span class="tech-indicator-icon">🔬</span>
+<<<<<<< HEAD
             <span class="tech-indicator-name">R&D Expenditure</span>
             <span class="tech-indicator-status"></span>
           </div>
         </div>
         <div class="tech-fetch-note">Analyzing 200+ countries...</div>
+=======
+            <span class="tech-indicator-name">${t('components.techReadiness.rdExpenditure')}</span>
+            <span class="tech-indicator-status"></span>
+          </div>
+        </div>
+        <div class="tech-fetch-note">${t('components.techReadiness.analyzingCountries')}</div>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `);
   }
@@ -116,7 +161,11 @@ export class TechReadinessPanel extends Panel {
 
   private render(): void {
     if (this.rankings.length === 0) {
+<<<<<<< HEAD
       this.showError('No data available');
+=======
+      this.showError(t('common.noDataAvailable'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return;
     }
 
@@ -126,27 +175,46 @@ export class TechReadinessPanel extends Panel {
     const html = `
       <div class="tech-readiness-list">
         ${top.map(country => {
+<<<<<<< HEAD
           const scoreClass = this.getScoreClass(country.score);
           return `
+=======
+      const scoreClass = this.getScoreClass(country.score);
+      return `
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <div class="readiness-item ${scoreClass}" data-country="${escapeHtml(country.country)}">
               <div class="readiness-rank">#${country.rank}</div>
               <div class="readiness-flag">${this.getFlag(country.country)}</div>
               <div class="readiness-info">
                 <div class="readiness-name">${escapeHtml(country.countryName)}</div>
                 <div class="readiness-components">
+<<<<<<< HEAD
                   <span title="Internet Users">🌐${this.formatComponent(country.components.internet)}</span>
                   <span title="Mobile Subscriptions">📱${this.formatComponent(country.components.mobile)}</span>
                   <span title="R&D Spending">🔬${this.formatComponent(country.components.rdSpend)}</span>
+=======
+                  <span title="${t('components.techReadiness.internetUsers')}">🌐${this.formatComponent(country.components.internet)}</span>
+                  <span title="${t('components.techReadiness.mobileSubscriptions')}">📱${this.formatComponent(country.components.mobile)}</span>
+                  <span title="${t('components.techReadiness.rdSpending')}">🔬${this.formatComponent(country.components.rdSpend)}</span>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
                 </div>
               </div>
               <div class="readiness-score ${scoreClass}">${country.score}</div>
             </div>
           `;
+<<<<<<< HEAD
         }).join('')}
       </div>
       <div class="readiness-footer">
         <span class="readiness-source">Source: World Bank</span>
         <span class="readiness-updated">Updated: ${new Date(this.lastFetch).toLocaleDateString()}</span>
+=======
+    }).join('')}
+      </div>
+      <div class="readiness-footer">
+        <span class="readiness-source">${t('components.techReadiness.source')}</span>
+        <span class="readiness-updated">${t('components.techReadiness.updated', { date: new Date(this.lastFetch).toLocaleDateString() })}</span>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
 

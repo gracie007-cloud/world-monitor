@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+// Non-sebuf: returns XML/HTML, stays as standalone Vercel function
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 /**
  * Dynamic OG Image Generator for Story Sharing
  * Returns an SVG image (1200x630) — rich intelligence card for social previews.
@@ -24,12 +28,24 @@ const LEVEL_LABELS = {
   low: 'LOW RISK',
 };
 
+<<<<<<< HEAD
+=======
+function normalizeLevel(rawLevel) {
+  const level = String(rawLevel || '').toLowerCase();
+  return Object.prototype.hasOwnProperty.call(LEVEL_COLORS, level) ? level : 'normal';
+}
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 export default function handler(req, res) {
   const url = new URL(req.url, `https://${req.headers.host}`);
   const countryCode = (url.searchParams.get('c') || '').toUpperCase();
   const type = url.searchParams.get('t') || 'ciianalysis';
   const score = url.searchParams.get('s');
+<<<<<<< HEAD
   const level = url.searchParams.get('l') || 'normal';
+=======
+  const level = normalizeLevel(url.searchParams.get('l'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
   const countryName = COUNTRY_NAMES[countryCode] || countryCode || 'Global';
   const levelColor = LEVEL_COLORS[level] || '#eab308';

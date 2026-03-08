@@ -77,7 +77,10 @@ Bundler targets are pinned in both Tauri configs and enforced by packaging scrip
 - macOS: `app,dmg`
 - Windows: `nsis,msi`
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 ## Rust dependency modes (online vs restricted network)
 
 From `src-tauri/`, the project supports two packaging paths:

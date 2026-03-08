@@ -22,13 +22,25 @@ import {
   SPACEPORTS,
   APT_GROUPS,
   CRITICAL_MINERALS,
+<<<<<<< HEAD
+=======
+  STOCK_EXCHANGES,
+  FINANCIAL_CENTERS,
+  CENTRAL_BANKS,
+  COMMODITY_HUBS,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 } from '../config';
 import type {
   AisDensityZone,
   AisDisruptionEvent,
+<<<<<<< HEAD
   AirportDelayAlert,
   CableAdvisory,
   Earthquake,
+=======
+  CableAdvisory,
+  CyberThreat,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   InternetOutage,
   MapLayers,
   MilitaryFlight,
@@ -40,11 +52,27 @@ import type {
   RepairShip,
   SocialUnrestEvent,
 } from '../types';
+<<<<<<< HEAD
 import type { WeatherAlert } from '../services/weather';
 
 type Scenario = 'alpha' | 'beta';
 type HarnessVariant = 'full' | 'tech';
 type HarnessLayerKey = keyof MapLayers;
+=======
+import type { AirportDelayAlert } from '../services/aviation';
+import type { Earthquake } from '../services/earthquakes';
+import type { WeatherAlert } from '../services/weather';
+
+type Scenario = 'alpha' | 'beta';
+type HarnessVariant = 'full' | 'tech' | 'finance';
+type HarnessLayerKey = keyof MapLayers;
+type PulseProtestScenario =
+  | 'none'
+  | 'recent-acled-riot'
+  | 'recent-gdelt-riot'
+  | 'recent-protest';
+type NewsPulseScenario = 'none' | 'recent' | 'stale';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 type LayerSnapshot = {
   id: string;
@@ -85,7 +113,16 @@ type MapHarness = {
   variant: HarnessVariant;
   seedAllDynamicData: () => void;
   setProtestsScenario: (scenario: Scenario) => void;
+<<<<<<< HEAD
   setHotspotActivityScenario: (scenario: 'none' | 'breaking') => void;
+=======
+  setPulseProtestsScenario: (scenario: PulseProtestScenario) => void;
+  setNewsPulseScenario: (scenario: NewsPulseScenario) => void;
+  setHotspotActivityScenario: (scenario: 'none' | 'breaking') => void;
+  forcePulseStartupElapsed: () => void;
+  resetPulseStartupTime: () => void;
+  isPulseAnimationRunning: () => boolean;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   setZoom: (zoom: number) => void;
   setLayersForSnapshot: (enabledLayers: HarnessLayerKey[]) => void;
   setCamera: (camera: CameraState) => void;
@@ -94,8 +131,17 @@ type MapHarness = {
   prepareVisualScenario: (scenarioId: string) => boolean;
   isVisualScenarioReady: (scenarioId: string) => boolean;
   getDeckLayerSnapshot: () => LayerSnapshot[];
+<<<<<<< HEAD
   getOverlaySnapshot: () => OverlaySnapshot;
   getClusterStateSize: () => number;
+=======
+  getLayerDataCount: (layerId: string) => number;
+  getLayerFirstScreenTransform: (layerId: string) => string | null;
+  getFirstProtestTitle: () => string | null;
+  getProtestClusterCount: () => number;
+  getOverlaySnapshot: () => OverlaySnapshot;
+  getCyberTooltipHtml: (indicator: string) => string;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   destroy: () => void;
 };
 
@@ -116,6 +162,11 @@ app.style.position = 'relative';
 app.style.margin = '0 auto';
 
 const allLayersEnabled: MapLayers = {
+<<<<<<< HEAD
+=======
+  gpsJamming: true,
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   conflicts: true,
   bases: true,
   cables: true,
@@ -129,6 +180,10 @@ const allLayersEnabled: MapLayers = {
   economic: true,
   waterways: true,
   outages: true,
+<<<<<<< HEAD
+=======
+  cyberThreats: true,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   datacenters: true,
   protests: true,
   flights: true,
@@ -145,9 +200,31 @@ const allLayersEnabled: MapLayers = {
   accelerators: true,
   techHQs: true,
   techEvents: true,
+<<<<<<< HEAD
 };
 
 const allLayersDisabled: MapLayers = {
+=======
+  stockExchanges: true,
+  financialCenters: true,
+  centralBanks: true,
+  commodityHubs: true,
+  gulfInvestments: true,
+  positiveEvents: true,
+  kindness: true,
+  happiness: false,
+  speciesRecovery: false,
+  renewableInstallations: false,
+  tradeRoutes: true,
+  iranAttacks: false,
+  ciiChoropleth: false,
+  dayNight: true,
+};
+
+const allLayersDisabled: MapLayers = {
+  gpsJamming: false,
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   conflicts: false,
   bases: false,
   cables: false,
@@ -161,6 +238,10 @@ const allLayersDisabled: MapLayers = {
   economic: false,
   waterways: false,
   outages: false,
+<<<<<<< HEAD
+=======
+  cyberThreats: false,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   datacenters: false,
   protests: false,
   flights: false,
@@ -177,6 +258,23 @@ const allLayersDisabled: MapLayers = {
   accelerators: false,
   techHQs: false,
   techEvents: false,
+<<<<<<< HEAD
+=======
+  stockExchanges: false,
+  financialCenters: false,
+  centralBanks: false,
+  commodityHubs: false,
+  gulfInvestments: false,
+  positiveEvents: false,
+  kindness: false,
+  happiness: false,
+  speciesRecovery: false,
+  renewableInstallations: false,
+  tradeRoutes: false,
+  iranAttacks: false,
+  ciiChoropleth: false,
+  dayNight: false,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 };
 
 const SEEDED_NEWS_LOCATIONS: Array<{
@@ -198,17 +296,31 @@ const map = new DeckGLMap(app, {
   pan: { x: 0, y: 0 },
   view: 'global',
   layers: allLayersEnabled,
+<<<<<<< HEAD
   timeRange: '24h',
+=======
+  // Keep harness deterministic regardless of wall-clock date.
+  timeRange: 'all',
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 });
 
 const DETERMINISTIC_BODY_CLASS = 'e2e-deterministic';
 
 const internals = map as unknown as {
   buildLayers?: () => Array<{ id: string; props?: { data?: unknown } }>;
+<<<<<<< HEAD
   lastClusterState?: Map<string, unknown>;
   maplibreMap?: MapLibreMap;
   newsLocationFirstSeen?: Map<string, number>;
   stopNewsPulseAnimation?: () => void;
+=======
+  maplibreMap?: MapLibreMap;
+  getTooltip?: (info: { object?: unknown; layer?: { id?: string } }) => { html?: string } | null;
+  newsLocationFirstSeen?: Map<string, number>;
+  newsPulseIntervalId?: ReturnType<typeof setInterval> | null;
+  startupTime?: number;
+  stopPulseAnimation?: () => void;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 };
 
 const buildLayerState = (enabledLayers: HarnessLayerKey[]): MapLayers => {
@@ -264,6 +376,53 @@ const getDeckLayerSnapshot = (): LayerSnapshot[] => {
   }));
 };
 
+<<<<<<< HEAD
+=======
+const getLayerDataCount = (layerId: string): number => {
+  return getDeckLayerSnapshot().find((layer) => layer.id === layerId)?.dataCount ?? 0;
+};
+
+const getLayerFirstScreenTransform = (layerId: string): string | null => {
+  const maplibreMap = internals.maplibreMap;
+  if (!maplibreMap) return null;
+
+  const layers = internals.buildLayers?.() ?? [];
+  const target = layers.find((layer) => layer.id === layerId);
+  const data = target?.props?.data;
+  if (!Array.isArray(data) || data.length === 0) return null;
+
+  const first = data[0] as {
+    lon?: number;
+    lng?: number;
+    longitude?: number;
+    lat?: number;
+    latitude?: number;
+  };
+
+  const lon = first.lon ?? first.lng ?? first.longitude;
+  const lat = first.lat ?? first.latitude;
+  if (!Number.isFinite(lon) || !Number.isFinite(lat)) return null;
+
+  const point = maplibreMap.project([lon as number, lat as number]);
+  return `translate(${point.x.toFixed(2)}px, ${point.y.toFixed(2)}px)`;
+};
+
+const getFirstProtestTitle = (): string | null => {
+  const layers = internals.buildLayers?.() ?? [];
+  const protestLayer = layers.find((layer) => layer.id === 'protest-clusters-layer');
+  const data = protestLayer?.props?.data;
+  if (!Array.isArray(data) || data.length === 0) return null;
+
+  const first = data[0] as { items?: Array<{ title?: string }> };
+  const title = first.items?.[0]?.title;
+  return typeof title === 'string' ? title : null;
+};
+
+const getProtestClusterCount = (): number => {
+  return getLayerDataCount('protest-clusters-layer');
+};
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 const getOverlaySnapshot = (): OverlaySnapshot => ({
   protestMarkers: document.querySelectorAll('.protest-marker').length,
   datacenterMarkers: document.querySelectorAll('.datacenter-marker').length,
@@ -306,6 +465,10 @@ const seededCameras = {
   ais: toCamera(55.0, 25.0, 5.2),
   weather: toCamera(-80.2, 25.7, 5.2),
   outages: toCamera(-0.1, 51.5, 5.2),
+<<<<<<< HEAD
+=======
+  cyber: toCamera(-0.12, 51.5, 5.2),
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   protests: toCamera(0.2, 20.1, 5.2),
   flights: toCamera(-73.9, 40.4, 5.2),
   military: toCamera(56.3, 26.1, 5.2),
@@ -333,6 +496,13 @@ const [techHQLon, techHQLat] = firstLatLon(TECH_HQS, [-122.0, 37.3]);
 const [cloudRegionLon, cloudRegionLat] = firstLatLon(CLOUD_REGIONS, [-122.3, 37.6]);
 const [aptLon, aptLat] = firstLatLon(APT_GROUPS, [116.4, 39.9]);
 const [portLon, portLat] = firstLatLon(PORTS, [32.5, 29.9]);
+<<<<<<< HEAD
+=======
+const [exchangeLon, exchangeLat] = firstLatLon(STOCK_EXCHANGES, [-74.0, 40.7]);
+const [financialCenterLon, financialCenterLat] = firstLatLon(FINANCIAL_CENTERS, [-74.0, 40.7]);
+const [centralBankLon, centralBankLat] = firstLatLon(CENTRAL_BANKS, [-77.0, 38.9]);
+const [commodityHubLon, commodityHubLat] = firstLatLon(COMMODITY_HUBS, [-87.6, 41.8]);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 const VISUAL_SCENARIOS: VisualScenario[] = [
   {
@@ -440,12 +610,28 @@ const VISUAL_SCENARIOS: VisualScenario[] = [
     expectedSelectors: [],
   },
   {
+<<<<<<< HEAD
+=======
+    id: 'cyber-z5',
+    variant: 'both',
+    enabledLayers: ['cyberThreats'],
+    camera: seededCameras.cyber,
+    expectedDeckLayers: ['cyber-threats-layer'],
+    expectedSelectors: [],
+  },
+  {
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     id: 'datacenters-cluster-z3',
     variant: 'both',
     enabledLayers: ['datacenters'],
     camera: toCamera(datacenterLon, datacenterLat, 3.0),
+<<<<<<< HEAD
     expectedDeckLayers: [],
     expectedSelectors: ['.datacenter-marker'],
+=======
+    expectedDeckLayers: ['datacenter-clusters-layer'],
+    expectedSelectors: [],
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   },
   {
     id: 'datacenters-icons-z6',
@@ -460,8 +646,13 @@ const VISUAL_SCENARIOS: VisualScenario[] = [
     variant: 'both',
     enabledLayers: ['protests'],
     camera: seededCameras.protests,
+<<<<<<< HEAD
     expectedDeckLayers: [],
     expectedSelectors: ['.protest-marker'],
+=======
+    expectedDeckLayers: ['protest-clusters-layer'],
+    expectedSelectors: [],
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   },
   {
     id: 'flights-z5',
@@ -562,16 +753,58 @@ const VISUAL_SCENARIOS: VisualScenario[] = [
     variant: 'tech',
     enabledLayers: ['techHQs'],
     camera: toCamera(techHQLon, techHQLat, 5.2),
+<<<<<<< HEAD
     expectedDeckLayers: [],
     expectedSelectors: ['.tech-hq-marker'],
+=======
+    expectedDeckLayers: ['tech-hq-clusters-layer'],
+    expectedSelectors: [],
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   },
   {
     id: 'tech-events-z5',
     variant: 'tech',
     enabledLayers: ['techEvents'],
     camera: seededCameras.techEvents,
+<<<<<<< HEAD
     expectedDeckLayers: [],
     expectedSelectors: ['.tech-event-marker'],
+=======
+    expectedDeckLayers: ['tech-event-clusters-layer'],
+    expectedSelectors: [],
+  },
+  {
+    id: 'stock-exchanges-z5',
+    variant: 'finance',
+    enabledLayers: ['stockExchanges'],
+    camera: toCamera(exchangeLon, exchangeLat, 5.2),
+    expectedDeckLayers: ['stock-exchanges-layer'],
+    expectedSelectors: [],
+  },
+  {
+    id: 'financial-centers-z5',
+    variant: 'finance',
+    enabledLayers: ['financialCenters'],
+    camera: toCamera(financialCenterLon, financialCenterLat, 5.2),
+    expectedDeckLayers: ['financial-centers-layer'],
+    expectedSelectors: [],
+  },
+  {
+    id: 'central-banks-z5',
+    variant: 'finance',
+    enabledLayers: ['centralBanks'],
+    camera: toCamera(centralBankLon, centralBankLat, 5.2),
+    expectedDeckLayers: ['central-banks-layer'],
+    expectedSelectors: [],
+  },
+  {
+    id: 'commodity-hubs-z5',
+    variant: 'finance',
+    enabledLayers: ['commodityHubs'],
+    camera: toCamera(commodityHubLon, commodityHubLat, 5.2),
+    expectedDeckLayers: ['commodity-hubs-layer'],
+    expectedSelectors: [],
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   },
   // Note: `sanctions` has no map renderer in DeckGLMap today; excluded from visual scenarios.
 ];
@@ -584,6 +817,15 @@ const filterScenariosForVariant = (variant: HarnessVariant): VisualScenario[] =>
   );
 };
 
+<<<<<<< HEAD
+=======
+const currentHarnessVariant: HarnessVariant = SITE_VARIANT === 'tech'
+  ? 'tech'
+  : SITE_VARIANT === 'finance'
+  ? 'finance'
+  : 'full';
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 const buildProtests = (scenario: Scenario): SocialUnrestEvent[] => {
   const title =
     scenario === 'alpha' ? 'Scenario Alpha Protest' : 'Scenario Beta Protest';
@@ -616,6 +858,40 @@ const buildProtests = (scenario: Scenario): SocialUnrestEvent[] => {
   ];
 };
 
+<<<<<<< HEAD
+=======
+const buildPulseProtests = (scenario: PulseProtestScenario): SocialUnrestEvent[] => {
+  if (scenario === 'none') return [];
+
+  const now = new Date();
+  const isRiot = scenario !== 'recent-protest';
+  const sourceType = scenario === 'recent-gdelt-riot' ? 'gdelt' : 'acled';
+
+  return [
+    {
+      id: `e2e-pulse-protest-${scenario}`,
+      title: `Pulse Protest ${scenario}`,
+      summary: `Pulse protest fixture: ${scenario}`,
+      eventType: isRiot ? 'riot' : 'protest',
+      city: 'Harness City',
+      country: 'Harnessland',
+      lat: 20.1,
+      lon: 0.2,
+      time: now,
+      severity: isRiot ? 'high' : 'medium',
+      fatalities: isRiot ? 1 : 0,
+      sources: ['e2e'],
+      sourceType,
+      tags: ['e2e', 'pulse'],
+      actors: ['Harness Group'],
+      relatedHotspots: [],
+      confidence: 'high',
+      validated: true,
+    },
+  ];
+};
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 const buildHotspotActivityNews = (
   scenario: 'none' | 'breaking'
 ): NewsItem[] => {
@@ -638,11 +914,18 @@ const seedAllDynamicData = (): void => {
       id: 'e2e-eq-1',
       place: 'Harness Fault',
       magnitude: 5.8,
+<<<<<<< HEAD
       lat: 34.1,
       lon: -118.2,
       depth: 12,
       time: new Date('2026-02-01T10:00:00.000Z'),
       url: 'https://example.com/eq',
+=======
+      depthKm: 12,
+      location: { latitude: 34.1, longitude: -118.2 },
+      occurredAt: new Date('2026-02-01T10:00:00.000Z').getTime(),
+      sourceUrl: 'https://example.com/eq',
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     },
   ];
 
@@ -676,6 +959,27 @@ const seedAllDynamicData = (): void => {
     },
   ];
 
+<<<<<<< HEAD
+=======
+  const cyberThreats: CyberThreat[] = [
+    {
+      id: 'e2e-cyber-1',
+      type: 'c2_server',
+      source: 'feodo',
+      indicator: '1.2.3.4',
+      indicatorType: 'ip',
+      lat: 51.5,
+      lon: -0.12,
+      country: 'GB',
+      severity: 'high',
+      malwareFamily: 'QakBot',
+      tags: ['botnet', 'c2'],
+      firstSeen: '2026-02-01T09:00:00.000Z',
+      lastSeen: '2026-02-01T10:00:00.000Z',
+    },
+  ];
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   const aisDisruptions: AisDisruptionEvent[] = [
     {
       id: 'e2e-ais-disruption-1',
@@ -830,6 +1134,10 @@ const seedAllDynamicData = (): void => {
   map.setEarthquakes(earthquakes);
   map.setWeatherAlerts(weather);
   map.setOutages(outages);
+<<<<<<< HEAD
+=======
+  map.setCyberThreats(cyberThreats);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   map.setAisData(aisDisruptions, aisDensity);
   map.setCableActivity(cableAdvisories, repairShips);
   map.setProtests(buildProtests('alpha'));
@@ -887,7 +1195,34 @@ const makeNewsLocationsNonRecent = (): void => {
       internals.newsLocationFirstSeen.set(key, now - 120_000);
     }
   }
+<<<<<<< HEAD
   internals.stopNewsPulseAnimation?.();
+=======
+  internals.stopPulseAnimation?.();
+};
+
+const setNewsPulseScenario = (scenario: NewsPulseScenario): void => {
+  if (scenario === 'none') {
+    internals.newsLocationFirstSeen?.clear();
+    map.setNewsLocations([]);
+    return;
+  }
+
+  if (scenario === 'recent') {
+    map.setNewsLocations([
+      {
+        lat: 48.85,
+        lon: 2.35,
+        title: `Harness Pulse News ${Date.now()}`,
+        threatLevel: 'high',
+      },
+    ]);
+    return;
+  }
+
+  map.setNewsLocations(SEEDED_NEWS_LOCATIONS);
+  makeNewsLocationsNonRecent();
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 };
 
 let deterministicVisualModeEnabled = false;
@@ -983,6 +1318,7 @@ const isVisualScenarioReady = (scenarioId: string): boolean => {
   return true;
 };
 
+<<<<<<< HEAD
 seedAllDynamicData();
 
 let ready = false;
@@ -991,6 +1327,35 @@ const pollReady = (): void => {
   const maplibreMap = internals.maplibreMap;
 
   if (hasCanvas && maplibreMap?.isStyleLoaded()) {
+=======
+const getCyberTooltipHtml = (indicator: string): string => {
+  const tooltip = internals.getTooltip?.({
+    object: {
+      country: indicator,
+      severity: 'high',
+      source: 'feodo',
+    },
+    layer: { id: 'cyber-threats-layer' },
+  });
+  return typeof tooltip?.html === 'string' ? tooltip.html : '';
+};
+
+seedAllDynamicData();
+
+let ready = false;
+const readyStartedAt = Date.now();
+const STYLE_READY_FALLBACK_MS = 12_000;
+const pollReady = (): void => {
+  const hasCanvas = Boolean(document.querySelector('#deckgl-basemap canvas'));
+  const maplibreMap = internals.maplibreMap;
+  const styleLoaded = Boolean(maplibreMap?.isStyleLoaded());
+  const allowStyleFallback =
+    hasCanvas &&
+    Boolean(maplibreMap) &&
+    Date.now() - readyStartedAt >= STYLE_READY_FALLBACK_MS;
+
+  if ((hasCanvas && styleLoaded) || allowStyleFallback) {
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     if (!deterministicVisualModeEnabled) {
       enableDeterministicVisualMode();
     }
@@ -1006,14 +1371,37 @@ window.__mapHarness = {
   get ready() {
     return ready;
   },
+<<<<<<< HEAD
   variant: SITE_VARIANT === 'tech' ? 'tech' : 'full',
+=======
+  variant: currentHarnessVariant,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   seedAllDynamicData,
   setProtestsScenario: (scenario: Scenario): void => {
     map.setProtests(buildProtests(scenario));
   },
+<<<<<<< HEAD
   setHotspotActivityScenario: (scenario: 'none' | 'breaking'): void => {
     map.updateHotspotActivity(buildHotspotActivityNews(scenario));
   },
+=======
+  setPulseProtestsScenario: (scenario: PulseProtestScenario): void => {
+    map.setProtests(buildPulseProtests(scenario));
+  },
+  setNewsPulseScenario,
+  setHotspotActivityScenario: (scenario: 'none' | 'breaking'): void => {
+    map.updateHotspotActivity(buildHotspotActivityNews(scenario));
+  },
+  forcePulseStartupElapsed: (): void => {
+    internals.startupTime = Date.now() - 61_000;
+  },
+  resetPulseStartupTime: (): void => {
+    internals.startupTime = Date.now();
+  },
+  isPulseAnimationRunning: (): boolean => {
+    return internals.newsPulseIntervalId != null;
+  },
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   setZoom: (zoom: number): void => {
     map.setZoom(zoom);
     map.render();
@@ -1022,8 +1410,12 @@ window.__mapHarness = {
   setCamera,
   enableDeterministicVisualMode,
   getVisualScenarios: (): VisualScenarioSummary[] => {
+<<<<<<< HEAD
     const variant = SITE_VARIANT === 'tech' ? 'tech' : 'full';
     return filterScenariosForVariant(variant).map((scenario) => ({
+=======
+    return filterScenariosForVariant(currentHarnessVariant).map((scenario) => ({
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       id: scenario.id,
       variant: scenario.variant,
     }));
@@ -1031,10 +1423,19 @@ window.__mapHarness = {
   prepareVisualScenario,
   isVisualScenarioReady,
   getDeckLayerSnapshot,
+<<<<<<< HEAD
   getOverlaySnapshot,
   getClusterStateSize: (): number => {
     return internals.lastClusterState?.size ?? -1;
   },
+=======
+  getLayerDataCount,
+  getLayerFirstScreenTransform,
+  getFirstProtestTitle,
+  getProtestClusterCount,
+  getOverlaySnapshot,
+  getCyberTooltipHtml,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   destroy: (): void => {
     map.destroy();
   },

@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import type { SocialUnrestEvent, MilitaryFlight, MilitaryVessel, Earthquake } from '@/types';
+=======
+import type { SocialUnrestEvent, MilitaryFlight, MilitaryVessel } from '@/types';
+import type { Earthquake } from '@/services/earthquakes';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 import { generateSignalId } from '@/utils/analysis-constants';
 import type { CorrelationSignalCore } from './analysis-core';
 import { INTEL_HOTSPOTS, CONFLICT_ZONES, STRATEGIC_WATERWAYS } from '@/config/geo';
@@ -83,7 +88,11 @@ export function ingestVessels(vessels: MilitaryVessel[]): void {
 
 export function ingestEarthquakes(quakes: Earthquake[]): void {
   for (const q of quakes) {
+<<<<<<< HEAD
     ingestGeoEvent(q.lat, q.lon, 'earthquake', q.time);
+=======
+    ingestGeoEvent(q.location?.latitude ?? 0, q.location?.longitude ?? 0, 'earthquake', new Date(q.occurredAt));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 }
 
@@ -212,6 +221,7 @@ export function getCellCount(): number {
   return cells.size;
 }
 
+<<<<<<< HEAD
 export function debugInjectTestEvents(): void {
   const now = new Date();
   const testLat = 25.5;
@@ -223,6 +233,8 @@ export function debugInjectTestEvents(): void {
   console.log('[GeoConvergence] Injected 4 test events at Taiwan Strait region');
 }
 
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 export function debugGetCells(): Map<string, unknown> {
   return new Map(cells);
 }

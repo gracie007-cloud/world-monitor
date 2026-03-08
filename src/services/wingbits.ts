@@ -1,11 +1,24 @@
 /**
  * Wingbits Aircraft Enrichment Service
  * Provides detailed aircraft information (owner, operator, type) for military classification
+<<<<<<< HEAD
+=======
+ *
+ * Uses MilitaryServiceClient RPCs (GetAircraftDetails, GetAircraftDetailsBatch, GetWingbitsStatus)
+ * instead of the legacy /api/wingbits proxy.
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
  */
 
 import { createCircuitBreaker } from '@/utils';
 import { dataFreshness } from './data-freshness';
 import { isFeatureAvailable } from './runtime-config';
+<<<<<<< HEAD
+=======
+import {
+  MilitaryServiceClient,
+  type AircraftDetails,
+} from '@/generated/client/worldmonitor/military/v1/service_client';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export interface WingbitsAircraftDetails {
   icao24: string;
@@ -39,7 +52,13 @@ export interface EnrichedAircraftInfo {
   confidence: 'confirmed' | 'likely' | 'possible' | 'civilian';
 }
 
+<<<<<<< HEAD
 const WINGBITS_PROXY_URL = '/api/wingbits';
+=======
+// ---- Sebuf client ----
+
+const client = new MilitaryServiceClient('', { fetch: (...args) => globalThis.fetch(...args) });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 // Client-side cache for aircraft details
 const localCache = new Map<string, { data: WingbitsAircraftDetails; timestamp: number }>();
@@ -130,6 +149,52 @@ const MILITARY_AIRCRAFT_TYPES = [
   'EUFI', 'TYPHOON', 'RAFALE', 'TORNADO', 'GRIPEN',
 ];
 
+<<<<<<< HEAD
+=======
+// ---- Proto-to-legacy type mapping ----
+
+/** Map proto AircraftDetails (non-nullable strings) to WingbitsAircraftDetails (nullable strings) */
+function toWingbitsDetails(d: AircraftDetails): WingbitsAircraftDetails {
+  return {
+    icao24: d.icao24,
+    registration: d.registration || null,
+    manufacturerIcao: d.manufacturerIcao || null,
+    manufacturerName: d.manufacturerName || null,
+    model: d.model || null,
+    typecode: d.typecode || null,
+    serialNumber: d.serialNumber || null,
+    icaoAircraftType: d.icaoAircraftType || null,
+    operator: d.operator || null,
+    operatorCallsign: d.operatorCallsign || null,
+    operatorIcao: d.operatorIcao || null,
+    owner: d.owner || null,
+    built: d.built || null,
+    engines: d.engines || null,
+    categoryDescription: d.categoryDescription || null,
+  };
+}
+
+function createNegativeDetailsEntry(icao24: string): WingbitsAircraftDetails {
+  return {
+    icao24,
+    registration: null,
+    manufacturerIcao: null,
+    manufacturerName: null,
+    model: null,
+    typecode: null,
+    serialNumber: null,
+    icaoAircraftType: null,
+    operator: null,
+    operatorCallsign: null,
+    operatorIcao: null,
+    owner: null,
+    built: null,
+    engines: null,
+    categoryDescription: null,
+  };
+}
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 /**
  * Check if Wingbits API is configured
  */
@@ -138,11 +203,17 @@ export async function checkWingbitsStatus(): Promise<boolean> {
   if (wingbitsConfigured !== null) return wingbitsConfigured;
 
   try {
+<<<<<<< HEAD
     const response = await fetch(`${WINGBITS_PROXY_URL}/health`);
     const data = await response.json();
     wingbitsConfigured = data.configured === true;
     dataFreshness.setEnabled('wingbits', wingbitsConfigured);
     console.log(`[Wingbits] Status: ${wingbitsConfigured ? 'configured' : 'not configured'}`);
+=======
+    const resp = await client.getWingbitsStatus({});
+    wingbitsConfigured = resp.configured;
+    dataFreshness.setEnabled('wingbits', wingbitsConfigured);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     return wingbitsConfigured;
   } catch {
     wingbitsConfigured = false;
@@ -166,6 +237,7 @@ export async function getAircraftDetails(icao24: string): Promise<WingbitsAircra
     // Check if configured
     if (wingbitsConfigured === false) return null;
 
+<<<<<<< HEAD
     const response = await fetch(`${WINGBITS_PROXY_URL}/details/${key}`);
 
     if (!response.ok) {
@@ -180,13 +252,30 @@ export async function getAircraftDetails(icao24: string): Promise<WingbitsAircra
     const data = await response.json();
 
     if (data.configured === false) {
+=======
+    const resp = await client.getAircraftDetails({ icao24: key });
+
+    if (resp.configured === false) {
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       wingbitsConfigured = false;
       throw new Error('Wingbits not configured');
     }
 
+<<<<<<< HEAD
     // Cache the result
     setLocalCache(key, data);
     return data;
+=======
+    if (!resp.details) {
+      // Cache negative result
+      setLocalCache(key, createNegativeDetailsEntry(key));
+      return null;
+    }
+
+    const details = toWingbitsDetails(resp.details);
+    setLocalCache(key, details);
+    return details;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }, null);
 }
 
@@ -197,10 +286,17 @@ export async function getAircraftDetailsBatch(icao24List: string[]): Promise<Map
   if (!isFeatureAvailable('wingbitsEnrichment')) return new Map();
   const results = new Map<string, WingbitsAircraftDetails>();
   const toFetch: string[] = [];
+<<<<<<< HEAD
 
   // Check local cache first
   for (const icao24 of icao24List) {
     const key = icao24.toLowerCase();
+=======
+  const requestedKeys = Array.from(new Set(icao24List.map((icao24) => icao24.toLowerCase()))).sort();
+
+  // Check local cache first
+  for (const key of requestedKeys) {
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const cached = getFromLocalCache(key);
     if (cached) {
       if (cached.registration) { // Only include valid results
@@ -216,6 +312,7 @@ export async function getAircraftDetailsBatch(icao24List: string[]): Promise<Map
   }
 
   try {
+<<<<<<< HEAD
     const response = await fetch(`${WINGBITS_PROXY_URL}/details/batch`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -227,11 +324,17 @@ export async function getAircraftDetailsBatch(icao24List: string[]): Promise<Map
     const data = await response.json();
 
     if (data.configured === false) {
+=======
+    const resp = await client.getAircraftDetailsBatch({ icao24s: toFetch });
+
+    if (resp.configured === false) {
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       wingbitsConfigured = false;
       return results;
     }
 
     // Process results
+<<<<<<< HEAD
     if (data.results) {
       for (const [icao24, details] of Object.entries(data.results)) {
         const typedDetails = details as WingbitsAircraftDetails;
@@ -243,6 +346,29 @@ export async function getAircraftDetailsBatch(icao24List: string[]): Promise<Map
     }
 
     console.log(`[Wingbits] Batch: ${results.size} enriched, ${data.cached || 0} cached, ${data.fetched || 0} fetched`);
+=======
+    const returnedKeys = new Set<string>();
+    for (const [icao24, protoDetails] of Object.entries(resp.results)) {
+      const key = icao24.toLowerCase();
+      returnedKeys.add(key);
+      const details = toWingbitsDetails(protoDetails);
+      setLocalCache(key, details);
+      if (details.registration) {
+        results.set(key, details);
+      }
+    }
+
+    // Cache missing lookups as negative entries to avoid repeated retries.
+    const requestedCount = Number.isFinite(resp.requested)
+      ? Math.max(0, Math.min(toFetch.length, resp.requested))
+      : toFetch.length;
+    for (const key of toFetch.slice(0, requestedCount)) {
+      if (!returnedKeys.has(key)) {
+        setLocalCache(key, createNegativeDetailsEntry(key));
+      }
+    }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     if (results.size > 0) {
       dataFreshness.recordUpdate('wingbits', results.size);
     }

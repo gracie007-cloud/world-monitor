@@ -1,6 +1,10 @@
 # Tauri Validation Report
 
 ## Scope
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 Validated desktop build readiness for the World Monitor Tauri app by checking frontend compilation, TypeScript integrity, and Tauri/Rust build execution.
 
 ## Preflight checks before desktop validation
@@ -25,6 +29,10 @@ If any of these checks fail, treat downstream desktop build failures as environm
 5. `cargo check` (from `src-tauri/`) — failed because the environment blocks downloading crates from `https://index.crates.io` (`403 CONNECT tunnel failed`).
 
 ## Assessment
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 - The web app portion compiles successfully.
 - Full Tauri desktop validation in this run is blocked by an **external environment outage/restriction** (registry access denied with HTTP 403).
 - No code/runtime defects were observed in project sources during this validation pass.
@@ -42,6 +50,10 @@ Use these labels in future reports so outcomes are actionable:
    - Action: provision offline artifacts/mirror config first, enable offline override (`config.local.toml` or CLI `--config`), then rerun.
 
 ## Next action to validate desktop end-to-end
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 Choose one supported path:
 
 - Online path:

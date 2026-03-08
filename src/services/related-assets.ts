@@ -1,4 +1,6 @@
 import type { ClusteredEvent, RelatedAsset, AssetType, RelatedAssetContext } from '@/types';
+import { tokenizeForMatch, matchKeyword } from '@/utils/keyword-match';
+import { t } from '@/services/i18n';
 import {
   INTEL_HOTSPOTS,
   CONFLICT_ZONES,
@@ -9,7 +11,7 @@ import {
   PIPELINES,
 } from '@/config';
 
-const MAX_DISTANCE_KM = 600;
+const MAX_DISTANCE_KM = 300;
 const MAX_ASSETS_PER_TYPE = 3;
 
 const ASSET_KEYWORDS: Record<AssetType, string[]> = {
@@ -20,38 +22,26 @@ const ASSET_KEYWORDS: Record<AssetType, string[]> = {
   nuclear: ['nuclear', 'reactor', 'uranium', 'enrichment', 'nuclear plant'],
 };
 
-const ASSET_LABELS: Record<AssetType, string> = {
-  pipeline: 'Pipeline',
-  cable: 'Cable',
-  datacenter: 'Datacenter',
-  base: 'Base',
-  nuclear: 'Nuclear',
-};
-
 interface AssetOrigin {
   lat: number;
   lon: number;
   label: string;
 }
 
-function toTitleLower(titles: string[]): string[] {
-  return titles.map(title => title.toLowerCase());
-}
-
 function detectAssetTypes(titles: string[]): AssetType[] {
-  const normalized = toTitleLower(titles);
+  const tokenized = titles.map(t => tokenizeForMatch(t));
   const types = Object.entries(ASSET_KEYWORDS)
     .filter(([, keywords]) =>
-      normalized.some(title => keywords.some(keyword => title.includes(keyword)))
+      tokenized.some(tokens => keywords.some(keyword => matchKeyword(tokens, keyword)))
     )
     .map(([type]) => type as AssetType);
   return types;
 }
 
 function countKeywordMatches(titles: string[], keywords: string[]): number {
-  const normalized = toTitleLower(titles);
+  const tokenized = titles.map(t => tokenizeForMatch(t));
   return keywords.reduce((count, keyword) => {
-    return count + normalized.filter(title => title.includes(keyword)).length;
+    return count + tokenized.filter(tokens => matchKeyword(tokens, keyword)).length;
   }, 0);
 }
 
@@ -160,7 +150,15 @@ export function getClusterAssetContext(cluster: ClusteredEvent): RelatedAssetCon
 }
 
 export function getAssetLabel(type: AssetType): string {
-  return ASSET_LABELS[type];
+  return t(`components.relatedAssets.${type}`);
 }
+
+export function getNearbyInfrastructure(
+  lat: number, lon: number, types: AssetType[]
+): RelatedAsset[] {
+  return findNearbyAssets({ lat, lon, label: 'country-centroid' }, types);
+}
+
+export { haversineDistanceKm };
 
 export { MAX_DISTANCE_KM };

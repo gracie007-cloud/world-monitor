@@ -1,5 +1,12 @@
 import { Panel } from './Panel';
 import { escapeHtml } from '@/utils/sanitize';
+<<<<<<< HEAD
+=======
+import { t } from '@/services/i18n';
+import { EconomicServiceClient } from '@/generated/client/worldmonitor/economic/v1/service_client';
+import type { GetMacroSignalsResponse } from '@/generated/client/worldmonitor/economic/v1/service_client';
+import { getHydratedData } from '@/services/bootstrap';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 interface MacroSignalData {
   timestamp: string;
@@ -12,10 +19,71 @@ interface MacroSignalData {
     macroRegime: { status: string; qqqRoc20: number | null; xlpRoc20: number | null };
     technicalTrend: { status: string; btcPrice: number | null; sma50: number | null; sma200: number | null; vwap30d: number | null; mayerMultiple: number | null; sparkline: number[] };
     hashRate: { status: string; change30d: number | null };
+<<<<<<< HEAD
     miningCost: { status: string };
     fearGreed: { status: string; value: number | null; history: Array<{ value: number; date: string }> };
   };
   meta: { qqqSparkline: number[] };
+=======
+    priceMomentum: { status: string };
+    fearGreed: { status: string; value: number | null; history: Array<{ value: number; date: string }> };
+  };
+  meta: { qqqSparkline: number[] };
+  unavailable?: boolean;
+}
+
+const economicClient = new EconomicServiceClient('', { fetch: (...args) => globalThis.fetch(...args) });
+
+/** Map proto response (optional fields = undefined) to MacroSignalData (null for absent values). */
+function mapProtoToData(r: GetMacroSignalsResponse): MacroSignalData {
+  const s = r.signals;
+  return {
+    timestamp: r.timestamp,
+    verdict: r.verdict,
+    bullishCount: r.bullishCount,
+    totalCount: r.totalCount,
+    signals: {
+      liquidity: {
+        status: s?.liquidity?.status ?? 'UNKNOWN',
+        value: s?.liquidity?.value ?? null,
+        sparkline: s?.liquidity?.sparkline ?? [],
+      },
+      flowStructure: {
+        status: s?.flowStructure?.status ?? 'UNKNOWN',
+        btcReturn5: s?.flowStructure?.btcReturn5 ?? null,
+        qqqReturn5: s?.flowStructure?.qqqReturn5 ?? null,
+      },
+      macroRegime: {
+        status: s?.macroRegime?.status ?? 'UNKNOWN',
+        qqqRoc20: s?.macroRegime?.qqqRoc20 ?? null,
+        xlpRoc20: s?.macroRegime?.xlpRoc20 ?? null,
+      },
+      technicalTrend: {
+        status: s?.technicalTrend?.status ?? 'UNKNOWN',
+        btcPrice: s?.technicalTrend?.btcPrice ?? null,
+        sma50: s?.technicalTrend?.sma50 ?? null,
+        sma200: s?.technicalTrend?.sma200 ?? null,
+        vwap30d: s?.technicalTrend?.vwap30d ?? null,
+        mayerMultiple: s?.technicalTrend?.mayerMultiple ?? null,
+        sparkline: s?.technicalTrend?.sparkline ?? [],
+      },
+      hashRate: {
+        status: s?.hashRate?.status ?? 'UNKNOWN',
+        change30d: s?.hashRate?.change30d ?? null,
+      },
+      priceMomentum: {
+        status: s?.priceMomentum?.status ?? 'UNKNOWN',
+      },
+      fearGreed: {
+        status: s?.fearGreed?.status ?? 'UNKNOWN',
+        value: s?.fearGreed?.value ?? null,
+        history: s?.fearGreed?.history ?? [],
+      },
+    },
+    meta: { qqqSparkline: r.meta?.qqqSparkline ?? [] },
+    unavailable: r.unavailable,
+  };
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 function sparklineSvg(data: number[], width = 80, height = 24, color = '#4fc3f7'): string {
@@ -65,6 +133,7 @@ export class MacroSignalsPanel extends Panel {
   private data: MacroSignalData | null = null;
   private loading = true;
   private error: string | null = null;
+<<<<<<< HEAD
   private refreshInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
@@ -92,16 +161,82 @@ export class MacroSignalsPanel extends Panel {
       this.loading = false;
       this.renderPanel();
     }
+=======
+  private lastTimestamp = '';
+
+  constructor() {
+    super({ id: 'macro-signals', title: t('panels.macroSignals'), showCount: false });
+    void this.fetchData();
+  }
+
+  public async fetchData(): Promise<boolean> {
+    const hydrated = getHydratedData('macroSignals') as GetMacroSignalsResponse | undefined;
+    if (hydrated?.signals && hydrated.totalCount > 0) {
+      this.data = mapProtoToData(hydrated);
+      this.lastTimestamp = this.data.timestamp;
+      this.error = null;
+      this.loading = false;
+      this.renderPanel();
+      return true;
+    }
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const res = await economicClient.getMacroSignals({});
+        if (!this.element?.isConnected) return false;
+        this.data = mapProtoToData(res);
+        this.error = null;
+
+        if (this.data && this.data.unavailable && attempt < 2) {
+          this.showRetrying();
+          await new Promise(r => setTimeout(r, 20_000));
+          if (!this.element?.isConnected) return false;
+          continue;
+        }
+        break;
+      } catch (err) {
+        if (this.isAbortError(err)) return false;
+        if (!this.element?.isConnected) return false;
+        if (attempt < 2) {
+          this.showRetrying();
+          await new Promise(r => setTimeout(r, 20_000));
+          if (!this.element?.isConnected) return false;
+          continue;
+        }
+        this.error = err instanceof Error ? err.message : 'Failed to fetch';
+      }
+    }
+    this.loading = false;
+    this.renderPanel();
+
+    const ts = this.data?.timestamp ?? '';
+    const changed = ts !== this.lastTimestamp;
+    this.lastTimestamp = ts;
+    return changed;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   private renderPanel(): void {
     if (this.loading) {
+<<<<<<< HEAD
       this.showLoading('Computing signals...');
+=======
+      this.showLoading(t('common.computingSignals'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return;
     }
 
     if (this.error || !this.data) {
+<<<<<<< HEAD
       this.showError(this.error || 'No data');
+=======
+      this.showError(this.error || t('common.noDataShort'));
+      return;
+    }
+
+    if (this.data.unavailable) {
+      this.showError(t('common.upstreamUnavailable'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return;
     }
 
@@ -113,6 +248,7 @@ export class MacroSignalsPanel extends Panel {
     const html = `
       <div class="macro-signals-container">
         <div class="macro-verdict ${verdictClass}">
+<<<<<<< HEAD
           <span class="verdict-label">Overall</span>
           <span class="verdict-value">${escapeHtml(d.verdict)}</span>
           <span class="verdict-detail">${d.bullishCount}/${d.totalCount} bullish</span>
@@ -124,6 +260,19 @@ export class MacroSignalsPanel extends Panel {
           ${this.renderSignalCard('BTC Trend', s.technicalTrend.status, `$${s.technicalTrend.btcPrice?.toLocaleString() ?? 'N/A'}`, sparklineSvg(s.technicalTrend.sparkline, 60, 20, '#ff9800'), `SMA50: $${s.technicalTrend.sma50?.toLocaleString() ?? '-'} | VWAP: $${s.technicalTrend.vwap30d?.toLocaleString() ?? '-'} | Mayer: ${s.technicalTrend.mayerMultiple ?? '-'}`, 'https://www.tradingview.com/symbols/BTCUSD/')}
           ${this.renderSignalCard('Hash Rate', s.hashRate.status, formatNum(s.hashRate.change30d), '', '30d change', 'https://mempool.space/mining')}
           ${this.renderSignalCard('Mining', s.miningCost.status, '', '', 'Hashprice model', null)}
+=======
+          <span class="verdict-label">${t('components.macroSignals.overall')}</span>
+          <span class="verdict-value">${d.verdict === 'BUY' ? t('components.macroSignals.verdict.buy') : d.verdict === 'CASH' ? t('components.macroSignals.verdict.cash') : escapeHtml(d.verdict)}</span>
+          <span class="verdict-detail">${t('components.macroSignals.bullish', { count: String(d.bullishCount), total: String(d.totalCount) })}</span>
+        </div>
+        <div class="signals-grid">
+          ${this.renderSignalCard(t('components.macroSignals.signals.liquidity'), s.liquidity.status, formatNum(s.liquidity.value), sparklineSvg(s.liquidity.sparkline, 60, 20, '#4fc3f7'), 'JPY 30d ROC', 'https://www.tradingview.com/symbols/JPYUSD/')}
+          ${this.renderSignalCard(t('components.macroSignals.signals.flow'), s.flowStructure.status, `BTC ${formatNum(s.flowStructure.btcReturn5)} / QQQ ${formatNum(s.flowStructure.qqqReturn5)}`, '', '5d returns', null)}
+          ${this.renderSignalCard(t('components.macroSignals.signals.regime'), s.macroRegime.status, `QQQ ${formatNum(s.macroRegime.qqqRoc20)} / XLP ${formatNum(s.macroRegime.xlpRoc20)}`, sparklineSvg(d.meta.qqqSparkline, 60, 20, '#ab47bc'), '20d ROC', 'https://www.tradingview.com/symbols/QQQ/')}
+          ${this.renderSignalCard(t('components.macroSignals.signals.btcTrend'), s.technicalTrend.status, `$${s.technicalTrend.btcPrice?.toLocaleString() ?? 'N/A'}`, sparklineSvg(s.technicalTrend.sparkline, 60, 20, '#ff9800'), `SMA50: $${s.technicalTrend.sma50?.toLocaleString() ?? '-'} | VWAP: $${s.technicalTrend.vwap30d?.toLocaleString() ?? '-'} | Mayer: ${s.technicalTrend.mayerMultiple ?? '-'}`, 'https://www.tradingview.com/symbols/BTCUSD/')}
+          ${this.renderSignalCard(t('components.macroSignals.signals.hashRate'), s.hashRate.status, formatNum(s.hashRate.change30d), '', '30d change', 'https://mempool.space/mining')}
+          ${this.renderSignalCard(t('components.macroSignals.signals.momentum'), s.priceMomentum.status, '', '', 'Mayer Multiple', null)}
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           ${this.renderFearGreedCard(s.fearGreed)}
         </div>
       </div>
@@ -154,7 +303,11 @@ export class MacroSignalsPanel extends Panel {
     return `
       <div class="signal-card signal-card-fg">
         <div class="signal-header">
+<<<<<<< HEAD
           <span class="signal-name">Fear & Greed</span>
+=======
+          <span class="signal-name">${t('components.macroSignals.signals.fearGreed')}</span>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           <span class="signal-badge ${badgeClass}">${escapeHtml(fg.status)}</span>
         </div>
         <div class="signal-body signal-body-fg">

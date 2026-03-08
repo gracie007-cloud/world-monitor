@@ -1,12 +1,25 @@
+<<<<<<< HEAD
+=======
+export interface DeductContextDetail {
+  query?: string;
+  geoContext: string;
+  autoSubmit?: boolean;
+}
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 export type PropagandaRisk = 'low' | 'medium' | 'high';
 
 export interface Feed {
   name: string;
-  url: string;
+  url: string | Record<string, string>;
   type?: string;
   region?: string;
   propagandaRisk?: PropagandaRisk;
   stateAffiliated?: string;  // e.g., "Russia", "China", "Iran"
+<<<<<<< HEAD
+=======
+  lang?: string;             // ISO 2-letter code for filtering
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 export type { ThreatClassification, ThreatLevel, EventCategory } from '@/services/threat-classifier';
@@ -23,6 +36,14 @@ export interface NewsItem {
   lat?: number;
   lon?: number;
   locationName?: string;
+<<<<<<< HEAD
+=======
+  lang?: string;
+  // Happy variant: positive content category
+  happyCategory?: import('@/services/positive-classifier').HappyContentCategory;
+  // Image URL extracted from RSS media/enclosure tags
+  imageUrl?: string;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 export type VelocityLevel = 'normal' | 'elevated' | 'spike';
@@ -53,6 +74,10 @@ export interface ClusteredEvent {
   threat?: import('@/services/threat-classifier').ThreatClassification;
   lat?: number;
   lon?: number;
+<<<<<<< HEAD
+=======
+  lang?: string;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 export type AssetType = 'pipeline' | 'cable' | 'datacenter' | 'base' | 'nuclear';
@@ -196,6 +221,27 @@ export interface APTGroup {
   lon: number;
 }
 
+export type CyberThreatType = 'c2_server' | 'malware_host' | 'phishing' | 'malicious_url';
+export type CyberThreatSource = 'feodo' | 'urlhaus' | 'c2intel' | 'otx' | 'abuseipdb';
+export type CyberThreatSeverity = 'low' | 'medium' | 'high' | 'critical';
+export type CyberThreatIndicatorType = 'ip' | 'domain' | 'url';
+
+export interface CyberThreat {
+  id: string;
+  type: CyberThreatType;
+  source: CyberThreatSource;
+  indicator: string;
+  indicatorType: CyberThreatIndicatorType;
+  lat: number;
+  lon: number;
+  country?: string;
+  severity: CyberThreatSeverity;
+  malwareFamily?: string;
+  tags: string[];
+  firstSeen?: string;
+  lastSeen?: string;
+}
+
 export interface ConflictZone {
   id: string;
   name: string;
@@ -212,6 +258,10 @@ export interface ConflictZone {
   keyDevelopments?: string[];
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 // UCDP Georeferenced Events
 export type UcdpEventType = 'state-based' | 'non-state' | 'one-sided';
 
@@ -231,6 +281,7 @@ export interface UcdpGeoEvent {
   source_original: string;
 }
 
+<<<<<<< HEAD
 // UNHCR Displacement Data
 export interface DisplacementFlow {
   originCode: string;
@@ -288,6 +339,8 @@ export interface ClimateAnomaly {
   period: string;
 }
 
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 // WorldPop Population Exposure
 export interface CountryPopulation {
   code: string;
@@ -333,6 +386,19 @@ export interface MilitaryBase {
   source?: string;            // Reference URL
 }
 
+<<<<<<< HEAD
+=======
+export interface MilitaryBaseEnriched extends MilitaryBase {
+  kind?: string;
+  tier?: number;
+  catAirforce?: boolean;
+  catNaval?: boolean;
+  catNuclear?: boolean;
+  catSpace?: boolean;
+  catTraining?: boolean;
+}
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 export interface CableLandingPoint {
   country: string;       // ISO code
   countryName: string;
@@ -387,6 +453,28 @@ export interface RepairShip {
   eta: string;
   operator?: string;
   note?: string;
+}
+
+// Cable health types (computed from NGA maritime warning signals)
+export type CableHealthStatus = 'ok' | 'degraded' | 'fault' | 'unknown';
+
+export interface CableHealthEvidence {
+  source: string;
+  summary: string;
+  ts: string;
+}
+
+export interface CableHealthRecord {
+  status: CableHealthStatus;
+  score: number;
+  confidence: number;
+  lastUpdated: string;
+  evidence: CableHealthEvidence[];
+}
+
+export interface CableHealthResponse {
+  generatedAt: string;
+  cables: Record<string, CableHealthRecord>;
 }
 
 export interface ShippingChokepoint {
@@ -504,6 +592,7 @@ export interface MapLayers {
   economic: boolean;
   waterways: boolean;
   outages: boolean;
+  cyberThreats: boolean;
   datacenters: boolean;
   protests: boolean;
   flights: boolean;
@@ -522,6 +611,33 @@ export interface MapLayers {
   accelerators: boolean;
   techHQs: boolean;
   techEvents: boolean;
+<<<<<<< HEAD
+=======
+  // Finance variant layers
+  stockExchanges: boolean;
+  financialCenters: boolean;
+  centralBanks: boolean;
+  commodityHubs: boolean;
+  // Gulf FDI layers
+  gulfInvestments: boolean;
+  // Happy variant layers
+  positiveEvents: boolean;
+  kindness: boolean;
+  happiness: boolean;
+  speciesRecovery: boolean;
+  renewableInstallations: boolean;
+  // Trade route layers
+  tradeRoutes: boolean;
+  // Iran attacks layer
+  iranAttacks: boolean;
+  // GPS/GNSS interference layer
+  gpsJamming: boolean;
+
+  // CII choropleth layer
+  ciiChoropleth: boolean;
+  // Overlay layers
+  dayNight: boolean;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 export interface AIDataCenter {
@@ -591,6 +707,7 @@ export interface CriticalMineralProject {
   operator: string;
   status: 'producing' | 'development' | 'exploration';
   significance: string;
+<<<<<<< HEAD
 }
 
 export interface PredictionMarket {
@@ -598,6 +715,8 @@ export interface PredictionMarket {
   yesPrice: number;
   volume?: number;
   url?: string;
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 export interface AppState {
@@ -654,6 +773,7 @@ export interface ProtestCluster {
   primaryCause?: string;
 }
 
+<<<<<<< HEAD
 // Flight Delay Types
 export type FlightDelaySource = 'faa' | 'eurocontrol' | 'computed';
 export type FlightDelaySeverity = 'normal' | 'minor' | 'moderate' | 'major' | 'severe';
@@ -681,6 +801,8 @@ export interface AirportDelayAlert {
   updatedAt: Date;
 }
 
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 export interface MonitoredAirport {
   iata: string;
   icao: string;
@@ -689,7 +811,11 @@ export interface MonitoredAirport {
   country: string;
   lat: number;
   lon: number;
+<<<<<<< HEAD
   region: AirportRegion;
+=======
+  region: 'americas' | 'europe' | 'apac' | 'mena' | 'africa';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 // Military Flight Tracking Types
@@ -809,6 +935,57 @@ export interface MilitaryVessel {
   confidence: 'high' | 'medium' | 'low';
   isInteresting?: boolean;
   note?: string;
+<<<<<<< HEAD
+=======
+  usniRegion?: string;
+  usniDeploymentStatus?: USNIDeploymentStatus;
+  usniStrikeGroup?: string;
+  usniActivityDescription?: string;
+  usniArticleUrl?: string;
+  usniArticleDate?: string;
+  usniSource?: boolean;
+}
+
+export type USNIDeploymentStatus = 'deployed' | 'underway' | 'in-port' | 'unknown';
+
+export interface USNIVesselEntry {
+  name: string;
+  hullNumber: string;
+  vesselType: MilitaryVesselType;
+  region: string;
+  regionLat: number;
+  regionLon: number;
+  deploymentStatus: USNIDeploymentStatus;
+  homePort?: string;
+  strikeGroup?: string;
+  activityDescription?: string;
+  usniArticleUrl: string;
+  usniArticleDate: string;
+}
+
+export interface USNIStrikeGroup {
+  name: string;
+  carrier?: string;
+  airWing?: string;
+  destroyerSquadron?: string;
+  escorts: string[];
+}
+
+export interface USNIFleetReport {
+  articleUrl: string;
+  articleDate: string;
+  articleTitle: string;
+  battleForceSummary?: {
+    totalShips: number;
+    deployed: number;
+    underway: number;
+  };
+  vessels: USNIVesselEntry[];
+  strikeGroups: USNIStrikeGroup[];
+  regions: string[];
+  parsingWarnings: string[];
+  timestamp: string;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 export interface MilitaryVesselCluster {
@@ -892,6 +1069,14 @@ export type NaturalEventCategory =
   | 'waterColor'
   | 'manmade';
 
+<<<<<<< HEAD
+=======
+export const NATURAL_EVENT_CATEGORIES: ReadonlySet<NaturalEventCategory> = new Set<NaturalEventCategory>([
+  'severeStorms', 'wildfires', 'volcanoes', 'earthquakes', 'floods', 'landslides',
+  'drought', 'dustHaze', 'snow', 'tempExtremes', 'seaLakeIce', 'waterColor', 'manmade',
+]);
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 export interface NaturalEvent {
   id: string;
   title: string;
@@ -1137,8 +1322,79 @@ export interface FocalPointSummary {
   topCompanies: FocalPoint[];
 }
 
+<<<<<<< HEAD
 export interface MapProtestCluster {
   id: string;
+=======
+// ============================================
+// GULF FDI TYPES
+// ============================================
+
+export type GulfInvestorCountry = 'SA' | 'UAE';
+
+export type GulfInvestmentSector =
+  | 'ports'
+  | 'pipelines'
+  | 'energy'
+  | 'datacenters'
+  | 'airports'
+  | 'railways'
+  | 'telecoms'
+  | 'water'
+  | 'logistics'
+  | 'mining'
+  | 'real-estate'
+  | 'manufacturing';
+
+export type GulfInvestmentStatus =
+  | 'operational'
+  | 'under-construction'
+  | 'announced'
+  | 'rumoured'
+  | 'cancelled'
+  | 'divested';
+
+export type GulfInvestingEntity =
+  | 'DP World'
+  | 'AD Ports'
+  | 'Mubadala'
+  | 'ADIA'
+  | 'ADNOC'
+  | 'Masdar'
+  | 'PIF'
+  | 'Saudi Aramco'
+  | 'ACWA Power'
+  | 'STC'
+  | 'Mawani'
+  | 'NEOM'
+  | 'Emirates Global Aluminium'
+  | 'Other';
+
+export interface GulfInvestment {
+  id: string;
+  investingEntity: GulfInvestingEntity;
+  investingCountry: GulfInvestorCountry;
+  targetCountry: string;
+  targetCountryIso: string;
+  sector: GulfInvestmentSector;
+  assetType: string;
+  assetName: string;
+  lat: number;
+  lon: number;
+  investmentUSD?: number;
+  stakePercent?: number;
+  status: GulfInvestmentStatus;
+  yearAnnounced?: number;
+  yearOperational?: number;
+  description: string;
+  sourceUrl?: string;
+  tags?: string[];
+}
+
+export interface MapProtestCluster {
+  id: string;
+  _clusterId?: number;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   lat: number;
   lon: number;
   count: number;
@@ -1146,6 +1402,10 @@ export interface MapProtestCluster {
   country: string;
   maxSeverity: 'low' | 'medium' | 'high';
   hasRiot: boolean;
+<<<<<<< HEAD
+=======
+  latestRiotEventTimeMs?: number;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   totalFatalities: number;
   riotCount?: number;
   highSeverityCount?: number;
@@ -1155,6 +1415,10 @@ export interface MapProtestCluster {
 
 export interface MapTechHQCluster {
   id: string;
+<<<<<<< HEAD
+=======
+  _clusterId?: number;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   lat: number;
   lon: number;
   count: number;
@@ -1170,6 +1434,10 @@ export interface MapTechHQCluster {
 
 export interface MapTechEventCluster {
   id: string;
+<<<<<<< HEAD
+=======
+  _clusterId?: number;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   lat: number;
   lon: number;
   count: number;
@@ -1183,6 +1451,10 @@ export interface MapTechEventCluster {
 
 export interface MapDatacenterCluster {
   id: string;
+<<<<<<< HEAD
+=======
+  _clusterId?: number;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   lat: number;
   lon: number;
   count: number;

@@ -1,6 +1,11 @@
 import { Panel } from './Panel';
 import type { GeoHubActivity } from '@/services/geo-activity';
 import { escapeHtml, sanitizeUrl } from '@/utils/sanitize';
+<<<<<<< HEAD
+=======
+import { t } from '@/services/i18n';
+import { getCSSColor } from '@/utils';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 const COUNTRY_FLAGS: Record<string, string> = {
   'USA': '🇺🇸', 'Russia': '🇷🇺', 'China': '🇨🇳', 'UK': '🇬🇧', 'Belgium': '🇧🇪',
@@ -33,6 +38,7 @@ export class GeoHubsPanel extends Panel {
   constructor() {
     super({
       id: 'geo-hubs',
+<<<<<<< HEAD
       title: 'Geopolitical Hotspots',
       showCount: true,
       infoTooltip: `
@@ -50,6 +56,17 @@ export class GeoHubsPanel extends Panel {
         Click a hub to zoom to its location.
       `,
     });
+=======
+      title: t('panels.geoHubs'),
+      showCount: true,
+      infoTooltip: t('components.geoHubs.infoTooltip', {
+        highColor: getCSSColor('--semantic-critical'),
+        elevatedColor: getCSSColor('--semantic-high'),
+        lowColor: getCSSColor('--text-dim'),
+      }),
+    });
+    this.setupDelegatedListeners();
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   public setOnHubClick(handler: (hub: GeoHubActivity) => void): void {
@@ -76,7 +93,11 @@ export class GeoHubsPanel extends Panel {
 
   private render(): void {
     if (this.activities.length === 0) {
+<<<<<<< HEAD
       this.showError('No active geopolitical hubs');
+=======
+      this.showError(t('common.noActiveGeoHubs'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return;
     }
 
@@ -96,7 +117,11 @@ export class GeoHubsPanel extends Panel {
               ${breakingTag}
             </div>
             <div class="hub-meta">
+<<<<<<< HEAD
               <span class="hub-news-count">${hub.newsCount} ${hub.newsCount === 1 ? 'story' : 'stories'}</span>
+=======
+              <span class="hub-news-count">${hub.newsCount} ${hub.newsCount === 1 ? t('components.geoHubs.story') : t('components.geoHubs.stories')}</span>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
               ${trendIcon ? `<span class="hub-trend ${hub.trend}">${trendIcon}</span>` : ''}
               <span class="geo-hub-type">${this.getTypeIcon(hub.type)} ${this.getTypeLabel(hub.type)}</span>
             </div>
@@ -112,6 +137,7 @@ export class GeoHubsPanel extends Panel {
     }).join('');
 
     this.setContent(html);
+<<<<<<< HEAD
     this.bindEvents();
   }
 
@@ -125,6 +151,24 @@ export class GeoHubsPanel extends Panel {
           this.onHubClick(hub);
         }
       });
+=======
+  }
+
+  /**
+   * Attach a single delegated click listener on the container so that
+   * re-renders (which replace innerHTML) never accumulate listeners.
+   */
+  private setupDelegatedListeners(): void {
+    this.content.addEventListener('click', (e: Event) => {
+      const target = e.target as HTMLElement;
+      const item = target.closest<HTMLDivElement>('.geo-hub-item');
+      if (!item) return;
+      const hubId = item.dataset.hubId;
+      const hub = this.activities.find(a => a.hubId === hubId);
+      if (hub && this.onHubClick) {
+        this.onHubClick(hub);
+      }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     });
   }
 }

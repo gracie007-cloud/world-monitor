@@ -12,7 +12,12 @@ import {
   isAisConfigured,
   initAisStream,
   type AisPositionData,
+<<<<<<< HEAD
 } from './ais';
+=======
+} from './maritime';
+import { fetchUSNIFleetReport, mergeUSNIWithAIS } from './usni-fleet';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 // Cache for API responses
 let vesselCache: { data: MilitaryVessel[]; timestamp: number } | null = null;
@@ -27,13 +32,21 @@ const VESSEL_STALE_TIME = 60 * 60 * 1000; // 1 hour - consider vessel stale
 // Tracking state
 let isTracking = false;
 let messageCount = 0;
+<<<<<<< HEAD
+=======
+let historyCleanupIntervalId: ReturnType<typeof setInterval> | null = null;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 // Circuit breaker
 const breaker = createCircuitBreaker<{ vessels: MilitaryVessel[]; clusters: MilitaryVesselCluster[] }>({
   name: 'Military Vessel Tracking',
   maxFailures: 3,
   cooldownMs: 5 * 60 * 1000,
+<<<<<<< HEAD
   cacheTtlMs: 5 * 60 * 1000,
+=======
+  cacheTtlMs: 10 * 60 * 1000,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 });
 
 // Strategic chokepoints for naval monitoring
@@ -411,12 +424,17 @@ function processAisPosition(data: AisPositionData): void {
   if (previousSize === 0 || (trackedVessels.size === 10 && previousSize < 10)) {
     vesselCache = null;
     breaker.clearCache();
+<<<<<<< HEAD
     console.log(`[Military Vessels] Cleared caches - first vessels arriving (count: ${trackedVessels.size})`);
   }
 
   if (messageCount % 50 === 0) {
     console.log(`[Military Vessels] Tracking ${trackedVessels.size} military/gov vessels`);
   }
+=======
+  }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 
@@ -492,7 +510,19 @@ function clusterVessels(vessels: MilitaryVessel[]): MilitaryVesselCluster[] {
 
 // Initialize cleanup interval
 if (typeof window !== 'undefined') {
+<<<<<<< HEAD
   setInterval(cleanup, HISTORY_CLEANUP_INTERVAL);
+=======
+  historyCleanupIntervalId = setInterval(cleanup, HISTORY_CLEANUP_INTERVAL);
+}
+
+/** Stop the periodic history cleanup (for teardown / testing). */
+export function stopVesselHistoryCleanup(): void {
+  if (historyCleanupIntervalId) {
+    clearInterval(historyCleanupIntervalId);
+    historyCleanupIntervalId = null;
+  }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 /**
@@ -502,8 +532,11 @@ if (typeof window !== 'undefined') {
 export function initMilitaryVesselStream(): void {
   if (isTracking) return;
 
+<<<<<<< HEAD
   console.log('[Military Vessels] Initializing tracking via shared AIS stream...');
 
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   // Invalidate ALL caches when stream starts - fresh data should be read
   vesselCache = null;
   breaker.clearCache();  // Clear circuit breaker's 5-minute cache too!
@@ -549,6 +582,7 @@ export async function fetchMilitaryVessels(): Promise<{
   vessels: MilitaryVessel[];
   clusters: MilitaryVesselCluster[];
 }> {
+<<<<<<< HEAD
   // Debug: check state before calling breaker
   console.log(`[Military Vessels] fetchMilitaryVessels called - isTracking: ${isTracking}, isAisConfigured: ${isAisConfigured()}, trackedVessels.size: ${trackedVessels.size}`);
 
@@ -582,6 +616,48 @@ export async function fetchMilitaryVessels(): Promise<{
     const clusters = clusterVessels(vessels);
 
     return { vessels, clusters };
+=======
+
+  return breaker.execute(async () => {
+    let vessels: MilitaryVessel[] = [];
+
+    // Check cache first, but still run USNI merge so output is consistent.
+    if (vesselCache && Date.now() - vesselCache.timestamp < CACHE_TTL) {
+      vessels = vesselCache.data;
+    } else {
+      // Initialize stream if not running
+      if (!isTracking && isAisConfigured()) {
+        initMilitaryVesselStream();
+      }
+
+      // Clean up old data
+      cleanup();
+
+      // Convert tracked vessels to array
+      vessels = Array.from(trackedVessels.values());
+
+      // Only cache non-empty results - empty results due to timing shouldn't block future calls
+      if (vessels.length > 0) {
+        vesselCache = { data: vessels, timestamp: Date.now() };
+      }
+    }
+
+    // Generate AIS-only clusters
+    const aisClusters = clusterVessels(vessels);
+
+    // Merge with USNI Fleet Tracker data (non-blocking)
+    try {
+      const usniReport = await fetchUSNIFleetReport();
+      if (usniReport && usniReport.vessels.length > 0) {
+        const merged = mergeUSNIWithAIS(vessels, usniReport, aisClusters);
+        return merged;
+      }
+    } catch (e) {
+      console.warn('[Military Vessels] USNI merge failed, using AIS only:', (e as Error).message);
+    }
+
+    return { vessels, clusters: aisClusters };
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }, { vessels: [], clusters: [] });
 }
 

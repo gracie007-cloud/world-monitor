@@ -10,6 +10,45 @@ function sanitizeVideoId(value) {
   return /^[A-Za-z0-9_-]{11}$/.test(value) ? value : null;
 }
 
+<<<<<<< HEAD
+=======
+const ALLOWED_ORIGINS = [
+  /^https:\/\/(.*\.)?worldmonitor\.app$/,
+  /^https:\/\/worldmonitor-[a-z0-9-]+-elie-habib-projects\.vercel\.app$/,
+  /^https:\/\/worldmonitor-[a-z0-9-]+\.vercel\.app$/,
+  /^https?:\/\/localhost(:\d+)?$/,
+  /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
+  /^tauri:\/\/localhost$/,
+];
+
+const ALLOWED_PARENT_ORIGINS = [
+  ...ALLOWED_ORIGINS,
+  /^https?:\/\/tauri\.localhost$/,
+  /^https?:\/\/[a-z0-9-]+\.tauri\.localhost$/,
+];
+
+function sanitizeAllowedOrigin(raw, fallback, allowList = ALLOWED_ORIGINS) {
+  if (!raw) return fallback;
+  try {
+    const parsed = new URL(raw);
+    if (!['https:', 'http:', 'tauri:'].includes(parsed.protocol)) {
+      return fallback;
+    }
+    const origin = parsed.origin !== 'null' ? parsed.origin : raw;
+    if (allowList.some(p => p.test(origin))) return origin;
+  } catch { /* invalid URL */ }
+  return fallback;
+}
+
+function sanitizeOrigin(raw) {
+  return sanitizeAllowedOrigin(raw, 'https://worldmonitor.app', ALLOWED_ORIGINS);
+}
+
+function sanitizeParentOrigin(raw, fallback) {
+  return sanitizeAllowedOrigin(raw, fallback, ALLOWED_PARENT_ORIGINS);
+}
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 export default async function handler(request) {
   const url = new URL(request.url);
   const videoId = sanitizeVideoId(url.searchParams.get('videoId'));
@@ -23,10 +62,19 @@ export default async function handler(request) {
 
   const autoplay = parseFlag(url.searchParams.get('autoplay'), '1');
   const mute = parseFlag(url.searchParams.get('mute'), '1');
+<<<<<<< HEAD
 
   const origin = url.searchParams.get('origin') || 'https://worldmonitor.app';
 
   const embedSrc = new URL(`https://www.youtube-nocookie.com/embed/${videoId}`);
+=======
+  const vq = ['small', 'medium', 'large', 'hd720', 'hd1080'].includes(url.searchParams.get('vq') || '') ? url.searchParams.get('vq') : '';
+
+  const origin = sanitizeOrigin(url.searchParams.get('origin'));
+  const parentOrigin = sanitizeParentOrigin(url.searchParams.get('parentOrigin'), origin);
+
+  const embedSrc = new URL(`https://www.youtube.com/embed/${videoId}`);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   embedSrc.searchParams.set('autoplay', autoplay);
   embedSrc.searchParams.set('mute', mute);
   embedSrc.searchParams.set('playsinline', '1');
@@ -57,6 +105,7 @@ export default async function handler(request) {
     var tag=document.createElement('script');
     tag.src='https://www.youtube.com/iframe_api';
     document.head.appendChild(tag);
+<<<<<<< HEAD
     var player,overlay=document.getElementById('play-overlay'),started=false;
     function hideOverlay(){overlay.classList.add('hidden')}
     function onYouTubeIframeAPIReady(){
@@ -72,6 +121,41 @@ export default async function handler(request) {
           onError:function(e){window.parent.postMessage({type:'yt-error',code:e.data},'*')},
           onStateChange:function(e){
             window.parent.postMessage({type:'yt-state',state:e.data},'*');
+=======
+    var player,overlay=document.getElementById('play-overlay'),started=false,muteSyncIntervalId,parentOrigin=${JSON.stringify(parentOrigin)},allowedOrigin=${JSON.stringify(parentOrigin)};
+    function hideOverlay(){overlay.classList.add('hidden')}
+    function readMuted(){
+      if(!player)return null;
+      if(typeof player.isMuted==='function')return player.isMuted();
+      if(typeof player.getVolume==='function')return player.getVolume()===0;
+      return null;
+    }
+    function stopMuteSync(){if(muteSyncIntervalId){clearInterval(muteSyncIntervalId);muteSyncIntervalId=null}}
+    function startMuteSync(){
+      if(muteSyncIntervalId)return;
+      var lastMuted=readMuted();
+      if(lastMuted!==null)window.parent.postMessage({type:'yt-mute-state',muted:lastMuted},parentOrigin);
+      muteSyncIntervalId=setInterval(function(){
+        var m=readMuted();
+        if(m!==null&&m!==lastMuted){lastMuted=m;window.parent.postMessage({type:'yt-mute-state',muted:m},parentOrigin)}
+      },500);
+    }
+    function onYouTubeIframeAPIReady(){
+      player=new YT.Player('player',{
+        videoId:'${videoId}',
+        host:'https://www.youtube.com',
+        playerVars:{autoplay:${autoplay},mute:${mute},playsinline:1,rel:0,controls:1,modestbranding:1,enablejsapi:1,origin:${JSON.stringify(origin)},widget_referrer:${JSON.stringify(origin)}},
+        events:{
+          onReady:function(){
+            window.parent.postMessage({type:'yt-ready'},parentOrigin);
+            ${vq ? `if(player.setPlaybackQuality)player.setPlaybackQuality('${vq}');` : ''}
+            if(${autoplay}===1){player.playVideo()}
+            startMuteSync();
+          },
+          onError:function(e){stopMuteSync();window.parent.postMessage({type:'yt-error',code:e.data},parentOrigin)},
+          onStateChange:function(e){
+            window.parent.postMessage({type:'yt-state',state:e.data},parentOrigin);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             if(e.data===1||e.data===3){hideOverlay();started=true}
           }
         }
@@ -82,6 +166,10 @@ export default async function handler(request) {
     });
     setTimeout(function(){if(!started)overlay.classList.remove('hidden')},3000);
     window.addEventListener('message',function(e){
+<<<<<<< HEAD
+=======
+      if(allowedOrigin!=='*'&&e.origin!==allowedOrigin)return;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       if(!player||!player.getPlayerState)return;
       var m=e.data;if(!m||!m.type)return;
       switch(m.type){
@@ -90,6 +178,10 @@ export default async function handler(request) {
         case'mute':player.mute();break;
         case'unmute':player.unMute();break;
         case'loadVideo':if(m.videoId)player.loadVideoById(m.videoId);break;
+<<<<<<< HEAD
+=======
+        case'setQuality':if(m.quality&&player.setPlaybackQuality)player.setPlaybackQuality(m.quality);break;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       }
     });
   </script>
@@ -100,7 +192,11 @@ export default async function handler(request) {
     status: 200,
     headers: {
       'content-type': 'text/html; charset=utf-8',
+<<<<<<< HEAD
       'cache-control': 'public, s-maxage=60, stale-while-revalidate=300',
+=======
+      'cache-control': 'public, s-maxage=900, stale-while-revalidate=300',
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     },
   });
 }

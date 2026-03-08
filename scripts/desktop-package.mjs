@@ -16,6 +16,7 @@ const hasFlag = (name) => args.includes(`--${name}`);
 const os = getArg('os');
 const variant = getArg('variant') ?? 'full';
 const sign = hasFlag('sign');
+<<<<<<< HEAD
 const showHelp = hasFlag('help') || hasFlag('h');
 
 const validOs = new Set(['macos', 'windows']);
@@ -23,11 +24,25 @@ const validVariants = new Set(['full', 'tech']);
 
 if (showHelp) {
   console.log('Usage: npm run desktop:package -- --os <macos|windows> --variant <full|tech> [--sign]');
+=======
+const skipNodeRuntime = hasFlag('skip-node-runtime');
+const showHelp = hasFlag('help') || hasFlag('h');
+
+const validOs = new Set(['macos', 'windows', 'linux']);
+const validVariants = new Set(['full', 'tech']);
+
+if (showHelp) {
+  console.log('Usage: npm run desktop:package -- --os <macos|windows|linux> --variant <full|tech> [--sign] [--skip-node-runtime]');
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   process.exit(0);
 }
 
 if (!validOs.has(os)) {
+<<<<<<< HEAD
   console.error('Usage: npm run desktop:package -- --os <macos|windows> --variant <full|tech> [--sign]');
+=======
+  console.error('Usage: npm run desktop:package -- --os <macos|windows|linux> --variant <full|tech> [--sign] [--skip-node-runtime]');
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   process.exit(1);
 }
 
@@ -36,7 +51,22 @@ if (!validVariants.has(variant)) {
   process.exit(1);
 }
 
+<<<<<<< HEAD
 const bundles = os === 'macos' ? 'app,dmg' : 'nsis,msi';
+=======
+const syncVersionsResult = spawnSync(process.execPath, ['scripts/sync-desktop-version.mjs'], {
+  stdio: 'inherit'
+});
+if (syncVersionsResult.error) {
+  console.error(syncVersionsResult.error.message);
+  process.exit(1);
+}
+if ((syncVersionsResult.status ?? 1) !== 0) {
+  process.exit(syncVersionsResult.status ?? 1);
+}
+
+const bundles = os === 'macos' ? 'app,dmg' : os === 'linux' ? 'appimage' : 'nsis,msi';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 const env = {
   ...process.env,
   VITE_VARIANT: variant,
@@ -56,6 +86,24 @@ if (variant === 'tech') {
   cliArgs.push('--config', 'src-tauri/tauri.tech.conf.json');
 }
 
+<<<<<<< HEAD
+=======
+const resolveNodeTarget = () => {
+  if (env.NODE_TARGET) return env.NODE_TARGET;
+  if (os === 'windows') return 'x86_64-pc-windows-msvc';
+  if (os === 'linux') {
+    if (process.arch === 'arm64') return 'aarch64-unknown-linux-gnu';
+    if (process.arch === 'x64') return 'x86_64-unknown-linux-gnu';
+    return '';
+  }
+  if (os === 'macos') {
+    if (process.arch === 'arm64') return 'aarch64-apple-darwin';
+    if (process.arch === 'x64') return 'x86_64-apple-darwin';
+  }
+  return '';
+};
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 if (sign) {
   if (os === 'macos') {
     const hasIdentity = Boolean(env.TAURI_BUNDLE_MACOS_SIGNING_IDENTITY || env.APPLE_SIGNING_IDENTITY);
@@ -80,6 +128,37 @@ if (sign) {
   }
 }
 
+<<<<<<< HEAD
+=======
+if (!skipNodeRuntime) {
+  const nodeTarget = resolveNodeTarget();
+  if (!nodeTarget) {
+    console.error(
+      `Unable to infer Node runtime target for OS=${os} ARCH=${process.arch}. Set NODE_TARGET explicitly or pass --skip-node-runtime.`
+    );
+    process.exit(1);
+  }
+  console.log(
+    `[desktop-package] Bundling Node runtime TARGET=${nodeTarget} VERSION=${env.NODE_VERSION ?? '22.14.0'}`
+  );
+  const downloadResult = spawnSync('bash', ['scripts/download-node.sh', '--target', nodeTarget], {
+    env: {
+      ...env,
+      NODE_TARGET: nodeTarget
+    },
+    stdio: 'inherit',
+    shell: process.platform === 'win32'
+  });
+  if (downloadResult.error) {
+    console.error(downloadResult.error.message);
+    process.exit(1);
+  }
+  if ((downloadResult.status ?? 1) !== 0) {
+    process.exit(downloadResult.status ?? 1);
+  }
+}
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 console.log(`[desktop-package] OS=${os} VARIANT=${variant} BUNDLES=${bundles} SIGN=${sign ? 'on' : 'off'}`);
 
 const result = spawnSync(tauriBin, cliArgs, {

@@ -1,4 +1,8 @@
 import type { StoryData } from './story-data';
+<<<<<<< HEAD
+=======
+import { getLocale, t } from './i18n';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 const W = 1080;
 const H = 1920;
@@ -9,6 +13,10 @@ function humanizeSignalType(type: string): string {
     news_leads_markets: 'News Leading',
     silent_divergence: 'Silent Divergence',
     velocity_spike: 'Velocity Spike',
+<<<<<<< HEAD
+=======
+    keyword_spike: 'Keyword Spike',
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     convergence: 'Convergence',
     triangulation: 'Triangulation',
     flow_drop: 'Flow Drop',
@@ -72,9 +80,15 @@ export async function renderStoryToCanvas(data: StoryData): Promise<HTMLCanvasEl
   ctx.fillStyle = '#666';
   ctx.font = '700 30px Inter, system-ui, sans-serif';
   ctx.letterSpacing = '6px';
+<<<<<<< HEAD
   ctx.fillText('WORLDMONITOR', textX, y + 26);
   ctx.letterSpacing = '0px';
   const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+=======
+  ctx.fillText('WORLDMONITOR.APP', textX, y + 26);
+  ctx.letterSpacing = '0px';
+  const dateStr = new Date().toLocaleDateString(getLocale(), { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   ctx.font = '400 24px Inter, system-ui, sans-serif';
   ctx.fillStyle = '#555';
   const dateW = ctx.measureText(dateStr).width;
@@ -159,10 +173,17 @@ export async function renderStoryToCanvas(data: StoryData): Promise<HTMLCanvasEl
   if (data.cii?.components) {
     y += 44;
     const comps = [
+<<<<<<< HEAD
       { label: 'UNREST', val: data.cii.components.unrest, color: '#f97316' },
       { label: 'CONFLICT', val: data.cii.components.conflict, color: '#dc2626' },
       { label: 'SECURITY', val: data.cii.components.security, color: '#ef4444' },
       { label: 'INFORMATION', val: data.cii.components.information, color: '#8b5cf6' },
+=======
+      { label: t('common.unrest').toUpperCase(), val: data.cii.components.unrest, color: '#f97316' },
+      { label: t('common.conflict').toUpperCase(), val: data.cii.components.conflict, color: '#dc2626' },
+      { label: t('common.security').toUpperCase(), val: data.cii.components.security, color: '#ef4444' },
+      { label: t('common.information').toUpperCase(), val: data.cii.components.information, color: '#8b5cf6' },
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     ];
     const compBarW = (barW - 24) / 3;
     for (const comp of comps) {

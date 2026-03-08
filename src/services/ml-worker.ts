@@ -28,6 +28,16 @@ interface SentimentResult {
   score: number;
 }
 
+<<<<<<< HEAD
+=======
+export interface VectorSearchResult {
+  text: string;
+  pubDate: number;
+  source: string;
+  score: number;
+}
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 type WorkerResult =
   | { type: 'worker-ready' }
   | { type: 'ready'; id: string }
@@ -39,6 +49,13 @@ type WorkerResult =
   | { type: 'sentiment-result'; id: string; results: SentimentResult[] }
   | { type: 'entities-result'; id: string; entities: NEREntity[][] }
   | { type: 'cluster-semantic-result'; id: string; clusters: number[][] }
+<<<<<<< HEAD
+=======
+  | { type: 'vector-store-ingest-result'; id: string; stored: number }
+  | { type: 'vector-store-search-result'; id: string; results: VectorSearchResult[] }
+  | { type: 'vector-store-count-result'; id: string; count: number }
+  | { type: 'vector-store-reset-result'; id: string }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   | { type: 'status-result'; id: string; loadedModels: string[] }
   | { type: 'reset-complete' }
   | { type: 'error'; id?: string; error: string };
@@ -65,7 +82,10 @@ class MLWorkerManager {
     this.capabilities = await detectMLCapabilities();
 
     if (!this.capabilities.isSupported) {
+<<<<<<< HEAD
       console.log('[MLWorker] ML features disabled (device not supported)');
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return false;
     }
 
@@ -110,6 +130,15 @@ class MLWorkerManager {
           return;
         }
 
+<<<<<<< HEAD
+=======
+        // Unsolicited model-loaded notification (implicit load inside summarize/sentiment/etc.)
+        if (data.type === 'model-loaded' && !('id' in data && data.id)) {
+          this.loadedModels.add(data.modelId);
+          return;
+        }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         if (data.type === 'error') {
           const pending = data.id ? this.pendingRequests.get(data.id) : null;
           if (pending) {
@@ -144,6 +173,17 @@ class MLWorkerManager {
               pending.resolve(data.entities);
             } else if (data.type === 'cluster-semantic-result') {
               pending.resolve(data.clusters);
+<<<<<<< HEAD
+=======
+            } else if (data.type === 'vector-store-ingest-result') {
+              pending.resolve(data.stored);
+            } else if (data.type === 'vector-store-search-result') {
+              pending.resolve(data.results);
+            } else if (data.type === 'vector-store-count-result') {
+              pending.resolve(data.count);
+            } else if (data.type === 'vector-store-reset-result') {
+              pending.resolve(true);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             } else if (data.type === 'status-result') {
               pending.resolve(data.loadedModels);
             }
@@ -241,7 +281,16 @@ class MLWorkerManager {
    */
   async unloadModel(modelId: string): Promise<boolean> {
     if (!this.isReady || !this.loadedModels.has(modelId)) return false;
+<<<<<<< HEAD
     return this.request<boolean>('unload-model', { modelId });
+=======
+    try {
+      return await this.request<boolean>('unload-model', { modelId });
+    } catch {
+      this.loadedModels.delete(modelId);
+      return false;
+    }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   /**
@@ -267,9 +316,15 @@ class MLWorkerManager {
   /**
    * Generate summaries for texts
    */
+<<<<<<< HEAD
   async summarize(texts: string[]): Promise<string[]> {
     if (!this.isReady) throw new Error('ML Worker not ready');
     return this.request<string[]>('summarize', { texts });
+=======
+  async summarize(texts: string[], modelId?: string): Promise<string[]> {
+    if (!this.isReady) throw new Error('ML Worker not ready');
+    return this.request<string[]>('summarize', { texts, ...(modelId && { modelId }) });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   /**
@@ -313,9 +368,38 @@ class MLWorkerManager {
     );
   }
 
+<<<<<<< HEAD
   /**
    * Get status of loaded models
    */
+=======
+  async vectorStoreIngest(
+    items: Array<{ text: string; pubDate: number; source: string; url: string; tags?: string[] }>
+  ): Promise<number> {
+    if (!this.isReady) return 0;
+    return this.request<number>('vector-store-ingest', { items });
+  }
+
+  async vectorStoreSearch(
+    queries: string[],
+    topK = 5,
+    minScore = 0.3,
+  ): Promise<VectorSearchResult[]> {
+    if (!this.isReady || !this.loadedModels.has('embeddings')) return [];
+    return this.request<VectorSearchResult[]>('vector-store-search', { queries, topK, minScore });
+  }
+
+  async vectorStoreCount(): Promise<number> {
+    if (!this.isReady) return 0;
+    return this.request<number>('vector-store-count', {});
+  }
+
+  async vectorStoreReset(): Promise<boolean> {
+    if (!this.isReady) return false;
+    return this.request<boolean>('vector-store-reset', {});
+  }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   async getStatus(): Promise<string[]> {
     if (!this.isReady) return [];
     return this.request<string[]>('status', {});
@@ -358,6 +442,16 @@ class MLWorkerManager {
   get loadedModelIds(): string[] {
     return Array.from(this.loadedModels);
   }
+<<<<<<< HEAD
+=======
+
+  /**
+   * Check if a specific model is already loaded (no waiting)
+   */
+  isModelLoaded(modelId: string): boolean {
+    return this.loadedModels.has(modelId);
+  }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 // Export singleton instance

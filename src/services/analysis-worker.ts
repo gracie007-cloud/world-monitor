@@ -3,7 +3,12 @@
  * Provides typed async interface to the analysis Web Worker.
  */
 
+<<<<<<< HEAD
 import type { NewsItem, ClusteredEvent, PredictionMarket, MarketData } from '@/types';
+=======
+import type { NewsItem, ClusteredEvent, MarketData } from '@/types';
+import type { PredictionMarket } from '@/services/prediction';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 import type { CorrelationSignal } from './correlation';
 import { SOURCE_TIERS, SOURCE_TYPES, type SourceType } from '@/config/feeds';
 

@@ -6,6 +6,7 @@ export { SECTORS, COMMODITIES, MARKET_SYMBOLS } from '../markets';
 export { UNDERSEA_CABLES } from '../geo';
 export { AI_DATA_CENTERS } from '../ai-datacenters';
 
+<<<<<<< HEAD
 // API URLs - shared across all variants
 export const API_URLS = {
   finnhub: (symbols: string[]) =>
@@ -35,6 +36,18 @@ export const REFRESH_INTERVALS = {
   arxiv: 60 * 60 * 1000,
   githubTrending: 30 * 60 * 1000,
   hackernews: 5 * 60 * 1000,
+=======
+// Idle pause duration - shared across map and stream panels (5 minutes)
+export const IDLE_PAUSE_MS = 5 * 60 * 1000;
+
+// Refresh intervals - shared across all variants
+export const REFRESH_INTERVALS = {
+  feeds: 20 * 60 * 1000,
+  markets: 12 * 60 * 1000,
+  crypto: 12 * 60 * 1000,
+  predictions: 15 * 60 * 1000,
+  ais: 15 * 60 * 1000,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 };
 
 // Monitor colors - shared
@@ -57,6 +70,11 @@ export const STORAGE_KEYS = {
   monitors: 'worldmonitor-monitors',
   mapLayers: 'worldmonitor-layers',
   disabledFeeds: 'worldmonitor-disabled-feeds',
+<<<<<<< HEAD
+=======
+  liveChannels: 'worldmonitor-live-channels',
+  mapMode: 'worldmonitor-map-mode',          // 'flat' | 'globe'
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 } as const;
 
 // Type definitions for variant configs

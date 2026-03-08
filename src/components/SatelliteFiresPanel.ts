@@ -1,5 +1,10 @@
 import { Panel } from './Panel';
+<<<<<<< HEAD
 import type { FireRegionStats } from '@/services/firms-satellite';
+=======
+import type { FireRegionStats } from '@/services/wildfires';
+import { t } from '@/services/i18n';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export class SatelliteFiresPanel extends Panel {
   private stats: FireRegionStats[] = [];
@@ -9,12 +14,21 @@ export class SatelliteFiresPanel extends Panel {
   constructor() {
     super({
       id: 'satellite-fires',
+<<<<<<< HEAD
       title: 'Fires',
       showCount: true,
       trackActivity: true,
       infoTooltip: 'NASA FIRMS VIIRS satellite thermal detections across monitored conflict regions. High-intensity = brightness &gt;360K &amp; confidence &gt;80%.',
     });
     this.showLoading('Scanning thermal data');
+=======
+      title: t('panels.satelliteFires'),
+      showCount: true,
+      trackActivity: true,
+      infoTooltip: t('components.satelliteFires.infoTooltip'),
+    });
+    this.showLoading(t('common.scanningThermalData'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   public update(stats: FireRegionStats[], totalCount: number): void {
@@ -33,7 +47,11 @@ export class SatelliteFiresPanel extends Panel {
 
   private render(): void {
     if (this.stats.length === 0) {
+<<<<<<< HEAD
       this.setContent('<div class="panel-empty">No fire data available</div>');
+=======
+      this.setContent(`<div class="panel-empty">${t('common.noDataAvailable')}</div>`);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return;
     }
 
@@ -52,23 +70,37 @@ export class SatelliteFiresPanel extends Panel {
 
     const totalFrp = this.stats.reduce((sum, s) => sum + s.totalFrp, 0);
     const totalHigh = this.stats.reduce((sum, s) => sum + s.highIntensityCount, 0);
+<<<<<<< HEAD
     const ago = this.lastUpdated ? timeSince(this.lastUpdated) : 'never';
+=======
+    const ago = this.lastUpdated ? timeSince(this.lastUpdated) : t('components.satelliteFires.never');
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     this.setContent(`
       <div class="fires-panel-content">
         <table class="fires-table">
           <thead>
             <tr>
+<<<<<<< HEAD
               <th>Region</th>
               <th>Fires</th>
               <th>High</th>
+=======
+              <th>${t('components.satelliteFires.region')}</th>
+              <th>${t('components.satelliteFires.fires')}</th>
+              <th>${t('components.satelliteFires.high')}</th>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
               <th>FRP</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
           <tfoot>
             <tr class="fire-totals">
+<<<<<<< HEAD
               <td>Total</td>
+=======
+              <td>${t('components.satelliteFires.total')}</td>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
               <td>${this.totalCount}</td>
               <td>${totalHigh}</td>
               <td>${totalFrp >= 1000 ? `${(totalFrp / 1000).toFixed(1)}k` : Math.round(totalFrp).toLocaleString()}</td>
@@ -80,6 +112,7 @@ export class SatelliteFiresPanel extends Panel {
           <span class="fires-updated">${ago}</span>
         </div>
       </div>
+<<<<<<< HEAD
       <style>
         .fires-panel-content { font-size: 12px; }
         .fires-table { width: 100%; border-collapse: collapse; }
@@ -93,6 +126,8 @@ export class SatelliteFiresPanel extends Panel {
         .fire-totals td { color: #fff; font-weight: 600; }
         .fires-footer { display: flex; justify-content: space-between; padding: 8px 8px 0; color: #555; font-size: 10px; }
       </style>
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     `);
   }
 }
@@ -103,9 +138,17 @@ function escapeHtml(s: string): string {
 
 function timeSince(date: Date): string {
   const secs = Math.floor((Date.now() - date.getTime()) / 1000);
+<<<<<<< HEAD
   if (secs < 60) return 'just now';
   const mins = Math.floor(secs / 60);
   if (mins < 60) return `${mins}m ago`;
   const hrs = Math.floor(mins / 60);
   return `${hrs}h ago`;
+=======
+  if (secs < 60) return t('components.satelliteFires.time.justNow');
+  const mins = Math.floor(secs / 60);
+  if (mins < 60) return t('components.satelliteFires.time.minutesAgo', { count: String(mins) });
+  const hrs = Math.floor(mins / 60);
+  return t('components.satelliteFires.time.hoursAgo', { count: String(hrs) });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }

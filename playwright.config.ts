@@ -32,8 +32,13 @@ export default defineConfig({
   ],
   snapshotPathTemplate: '{testDir}/{testFileName}-snapshots/{arg}{ext}',
   webServer: {
+<<<<<<< HEAD
     command: 'npm run dev -- --host 127.0.0.1 --port 4173',
     url: 'http://127.0.0.1:4173/map-harness.html',
+=======
+    command: 'VITE_E2E=1 npm run dev -- --host 127.0.0.1 --port 4173',
+    url: 'http://127.0.0.1:4173/tests/map-harness.html',
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     reuseExistingServer: false,
     timeout: 120000,
   },

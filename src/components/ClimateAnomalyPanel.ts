@@ -1,7 +1,12 @@
 import { Panel } from './Panel';
 import { escapeHtml } from '@/utils/sanitize';
+<<<<<<< HEAD
 import type { ClimateAnomaly } from '@/types';
 import { getSeverityColor, getSeverityIcon, formatDelta } from '@/services/climate';
+=======
+import { type ClimateAnomaly, getSeverityIcon, formatDelta } from '@/services/climate';
+import { t } from '@/services/i18n';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export class ClimateAnomalyPanel extends Panel {
   private anomalies: ClimateAnomaly[] = [];
@@ -10,6 +15,7 @@ export class ClimateAnomalyPanel extends Panel {
   constructor() {
     super({
       id: 'climate',
+<<<<<<< HEAD
       title: 'Climate Anomalies',
       showCount: true,
       trackActivity: true,
@@ -23,6 +29,14 @@ export class ClimateAnomalyPanel extends Panel {
         Monitors 15 conflict/disaster-prone zones.`,
     });
     this.showLoading('Loading climate data');
+=======
+      title: t('panels.climate'),
+      showCount: true,
+      trackActivity: true,
+      infoTooltip: t('components.climate.infoTooltip'),
+    });
+    this.showLoading(t('common.loadingClimateData'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   public setZoneClickHandler(handler: (lat: number, lon: number) => void): void {
@@ -37,7 +51,11 @@ export class ClimateAnomalyPanel extends Panel {
 
   private renderContent(): void {
     if (this.anomalies.length === 0) {
+<<<<<<< HEAD
       this.setContent('<div class="panel-empty">No significant anomalies detected</div>');
+=======
+      this.setContent(`<div class="panel-empty">${t('components.climate.noAnomalies')}</div>`);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return;
     }
 
@@ -46,6 +64,7 @@ export class ClimateAnomalyPanel extends Panel {
       return (severityOrder[a.severity] || 2) - (severityOrder[b.severity] || 2);
     });
 
+<<<<<<< HEAD
     const listHtml = sorted.map(a => {
       const color = getSeverityColor(a);
       const icon = getSeverityIcon(a);
@@ -70,6 +89,40 @@ export class ClimateAnomalyPanel extends Panel {
     this.setContent(`<div class="climate-list">${listHtml}</div>`);
 
     this.content.querySelectorAll('.climate-zone').forEach(el => {
+=======
+    const rows = sorted.map(a => {
+      const icon = getSeverityIcon(a);
+      const tempClass = a.tempDelta > 0 ? 'climate-warm' : 'climate-cold';
+      const precipClass = a.precipDelta > 0 ? 'climate-wet' : 'climate-dry';
+      const sevClass = `severity-${a.severity}`;
+      const rowClass = a.severity === 'extreme' ? ' climate-extreme-row' : '';
+
+      return `<tr class="climate-row${rowClass}" data-lat="${a.lat}" data-lon="${a.lon}">
+        <td class="climate-zone"><span class="climate-icon">${icon}</span>${escapeHtml(a.zone)}</td>
+        <td class="climate-num ${tempClass}">${formatDelta(a.tempDelta, '°C')}</td>
+        <td class="climate-num ${precipClass}">${formatDelta(a.precipDelta, 'mm')}</td>
+        <td><span class="climate-badge ${sevClass}">${t(`components.climate.severity.${a.severity}`)}</span></td>
+      </tr>`;
+    }).join('');
+
+    this.setContent(`
+      <div class="climate-panel-content">
+        <table class="climate-table">
+          <thead>
+            <tr>
+              <th>${t('components.climate.zone')}</th>
+              <th>${t('components.climate.temp')}</th>
+              <th>${t('components.climate.precip')}</th>
+              <th>${t('components.climate.severityLabel')}</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `);
+
+    this.content.querySelectorAll('.climate-row').forEach(el => {
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       el.addEventListener('click', () => {
         const lat = Number((el as HTMLElement).dataset.lat);
         const lon = Number((el as HTMLElement).dataset.lon);

@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 import { escapeHtml } from '@/utils/sanitize';
 import { SITE_VARIANT } from '@/config';
 
 type StatusLevel = 'ok' | 'warning' | 'error' | 'disabled';
 
 interface FeedStatus {
+=======
+import { SITE_VARIANT } from '@/config';
+import { h } from '@/utils/dom-utils'; // kept for Panel base class compat
+
+export type StatusLevel = 'ok' | 'warning' | 'error' | 'disabled';
+
+export interface FeedStatus {
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   name: string;
   lastUpdate: Date | null;
   status: StatusLevel;
@@ -11,7 +20,7 @@ interface FeedStatus {
   errorMessage?: string;
 }
 
-interface ApiStatus {
+export interface ApiStatus {
   name: string;
   status: StatusLevel;
   latency?: number;
@@ -22,15 +31,25 @@ const TECH_FEEDS = new Set([
   'Tech', 'Ai', 'Startups', 'Vcblogs', 'RegionalStartups',
   'Unicorns', 'Accelerators', 'Security', 'Policy', 'Layoffs',
   'Finance', 'Hardware', 'Cloud', 'Dev', 'Tech Events', 'Crypto',
+<<<<<<< HEAD
   'Markets', 'Events', 'Producthunt', 'Funding', 'Polymarket'
 ]);
 const TECH_APIS = new Set([
   'RSS Proxy', 'Finnhub', 'CoinGecko', 'Tech Events API', 'Service Status', 'Polymarket'
+=======
+  'Markets', 'Events', 'Producthunt', 'Funding', 'Polymarket',
+  'Cyber Threats'
+]);
+const TECH_APIS = new Set([
+  'RSS Proxy', 'Finnhub', 'CoinGecko', 'Tech Events API', 'Service Status', 'Polymarket',
+  'Cyber Threats API'
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 ]);
 
 const WORLD_FEEDS = new Set([
   'Politics', 'Middleeast', 'Tech', 'Ai', 'Finance',
   'Gov', 'Intel', 'Layoffs', 'Thinktanks', 'Energy',
+<<<<<<< HEAD
   'Polymarket', 'Weather', 'NetBlocks', 'Shipping', 'Military'
 ]);
 const WORLD_APIS = new Set([
@@ -81,64 +100,92 @@ export class StatusPanel {
         </div>
       </div>
     `;
+=======
+  'Polymarket', 'Weather', 'NetBlocks', 'Shipping', 'Military',
+  'Cyber Threats', 'GPS Jam'
+]);
+const WORLD_APIS = new Set([
+  'RSS2JSON', 'Finnhub', 'CoinGecko', 'Polymarket', 'USGS', 'FRED',
+  'AISStream', 'GDELT Doc', 'EIA', 'USASpending', 'PizzINT', 'FIRMS',
+  'Cyber Threats API', 'BIS', 'WTO', 'SupplyChain'
+]);
 
-    this.setupEventListeners();
+import { t } from '../services/i18n';
+import { Panel } from './Panel';
+
+export class StatusPanel extends Panel {
+  private feeds: Map<string, FeedStatus> = new Map();
+  private apis: Map<string, ApiStatus> = new Map();
+  private allowedFeeds!: Set<string>;
+  private allowedApis!: Set<string>;
+  public onUpdate: (() => void) | null = null;
+
+  constructor() {
+    super({ id: 'status', title: t('panels.status') });
+    this.init();
+  }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+
+  private init(): void {
+    this.allowedFeeds = SITE_VARIANT === 'tech' ? TECH_FEEDS : WORLD_FEEDS;
+    this.allowedApis = SITE_VARIANT === 'tech' ? TECH_APIS : WORLD_APIS;
+
+    this.element = h('div', { className: 'status-panel-container' });
     this.initDefaultStatuses();
   }
 
-  private setupEventListeners(): void {
-    const toggle = this.element.querySelector('.status-panel-toggle')!;
-    const panel = this.element.querySelector('.status-panel')!;
-    const closeBtn = this.element.querySelector('.status-panel-close')!;
-
-    toggle.addEventListener('click', () => {
-      this.isOpen = !this.isOpen;
-      panel.classList.toggle('hidden', !this.isOpen);
-      if (this.isOpen) this.updateDisplay();
-    });
-
-    closeBtn.addEventListener('click', () => {
-      this.isOpen = false;
-      panel.classList.add('hidden');
-    });
-  }
-
   private initDefaultStatuses(): void {
+<<<<<<< HEAD
     // Initialize all allowed feeds/APIs as disabled
     // They get enabled when App.ts reports data
     this.allowedFeeds.forEach(name => {
       this.feeds.set(name, { name, lastUpdate: null, status: 'disabled', itemCount: 0 });
     });
 
+=======
+    this.allowedFeeds.forEach(name => {
+      this.feeds.set(name, { name, lastUpdate: null, status: 'disabled', itemCount: 0 });
+    });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     this.allowedApis.forEach(name => {
       this.apis.set(name, { name, status: 'disabled' });
     });
   }
 
+  public getFeeds(): Map<string, FeedStatus> { return this.feeds; }
+  public getApis(): Map<string, ApiStatus> { return this.apis; }
+
   public updateFeed(name: string, status: Partial<FeedStatus>): void {
+<<<<<<< HEAD
     // Only track feeds relevant to current variant
     if (!this.allowedFeeds.has(name)) return;
 
+=======
+    if (!this.allowedFeeds.has(name)) return;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const existing = this.feeds.get(name) || { name, lastUpdate: null, status: 'ok' as const, itemCount: 0 };
     this.feeds.set(name, { ...existing, ...status, lastUpdate: new Date() });
-    this.updateStatusIcon();
-    if (this.isOpen) this.updateDisplay();
+    this.onUpdate?.();
   }
 
   public updateApi(name: string, status: Partial<ApiStatus>): void {
+<<<<<<< HEAD
     // Only track APIs relevant to current variant
     if (!this.allowedApis.has(name)) return;
 
+=======
+    if (!this.allowedApis.has(name)) return;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const existing = this.apis.get(name) || { name, status: 'ok' as const };
     this.apis.set(name, { ...existing, ...status });
-    this.updateStatusIcon();
-    if (this.isOpen) this.updateDisplay();
+    this.onUpdate?.();
   }
 
   public setFeedDisabled(name: string): void {
     const existing = this.feeds.get(name);
     if (existing) {
       this.feeds.set(name, { ...existing, status: 'disabled', itemCount: 0, lastUpdate: null });
+<<<<<<< HEAD
       this.updateStatusIcon();
       if (this.isOpen) this.updateDisplay();
     }
@@ -221,10 +268,21 @@ export class StatusPanel {
       }
     } catch {
       container.innerHTML = `<div class="status-row">Storage info unavailable</div>`;
+=======
+      this.onUpdate?.();
     }
   }
 
-  private formatTime(date: Date): string {
+  public setApiDisabled(name: string): void {
+    const existing = this.apis.get(name);
+    if (existing) {
+      this.apis.set(name, { ...existing, status: 'disabled' });
+      this.onUpdate?.();
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
+    }
+  }
+
+  public formatTime(date: Date): string {
     const now = Date.now();
     const diff = now - date.getTime();
     if (diff < 60000) return 'just now';

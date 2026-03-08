@@ -4,6 +4,11 @@
  * showing misleading "all clear" when we actually have no data.
  */
 
+<<<<<<< HEAD
+=======
+import { getCSSColor } from '@/utils';
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 export type DataSourceId =
   | 'acled'      // Protests/conflicts
   | 'opensky'    // Military flights
@@ -11,9 +16,19 @@ export type DataSourceId =
   | 'ais'        // Vessel tracking
   | 'usgs'       // Earthquakes
   | 'gdelt'      // News velocity
+<<<<<<< HEAD
   | 'rss'        // RSS feeds
   | 'polymarket' // Prediction markets
   | 'outages'    // Internet outages
+=======
+  | 'gdelt_doc'  // GDELT Doc protest intelligence
+  | 'rss'        // RSS feeds
+  | 'polymarket' // Prediction markets
+  | 'predictions' // Predictions feed
+  | 'pizzint'    // PizzINT monitoring
+  | 'outages'    // Internet outages
+  | 'cyber_threats' // Cyber threat IOC layer
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   | 'weather'    // Weather alerts
   | 'economic'   // Economic indicators (FRED)
   | 'oil'        // EIA oil analytics
@@ -25,7 +40,17 @@ export type DataSourceId =
   | 'ucdp_events'    // UCDP georeferenced conflict events
   | 'unhcr'          // UNHCR displacement data
   | 'climate'        // Climate anomaly data (Open-Meteo)
+<<<<<<< HEAD
   | 'worldpop';      // WorldPop population exposure
+=======
+  | 'worldpop'       // WorldPop population exposure
+  | 'giving'         // Global giving activity data
+  | 'bis'            // BIS central bank data
+  | 'wto_trade'      // WTO trade policy data
+  | 'supply_chain'   // Supply chain disruption intelligence
+  | 'security_advisories'  // Government travel/security advisories
+  | 'gpsjam';              // GPS/GNSS interference
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export type FreshnessStatus = 'fresh' | 'stale' | 'very_stale' | 'no_data' | 'disabled' | 'error';
 
@@ -68,9 +93,19 @@ const SOURCE_METADATA: Record<DataSourceId, { name: string; requiredForRisk: boo
   ais: { name: 'Vessel Tracking', requiredForRisk: false, panelId: 'shipping' },
   usgs: { name: 'Earthquakes', requiredForRisk: false, panelId: 'natural' },
   gdelt: { name: 'News Intelligence', requiredForRisk: true, panelId: 'intel' },
+<<<<<<< HEAD
   rss: { name: 'Live News Feeds', requiredForRisk: true, panelId: 'live-news' },
   polymarket: { name: 'Prediction Markets', requiredForRisk: false, panelId: 'polymarket' },
   outages: { name: 'Internet Outages', requiredForRisk: false, panelId: 'outages' },
+=======
+  gdelt_doc: { name: 'GDELT Doc Intelligence', requiredForRisk: false, panelId: 'protests' },
+  rss: { name: 'Live News Feeds', requiredForRisk: true, panelId: 'live-news' },
+  polymarket: { name: 'Prediction Markets', requiredForRisk: false, panelId: 'polymarket' },
+  predictions: { name: 'Predictions Feed', requiredForRisk: false, panelId: 'polymarket' },
+  pizzint: { name: 'PizzINT Monitoring', requiredForRisk: false, panelId: 'intel' },
+  outages: { name: 'Internet Outages', requiredForRisk: false, panelId: 'outages' },
+  cyber_threats: { name: 'Cyber Threat IOCs', requiredForRisk: false, panelId: 'map' },
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   weather: { name: 'Weather Alerts', requiredForRisk: false, panelId: 'weather' },
   economic: { name: 'Economic Data (FRED)', requiredForRisk: false, panelId: 'economic' },
   oil: { name: 'Oil Analytics (EIA)', requiredForRisk: false, panelId: 'economic' },
@@ -83,6 +118,15 @@ const SOURCE_METADATA: Record<DataSourceId, { name: string; requiredForRisk: boo
   unhcr: { name: 'UNHCR Displacement', requiredForRisk: false, panelId: 'displacement' },
   climate: { name: 'Climate Anomalies', requiredForRisk: false, panelId: 'climate' },
   worldpop: { name: 'Population Exposure', requiredForRisk: false, panelId: 'population-exposure' },
+<<<<<<< HEAD
+=======
+  giving: { name: 'Global Giving Activity', requiredForRisk: false, panelId: 'giving' },
+  bis: { name: 'BIS Central Banks', requiredForRisk: false, panelId: 'economic' },
+  wto_trade: { name: 'WTO Trade Policy', requiredForRisk: false, panelId: 'trade-policy' },
+  supply_chain: { name: 'Supply Chain Intelligence', requiredForRisk: false, panelId: 'supply-chain' },
+  security_advisories: { name: 'Security Advisories', requiredForRisk: false, panelId: 'security-advisories' },
+  gpsjam: { name: 'GPS/GNSS Interference', requiredForRisk: false, panelId: 'map' },
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 };
 
 class DataFreshnessTracker {
@@ -212,8 +256,13 @@ class DataFreshnessTracker {
       errorSources: errorSources.length,
       overallStatus,
       coveragePercent,
+<<<<<<< HEAD
       oldestUpdate: updates.length > 0 ? new Date(Math.min(...updates)) : null,
       newestUpdate: updates.length > 0 ? new Date(Math.max(...updates)) : null,
+=======
+      oldestUpdate: updates.length > 0 ? new Date(updates.reduce((min, d) => d < min ? d : min, updates[0]!)) : null,
+      newestUpdate: updates.length > 0 ? new Date(updates.reduce((max, d) => d > max ? d : max, updates[0]!)) : null,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
   }
 
@@ -289,12 +338,21 @@ export const dataFreshness = new DataFreshnessTracker();
 // Helper to get status color
 export function getStatusColor(status: FreshnessStatus): string {
   switch (status) {
+<<<<<<< HEAD
     case 'fresh': return '#44aa44';
     case 'stale': return '#ffaa00';
     case 'very_stale': return '#ff8800';
     case 'error': return '#ff4444';
     case 'disabled': return '#666666';
     case 'no_data': return '#888888';
+=======
+    case 'fresh': return getCSSColor('--semantic-normal');
+    case 'stale': return getCSSColor('--semantic-elevated');
+    case 'very_stale': return getCSSColor('--semantic-high');
+    case 'error': return getCSSColor('--semantic-critical');
+    case 'disabled': return getCSSColor('--text-muted');
+    case 'no_data': return getCSSColor('--text-dim');
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 }
 
@@ -318,9 +376,19 @@ const INTELLIGENCE_GAP_MESSAGES: Record<DataSourceId, string> = {
   ais: 'Vessel positions outdated—possible dark shipping or AIS transponder-off activity undetected',
   usgs: 'Recent earthquakes may not be shown—seismic data unavailable',
   gdelt: 'News event velocity unknown—GDELT intelligence feed offline',
+<<<<<<< HEAD
   rss: 'Breaking news may be missed—RSS feeds not updating',
   polymarket: 'Prediction market signals unavailable—early warning capability degraded',
   outages: 'Internet disruptions may be unreported—outage monitoring offline',
+=======
+  gdelt_doc: 'Protest intelligence degraded—GDELT Doc feed offline',
+  rss: 'Breaking news may be missed—RSS feeds not updating',
+  polymarket: 'Prediction market signals unavailable—early warning capability degraded',
+  predictions: 'Prediction feed unavailable—scenario signals may be stale',
+  pizzint: 'PizzINT monitor unavailable—location/tension tracking degraded',
+  outages: 'Internet disruptions may be unreported—outage monitoring offline',
+  cyber_threats: 'Cyber IOC map points unavailable—malicious infrastructure visibility reduced',
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   weather: 'Severe weather warnings may be missed—weather alerts unavailable',
   economic: 'Economic indicators stale—Fed/Treasury data not updating',
   oil: 'Oil market analytics unavailable—EIA data not updating',
@@ -333,6 +401,15 @@ const INTELLIGENCE_GAP_MESSAGES: Record<DataSourceId, string> = {
   unhcr: 'UNHCR displacement data unavailable—refugee flows unknown',
   climate: 'Climate anomaly data unavailable—extreme weather patterns undetected',
   worldpop: 'Population exposure data unavailable—affected population unknown',
+<<<<<<< HEAD
+=======
+  giving: 'Global giving activity data unavailable',
+  bis: 'Central bank policy data may be stale—BIS feed unavailable',
+  wto_trade: 'Trade policy intelligence unavailable—WTO data not updating',
+  supply_chain: 'Supply chain disruption status unavailable—chokepoint monitoring offline',
+  security_advisories: 'Government travel advisory data unavailable—security alerts may be missed',
+  gpsjam: 'GPS/GNSS interference data unavailable—jamming zones undetected',
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 };
 
 /**

@@ -15,6 +15,7 @@ const LAYER_KEYS: (keyof MapLayers)[] = [
   'economic',
   'waterways',
   'outages',
+  'cyberThreats',
   'datacenters',
   'protests',
   'flights',
@@ -31,6 +32,13 @@ const LAYER_KEYS: (keyof MapLayers)[] = [
   'accelerators',
   'techHQs',
   'techEvents',
+<<<<<<< HEAD
+=======
+  'tradeRoutes',
+  'iranAttacks',
+  'gpsJamming',
+  'ciiChoropleth',
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 ];
 
 const TIME_RANGES: TimeRange[] = ['1h', '6h', '24h', '48h', '7d', 'all'];
@@ -43,6 +51,8 @@ export interface ParsedMapUrlState {
   lon?: number;
   timeRange?: TimeRange;
   layers?: MapLayers;
+  country?: string;
+  expanded?: boolean;
 }
 
 const clamp = (value: number, min: number, max: number): number =>
@@ -73,6 +83,12 @@ export function parseMapUrlState(
     ? (timeRangeParam as TimeRange)
     : undefined;
 
+  const countryParam = params.get('country');
+  const country = countryParam && /^[A-Z]{2}$/i.test(countryParam.trim()) ? countryParam.trim().toUpperCase() : undefined;
+
+  const expandedParam = params.get('expanded');
+  const expanded = expandedParam === '1' ? true : undefined;
+
   const layersParam = params.get('layers');
   let layers: MapLayers | undefined;
   if (layersParam !== null) {
@@ -102,6 +118,8 @@ export function parseMapUrlState(
     lon,
     timeRange,
     layers,
+    country,
+    expanded,
   };
 }
 
@@ -113,6 +131,8 @@ export function buildMapUrl(
     center?: { lat: number; lon: number } | null;
     timeRange: TimeRange;
     layers: MapLayers;
+    country?: string;
+    expanded?: boolean;
   }
 ): string {
   const url = new URL(baseUrl);
@@ -129,6 +149,17 @@ export function buildMapUrl(
 
   const activeLayers = LAYER_KEYS.filter((layer) => state.layers[layer]);
   params.set('layers', activeLayers.length > 0 ? activeLayers.join(',') : 'none');
+<<<<<<< HEAD
+=======
+
+  if (state.country) {
+    params.set('country', state.country);
+  }
+
+  if (state.expanded) {
+    params.set('expanded', '1');
+  }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
   url.search = params.toString();
   return url.toString();

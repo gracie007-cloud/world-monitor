@@ -22,11 +22,22 @@ export interface CircuitBreakerOptions {
   maxFailures?: number;
   cooldownMs?: number;
   cacheTtlMs?: number;
+<<<<<<< HEAD
+=======
+  /** Persist cache to IndexedDB across page reloads. Default: false.
+   *  Opt-in only — cached payloads must be JSON-safe (no Date objects).
+   *  Auto-disabled when cacheTtlMs === 0. */
+  persistCache?: boolean;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 const DEFAULT_MAX_FAILURES = 2;
 const DEFAULT_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes
 const DEFAULT_CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
+<<<<<<< HEAD
+=======
+const PERSISTENT_STALE_CEILING_MS = 24 * 60 * 60 * 1000; // 24h — discard persistent entries older than this
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 
 function isDesktopOfflineMode(): boolean {
@@ -42,13 +53,80 @@ export class CircuitBreaker<T> {
   private maxFailures: number;
   private cooldownMs: number;
   private cacheTtlMs: number;
+<<<<<<< HEAD
   private lastDataState: BreakerDataState = { mode: 'unavailable', timestamp: null, offline: false };
+=======
+  private persistEnabled: boolean;
+  private persistentLoaded = false;
+  private persistentLoadPromise: Promise<void> | null = null;
+  private lastDataState: BreakerDataState = { mode: 'unavailable', timestamp: null, offline: false };
+  private backgroundRefreshPromise: Promise<void> | null = null;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
   constructor(options: CircuitBreakerOptions) {
     this.name = options.name;
     this.maxFailures = options.maxFailures ?? DEFAULT_MAX_FAILURES;
     this.cooldownMs = options.cooldownMs ?? DEFAULT_COOLDOWN_MS;
     this.cacheTtlMs = options.cacheTtlMs ?? DEFAULT_CACHE_TTL_MS;
+<<<<<<< HEAD
+=======
+    this.persistEnabled = this.cacheTtlMs === 0
+      ? false
+      : (options.persistCache ?? false);
+  }
+
+  private get persistKey(): string {
+    return `breaker:${this.name}`;
+  }
+
+  /** Hydrate in-memory cache from persistent storage on first call. */
+  private hydratePersistentCache(): Promise<void> {
+    if (this.persistentLoaded) return Promise.resolve();
+    if (this.persistentLoadPromise) return this.persistentLoadPromise;
+
+    this.persistentLoadPromise = (async () => {
+      try {
+        const { getPersistentCache } = await import('../services/persistent-cache');
+        const entry = await getPersistentCache<T>(this.persistKey);
+        if (entry == null || entry.data === undefined || entry.data === null) return;
+
+        const age = Date.now() - entry.updatedAt;
+        if (age > PERSISTENT_STALE_CEILING_MS) return;
+
+        // Only hydrate if in-memory cache is empty (don't overwrite live data)
+        if (this.cache === null) {
+          this.cache = { data: entry.data, timestamp: entry.updatedAt };
+          const withinTtl = (Date.now() - entry.updatedAt) < this.cacheTtlMs;
+          this.lastDataState = {
+            mode: withinTtl ? 'cached' : 'unavailable',
+            timestamp: entry.updatedAt,
+            offline: false,
+          };
+        }
+      } catch (err) {
+        console.warn(`[${this.name}] Persistent cache hydration failed:`, err);
+      } finally {
+        this.persistentLoaded = true;
+        this.persistentLoadPromise = null;
+      }
+    })();
+
+    return this.persistentLoadPromise;
+  }
+
+  /** Fire-and-forget write to persistent storage. */
+  private writePersistentCache(data: T): void {
+    import('../services/persistent-cache').then(({ setPersistentCache }) => {
+      setPersistentCache(this.persistKey, data).catch(() => {});
+    }).catch(() => {});
+  }
+
+  /** Fire-and-forget delete from persistent storage. */
+  private deletePersistentCache(): void {
+    import('../services/persistent-cache').then(({ deletePersistentCache }) => {
+      deletePersistentCache(this.persistKey).catch(() => {});
+    }).catch(() => {});
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   isOnCooldown(): boolean {
@@ -96,10 +174,25 @@ export class CircuitBreaker<T> {
     this.state = { failures: 0, cooldownUntil: 0 };
     this.cache = { data, timestamp: Date.now() };
     this.lastDataState = { mode: 'live', timestamp: Date.now(), offline: false };
+<<<<<<< HEAD
+=======
+
+    if (this.persistEnabled) {
+      this.writePersistentCache(data);
+    }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   clearCache(): void {
     this.cache = null;
+<<<<<<< HEAD
+=======
+    this.backgroundRefreshPromise = null;
+    this.persistentLoadPromise = null; // orphan any in-flight hydration
+    if (this.persistEnabled) {
+      this.deletePersistentCache();
+    }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   recordFailure(error?: string): void {
@@ -117,6 +210,14 @@ export class CircuitBreaker<T> {
   ): Promise<R> {
     const offline = isDesktopOfflineMode();
 
+<<<<<<< HEAD
+=======
+    // Hydrate from persistent storage on first call (~1-5ms IndexedDB read)
+    if (this.persistEnabled && !this.persistentLoaded) {
+      await this.hydratePersistentCache();
+    }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     if (this.isOnCooldown()) {
       console.log(`[${this.name}] Currently unavailable, ${this.getCooldownRemaining()}s remaining`);
       const cachedFallback = this.getCached();
@@ -134,6 +235,33 @@ export class CircuitBreaker<T> {
       return cached as R;
     }
 
+<<<<<<< HEAD
+=======
+    // Stale-while-revalidate: if we have stale cached data (outside TTL but
+    // within the 24h persistent ceiling), return it instantly and refresh in
+    // the background. This prevents "Loading..." on every page reload when
+    // the persistent cache is older than the TTL.
+    // Skip SWR when cacheTtlMs === 0 (caching disabled) — the breaker may be
+    // shared across calls with different request params (e.g. stocks vs commodities),
+    // so returning stale data from a different call is wrong.
+    if (this.cache !== null && this.cacheTtlMs > 0) {
+      this.lastDataState = { mode: 'cached', timestamp: this.cache.timestamp, offline };
+      // Fire-and-forget background refresh — guard against concurrent SWR fetches
+      // so that multiple callers with stale cache don't each spawn a parallel request.
+      if (!this.backgroundRefreshPromise) {
+        this.backgroundRefreshPromise = fn().then(result => {
+          this.recordSuccess(result);
+        }).catch(e => {
+          console.warn(`[${this.name}] Background refresh failed:`, e);
+          this.recordFailure(String(e));
+        }).finally(() => {
+          this.backgroundRefreshPromise = null;
+        });
+      }
+      return this.cache.data as R;
+    }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     try {
       const result = await fn();
       this.recordSuccess(result);
@@ -142,8 +270,13 @@ export class CircuitBreaker<T> {
       const msg = String(e);
       console.error(`[${this.name}] Failed:`, msg);
       this.recordFailure(msg);
+<<<<<<< HEAD
       this.lastDataState = { mode: 'unavailable', timestamp: this.cache?.timestamp ?? null, offline };
       return this.getCachedOrDefault(defaultValue) as R;
+=======
+      this.lastDataState = { mode: 'unavailable', timestamp: null, offline };
+      return defaultValue;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
   }
 }

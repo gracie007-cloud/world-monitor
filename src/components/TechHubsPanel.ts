@@ -1,6 +1,13 @@
 import { Panel } from './Panel';
+<<<<<<< HEAD
 import type { TechHubActivity } from '@/services/tech-activity';
 import { escapeHtml, sanitizeUrl } from '@/utils/sanitize';
+=======
+import { t } from '@/services/i18n';
+import type { TechHubActivity } from '@/services/tech-activity';
+import { escapeHtml, sanitizeUrl } from '@/utils/sanitize';
+import { getCSSColor } from '@/utils';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 const COUNTRY_FLAGS: Record<string, string> = {
   'USA': '🇺🇸', 'United States': '🇺🇸',
@@ -64,6 +71,7 @@ export class TechHubsPanel extends Panel {
   constructor() {
     super({
       id: 'tech-hubs',
+<<<<<<< HEAD
       title: 'Hot Tech Hubs',
       showCount: true,
       infoTooltip: `
@@ -75,6 +83,15 @@ export class TechHubsPanel extends Panel {
         • <span style="color: #888">Low</span> — Score below 20<br><br>
         Click a hub to zoom to its location.
       `,
+=======
+      title: t('panels.techHubs'),
+      showCount: true,
+      infoTooltip: t('components.techHubs.infoTooltip', {
+        highColor: getCSSColor('--semantic-normal'),
+        elevatedColor: getCSSColor('--semantic-elevated'),
+        lowColor: getCSSColor('--text-dim'),
+      }),
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     });
   }
 
@@ -94,7 +111,11 @@ export class TechHubsPanel extends Panel {
 
   private render(): void {
     if (this.activities.length === 0) {
+<<<<<<< HEAD
       this.showError('No active tech hubs');
+=======
+      this.showError(t('common.noActiveTechHubs'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return;
     }
 

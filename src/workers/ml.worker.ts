@@ -5,6 +5,10 @@
 
 import { pipeline, env } from '@xenova/transformers';
 import { MODEL_CONFIGS, type ModelConfig } from '@/config/ml-config';
+<<<<<<< HEAD
+=======
+import { storeVectors, searchVectors, getCount, resetStore, sanitizeTitle, type VectorSearchResult } from './vector-db';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 // Configure transformers.js
 env.allowLocalModels = false;
@@ -38,6 +42,10 @@ interface SummarizeMessage {
   type: 'summarize';
   id: string;
   texts: string[];
+<<<<<<< HEAD
+=======
+  modelId?: string;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 interface SentimentMessage {
@@ -68,6 +76,39 @@ interface ResetMessage {
   type: 'reset';
 }
 
+<<<<<<< HEAD
+=======
+interface VectorStoreIngestMessage {
+  type: 'vector-store-ingest';
+  id: string;
+  items: Array<{
+    text: string;
+    pubDate: number;
+    source: string;
+    url: string;
+    tags?: string[];
+  }>;
+}
+
+interface VectorStoreSearchMessage {
+  type: 'vector-store-search';
+  id: string;
+  queries: string[];
+  topK: number;
+  minScore: number;
+}
+
+interface VectorStoreCountMessage {
+  type: 'vector-store-count';
+  id: string;
+}
+
+interface VectorStoreResetMessage {
+  type: 'vector-store-reset';
+  id: string;
+}
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 type MLWorkerMessage =
   | InitMessage
   | LoadModelMessage
@@ -78,7 +119,15 @@ type MLWorkerMessage =
   | NERMessage
   | SemanticClusterMessage
   | StatusMessage
+<<<<<<< HEAD
   | ResetMessage;
+=======
+  | ResetMessage
+  | VectorStoreIngestMessage
+  | VectorStoreSearchMessage
+  | VectorStoreCountMessage
+  | VectorStoreResetMessage;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 // Loaded pipelines (using unknown since pipeline types vary)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -103,6 +152,14 @@ async function loadModel(modelId: string): Promise<void> {
   const startTime = Date.now();
 
   const loadPromise = (async () => {
+<<<<<<< HEAD
+=======
+    // Suppress verbose ONNX Runtime warnings (CleanUnusedInitializersAndNodeArgs)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ort = (globalThis as any).ort;
+    if (ort?.env) { try { ort.env.logLevel = 'error'; } catch { /* ignore */ } }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const pipe = await pipeline(config.task, config.hfModel, {
       progress_callback: (progress: { status: string; progress?: number }) => {
         if (progress.status === 'progress' && progress.progress !== undefined) {
@@ -118,6 +175,12 @@ async function loadModel(modelId: string): Promise<void> {
     loadedPipelines.set(modelId, pipe);
     loadingPromises.delete(modelId);
     console.log(`[MLWorker] Model loaded in ${Date.now() - startTime}ms: ${modelId}`);
+<<<<<<< HEAD
+=======
+
+    // Notify manager that model is now available (no id = unsolicited notification)
+    self.postMessage({ type: 'model-loaded', modelId });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   })();
 
   loadingPromises.set(modelId, loadPromise);
@@ -145,9 +208,15 @@ async function embedTexts(texts: string[]): Promise<number[][]> {
   return results;
 }
 
+<<<<<<< HEAD
 async function summarizeTexts(texts: string[]): Promise<string[]> {
   await loadModel('summarization');
   const pipe = loadedPipelines.get('summarization')!;
+=======
+async function summarizeTexts(texts: string[], modelId = 'summarization'): Promise<string[]> {
+  await loadModel(modelId);
+  const pipe = loadedPipelines.get(modelId)!;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
   const results: string[] = [];
   for (const text of texts) {
@@ -232,6 +301,22 @@ function cosineSimilarity(a: number[], b: number[]): number {
   return denominator === 0 ? 0 : dotProduct / denominator;
 }
 
+<<<<<<< HEAD
+=======
+function cosineSimilarityF32(a: Float32Array, b: Float32Array): number {
+  let dot = 0;
+  let nA = 0;
+  let nB = 0;
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i]! * b[i]!;
+    nA += a[i]! * a[i]!;
+    nB += b[i]! * b[i]!;
+  }
+  const denom = Math.sqrt(nA) * Math.sqrt(nB);
+  return denom === 0 ? 0 : dot / denom;
+}
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 function semanticCluster(
   embeddings: number[][],
   threshold: number
@@ -310,7 +395,11 @@ self.onmessage = async (event: MessageEvent<MLWorkerMessage>) => {
       }
 
       case 'summarize': {
+<<<<<<< HEAD
         const summaries = await summarizeTexts(message.texts);
+=======
+        const summaries = await summarizeTexts(message.texts, message.modelId);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         self.postMessage({
           type: 'summarize-result',
           id: message.id,
@@ -349,6 +438,82 @@ self.onmessage = async (event: MessageEvent<MLWorkerMessage>) => {
         break;
       }
 
+<<<<<<< HEAD
+=======
+      case 'vector-store-ingest': {
+        const EMBED_DIM = 384;
+        const embeddings = await embedTexts(message.items.map(i => sanitizeTitle(i.text)));
+        const valid: Array<{
+          text: string;
+          embedding: Float32Array;
+          pubDate: number;
+          source: string;
+          url: string;
+          tags?: string[];
+        }> = [];
+        for (let i = 0; i < message.items.length; i++) {
+          const emb = embeddings[i];
+          if (!emb || emb.length !== EMBED_DIM) continue;
+          const item = message.items[i]!;
+          valid.push({
+            text: item.text,
+            embedding: new Float32Array(emb),
+            pubDate: item.pubDate,
+            source: item.source,
+            url: item.url,
+            ...(item.tags?.length ? { tags: item.tags } : {}),
+          });
+        }
+        const stored = valid.length > 0 ? await storeVectors(valid) : 0;
+        self.postMessage({
+          type: 'vector-store-ingest-result',
+          id: message.id,
+          stored,
+        });
+        break;
+      }
+
+      case 'vector-store-search': {
+        const clampedTopK = Math.max(1, Math.min(20, message.topK));
+        const clampedMinScore = Math.max(0, Math.min(1, message.minScore));
+        const queries = message.queries.slice(0, 5).map(q => sanitizeTitle(q));
+        const queryEmbeddings = await embedTexts(queries);
+        const queryF32: Float32Array[] = [];
+        for (const emb of queryEmbeddings) {
+          if (emb && emb.length > 0) queryF32.push(new Float32Array(emb));
+        }
+        let results: VectorSearchResult[] = [];
+        if (queryF32.length > 0) {
+          results = await searchVectors(queryF32, clampedTopK, clampedMinScore, cosineSimilarityF32);
+        }
+        self.postMessage({
+          type: 'vector-store-search-result',
+          id: message.id,
+          results,
+        });
+        break;
+      }
+
+      case 'vector-store-count': {
+        const count = await getCount();
+        self.postMessage({
+          type: 'vector-store-count-result',
+          id: message.id,
+          count,
+        });
+        break;
+      }
+
+      case 'vector-store-reset': {
+        await resetStore();
+        self.postMessage({
+          type: 'vector-store-reset-result',
+          id: message.id,
+        });
+        break;
+      }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       case 'status': {
         self.postMessage({
           type: 'status-result',

@@ -19,9 +19,17 @@ import {
   PIPELINE_KEYWORDS,
   FLOW_DROP_KEYWORDS,
   TOPIC_KEYWORDS,
+<<<<<<< HEAD
   tokenize,
   jaccardSimilarity,
   includesKeyword,
+=======
+  SUPPRESSED_TRENDING_TERMS,
+  tokenize,
+  jaccardSimilarity,
+  includesKeyword,
+  containsTopicKeyword,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   findRelatedTopics,
   generateSignalId,
   generateDedupeKey,
@@ -34,6 +42,18 @@ import {
 import { getEntityIndex } from './entity-index';
 import { aggregateThreats } from './threat-classifier';
 
+<<<<<<< HEAD
+=======
+const TOPIC_BASELINE_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+const TOPIC_BASELINE_SPIKE_MULTIPLIER = 3;
+const TOPIC_HISTORY_MAX_POINTS = 1000;
+
+interface TopicVelocityPoint {
+  timestamp: number;
+  velocity: number;
+}
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 // Re-export for convenience
 export {
   SIMILARITY_THRESHOLD,
@@ -59,6 +79,10 @@ export interface NewsItemCore {
   lat?: number;
   lon?: number;
   locationName?: string;
+<<<<<<< HEAD
+=======
+  lang?: string;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 export type NewsItemWithTier = NewsItemCore & { tier: number };
@@ -79,6 +103,10 @@ export interface ClusteredEventCore {
   threat?: import('./threat-classifier').ThreatClassification;
   lat?: number;
   lon?: number;
+<<<<<<< HEAD
+=======
+  lang?: string;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }
 
 export interface PredictionMarketCore {
@@ -100,6 +128,10 @@ export type SignalType =
   | 'news_leads_markets'
   | 'silent_divergence'
   | 'velocity_spike'
+<<<<<<< HEAD
+=======
+  | 'keyword_spike'
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   | 'convergence'
   | 'triangulation'
   | 'flow_drop'
@@ -125,6 +157,13 @@ export interface CorrelationSignalCore {
     correlatedEntities?: string[];
     correlatedNews?: string[];
     explanation?: string;
+<<<<<<< HEAD
+=======
+    term?: string;
+    baseline?: number;
+    multiplier?: number;
+    sourceCount?: number;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   };
 }
 
@@ -134,6 +173,10 @@ export interface StreamSnapshot {
   newsVelocity: Map<string, number>;
   marketChanges: Map<string, number>;
   predictionChanges: Map<string, number>;
+<<<<<<< HEAD
+=======
+  topicVelocityHistory: Map<string, TopicVelocityPoint[]>;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   timestamp: number;
 }
 
@@ -269,12 +312,21 @@ export function clusterNewsCore(
       sourceCount: cluster.length,
       topSources,
       allItems: cluster,
+<<<<<<< HEAD
       firstSeen: new Date(Math.min(...dates)),
       lastUpdated: new Date(Math.max(...dates)),
+=======
+      firstSeen: new Date(dates.reduce((min, d) => d < min ? d : min)),
+      lastUpdated: new Date(dates.reduce((max, d) => d > max ? d : max)),
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       isAlert: cluster.some(i => i.isAlert),
       monitorColor: cluster.find(i => i.monitorColor)?.monitorColor,
       threat,
       ...(clusterLat != null && { lat: clusterLat, lon: clusterLon }),
+<<<<<<< HEAD
+=======
+      lang: primary.lang,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
   }).sort((a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime());
 }
@@ -289,16 +341,36 @@ function extractTopics(events: ClusteredEventCore[]): Map<string, number> {
   for (const event of events) {
     const title = event.primaryTitle.toLowerCase();
     for (const kw of TOPIC_KEYWORDS) {
+<<<<<<< HEAD
       if (title.includes(kw)) {
         const velocity = event.velocity?.sourcesPerHour ?? 0;
         topics.set(kw, (topics.get(kw) ?? 0) + velocity + event.sourceCount);
       }
+=======
+      if (SUPPRESSED_TRENDING_TERMS.has(kw)) continue;
+      if (!containsTopicKeyword(title, kw)) continue;
+      const velocity = event.velocity?.sourcesPerHour ?? 0;
+      topics.set(kw, (topics.get(kw) ?? 0) + velocity + event.sourceCount);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
   }
 
   return topics;
 }
 
+<<<<<<< HEAD
+=======
+function pruneVelocityHistory(history: TopicVelocityPoint[], now: number): TopicVelocityPoint[] {
+  return history.filter(point => now - point.timestamp <= TOPIC_BASELINE_WINDOW_MS);
+}
+
+function averageVelocity(history: TopicVelocityPoint[]): number {
+  if (history.length === 0) return 0;
+  const total = history.reduce((sum, point) => sum + point.velocity, 0);
+  return total / history.length;
+}
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 export function detectPipelineFlowDrops(
   events: ClusteredEventCore[],
   isRecentDuplicate: (key: string) => boolean,
@@ -456,10 +528,33 @@ export function analyzeCorrelationsCore(
   const entityIndex = getEntityIndex();
   const newsEntityContexts = extractEntitiesFromClusters(events);
 
+<<<<<<< HEAD
+=======
+  const previousHistory = previousSnapshot?.topicVelocityHistory ?? new Map<string, TopicVelocityPoint[]>();
+  const currentHistory = new Map<string, TopicVelocityPoint[]>();
+  const topicUniverse = new Set<string>([
+    ...previousHistory.keys(),
+    ...newsTopics.keys(),
+  ]);
+
+  for (const topic of topicUniverse) {
+    const prior = pruneVelocityHistory(previousHistory.get(topic) ?? [], now);
+    const updated = [...prior, { timestamp: now, velocity: newsTopics.get(topic) ?? 0 }];
+    if (updated.length > TOPIC_HISTORY_MAX_POINTS) {
+      updated.splice(0, updated.length - TOPIC_HISTORY_MAX_POINTS);
+    }
+    currentHistory.set(topic, updated);
+  }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   const currentSnapshot: StreamSnapshot = {
     newsVelocity: newsTopics,
     marketChanges: new Map(markets.map(m => [m.symbol, m.change ?? 0])),
     predictionChanges: new Map(predictions.map(p => [p.title.slice(0, 50), p.yesPrice])),
+<<<<<<< HEAD
+=======
+    topicVelocityHistory: currentHistory,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     timestamp: now,
   };
 
@@ -500,6 +595,7 @@ export function analyzeCorrelationsCore(
 
   // Detect news velocity spikes
   for (const [topic, velocity] of newsTopics) {
+<<<<<<< HEAD
     const prevVelocity = previousSnapshot.newsVelocity.get(topic) ?? 0;
     if (velocity > NEWS_VELOCITY_THRESHOLD * 2 && velocity > prevVelocity * 2) {
       const dedupeKey = generateDedupeKey('velocity_spike', topic, velocity);
@@ -518,6 +614,42 @@ export function analyzeCorrelationsCore(
           },
         });
       }
+=======
+    if (SUPPRESSED_TRENDING_TERMS.has(topic)) continue;
+    const baselineHistory = pruneVelocityHistory(previousHistory.get(topic) ?? [], now);
+    const baseline = averageVelocity(baselineHistory);
+    const exceedsAbsoluteThreshold = velocity > NEWS_VELOCITY_THRESHOLD * 2;
+    const exceedsBaseline = baseline > 0
+      ? velocity > baseline * TOPIC_BASELINE_SPIKE_MULTIPLIER
+      : exceedsAbsoluteThreshold;
+
+    if (!exceedsAbsoluteThreshold || !exceedsBaseline) continue;
+
+    const multiplier = baseline > 0 ? velocity / baseline : 0;
+    const dedupeKey = generateDedupeKey('velocity_spike', topic, velocity);
+    if (!isRecentDuplicate(dedupeKey)) {
+      markSignalSeen(dedupeKey);
+      const baselineText = baseline > 0
+        ? `${baseline.toFixed(1)} baseline (${multiplier.toFixed(1)}x)`
+        : 'cold-start baseline';
+      signals.push({
+        id: generateSignalId(),
+        type: 'velocity_spike',
+        title: 'News Velocity Spike',
+        description: `"${topic}" coverage surging: ${velocity.toFixed(1)} activity score vs ${baselineText}`,
+        confidence: Math.min(0.9, 0.45 + (multiplier > 0 ? multiplier / 8 : velocity / 18)),
+        timestamp: new Date(),
+        data: {
+          newsVelocity: velocity,
+          relatedTopics: [topic],
+          baseline,
+          multiplier: baseline > 0 ? multiplier : undefined,
+          explanation: baseline > 0
+            ? `Velocity ${velocity.toFixed(1)} is ${multiplier.toFixed(1)}x above baseline ${baseline.toFixed(1)}`
+            : `Velocity ${velocity.toFixed(1)} exceeded cold-start threshold`,
+        },
+      });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
   }
 

@@ -1,7 +1,19 @@
+<<<<<<< HEAD
+=======
+// Non-sebuf: returns XML/HTML, stays as standalone Vercel function
+import { getCorsHeaders, isDisallowedOrigin } from './_cors.js';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 export const config = { runtime: 'edge' };
 
 // Scrape FwdStart newsletter archive and return as RSS
 export default async function handler(req) {
+<<<<<<< HEAD
+=======
+  const cors = getCorsHeaders(req);
+  if (isDisallowedOrigin(req)) {
+    return new Response(JSON.stringify({ error: 'Origin not allowed' }), { status: 403, headers: cors });
+  }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   try {
     const response = await fetch('https://www.fwdstart.me/archive', {
       headers: {
@@ -84,7 +96,11 @@ export default async function handler(req) {
     return new Response(rss, {
       headers: {
         'Content-Type': 'application/xml; charset=utf-8',
+<<<<<<< HEAD
         'Access-Control-Allow-Origin': '*',
+=======
+        ...cors,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         'Cache-Control': 'public, max-age=1800, s-maxage=1800, stale-while-revalidate=300',
       },
     });
@@ -97,7 +113,11 @@ export default async function handler(req) {
       status: 502,
       headers: {
         'Content-Type': 'application/json',
+<<<<<<< HEAD
         'Access-Control-Allow-Origin': '*',
+=======
+        ...cors,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       },
     });
   }

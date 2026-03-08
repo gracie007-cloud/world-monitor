@@ -114,8 +114,13 @@ function mergeSemanticallySimilarClusters(
 
     // Calculate merged timestamps
     const allDates = allItems.map(i => i.pubDate.getTime());
+<<<<<<< HEAD
     const firstSeen = new Date(Math.min(...allDates));
     const lastUpdated = new Date(Math.max(...allDates));
+=======
+    const firstSeen = new Date(allDates.reduce((min, d) => d < min ? d : min));
+    const lastUpdated = new Date(allDates.reduce((max, d) => d > max ? d : max));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     const mergedCluster: ClusteredEvent = {
       id: primary.id,
@@ -130,6 +135,10 @@ function mergeSemanticallySimilarClusters(
       isAlert: allItems.some(i => i.isAlert),
       monitorColor: primary.monitorColor,
       velocity: primary.velocity,
+<<<<<<< HEAD
+=======
+      threat: primary.threat,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
     merged.push(mergedCluster);
   }

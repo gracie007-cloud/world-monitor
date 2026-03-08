@@ -1,13 +1,28 @@
 import { getRecentSignals, type CorrelationSignal } from '@/services/correlation';
 import { getRecentAlerts, type UnifiedAlert } from '@/services/cross-module-integration';
+<<<<<<< HEAD
 import { getSignalContext } from '@/utils/analysis-constants';
 import { escapeHtml } from '@/utils/sanitize';
+=======
+import { getAlertSettings, updateAlertSettings } from '@/services/breaking-news-alerts';
+import { t } from '@/services/i18n';
+import { getSignalContext } from '@/utils/analysis-constants';
+import { escapeHtml } from '@/utils/sanitize';
+import { trackFindingClicked } from '@/services/analytics';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 const LOW_COUNT_THRESHOLD = 3;
 const MAX_VISIBLE_FINDINGS = 10;
 const SORT_TIME_TOLERANCE_MS = 60000;
+<<<<<<< HEAD
 const REFRESH_INTERVAL_MS = 10000;
 const ALERT_HOURS = 6;
+=======
+const REFRESH_INTERVAL_MS = 180000;
+const ALERT_HOURS = 6;
+const STORAGE_KEY = 'worldmonitor-intel-findings';
+const POPUP_STORAGE_KEY = 'wm-alert-popup-enabled';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 type FindingSource = 'signal' | 'alert';
 
@@ -33,6 +48,7 @@ export class IntelligenceFindingsBadge {
   private onAlertClick: ((alert: UnifiedAlert) => void) | null = null;
   private findings: UnifiedFinding[] = [];
   private boundCloseDropdown = () => this.closeDropdown();
+<<<<<<< HEAD
   private audio: HTMLAudioElement | null = null;
   private audioEnabled = true;
 
@@ -40,6 +56,29 @@ export class IntelligenceFindingsBadge {
     this.badge = document.createElement('button');
     this.badge.className = 'intel-findings-badge';
     this.badge.title = 'Intelligence findings';
+=======
+  private pendingUpdateFrame = 0;
+  private boundUpdate = () => {
+    if (this.pendingUpdateFrame) return;
+    this.pendingUpdateFrame = requestAnimationFrame(() => {
+      this.pendingUpdateFrame = 0;
+      this.update();
+    });
+  };
+  private audio: HTMLAudioElement | null = null;
+  private audioEnabled = true;
+  private enabled: boolean;
+  private popupEnabled: boolean;
+  private contextMenu: HTMLElement | null = null;
+
+  constructor() {
+    this.enabled = IntelligenceFindingsBadge.getStoredEnabledState();
+    this.popupEnabled = localStorage.getItem(POPUP_STORAGE_KEY) === '1';
+
+    this.badge = document.createElement('button');
+    this.badge.className = 'intel-findings-badge';
+    this.badge.title = t('components.intelligenceFindings.badgeTitle');
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     this.badge.innerHTML = '<span class="findings-icon">🎯</span><span class="findings-count">0</span>';
 
     this.dropdown = document.createElement('div');
@@ -50,10 +89,43 @@ export class IntelligenceFindingsBadge {
       this.toggleDropdown();
     });
 
+<<<<<<< HEAD
     // Event delegation for finding items and "more" link
     this.dropdown.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
 
+=======
+    this.badge.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.showContextMenu(e.clientX, e.clientY);
+    });
+
+    // Event delegation for finding items, toggle, and "more" link
+    this.dropdown.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+
+      const toggleAttr = target.closest('[data-toggle]')?.getAttribute('data-toggle');
+      if (toggleAttr === 'popup') {
+        e.stopPropagation();
+        this.popupEnabled = !this.popupEnabled;
+        if (this.popupEnabled) {
+          localStorage.setItem(POPUP_STORAGE_KEY, '1');
+        } else {
+          localStorage.removeItem(POPUP_STORAGE_KEY);
+        }
+        this.renderDropdown();
+        return;
+      }
+      if (toggleAttr === 'breaking-alerts') {
+        e.stopPropagation();
+        const settings = getAlertSettings();
+        updateAlertSettings({ enabled: !settings.enabled });
+        this.renderDropdown();
+        return;
+      }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       // Handle "more findings" click - show all in modal
       if (target.closest('.findings-more')) {
         e.stopPropagation();
@@ -70,6 +142,10 @@ export class IntelligenceFindingsBadge {
       const finding = this.findings.find(f => f.id === id);
       if (!finding) return;
 
+<<<<<<< HEAD
+=======
+      trackFindingClicked(finding.id, finding.source, finding.type, finding.priority);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       if (finding.source === 'signal' && this.onSignalClick) {
         this.onSignalClick(finding.original as CorrelationSignal);
       } else if (finding.source === 'alert' && this.onAlertClick) {
@@ -78,12 +154,22 @@ export class IntelligenceFindingsBadge {
       this.closeDropdown();
     });
 
+<<<<<<< HEAD
     document.addEventListener('click', this.boundCloseDropdown);
 
     this.mount();
     this.initAudio();
     this.update();
     this.startRefresh();
+=======
+    if (this.enabled) {
+      document.addEventListener('click', this.boundCloseDropdown);
+      this.mount();
+      this.initAudio();
+      this.update();
+      this.startRefresh();
+    }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   private initAudio(): void {
@@ -94,7 +180,11 @@ export class IntelligenceFindingsBadge {
   private playSound(): void {
     if (this.audioEnabled && this.audio) {
       this.audio.currentTime = 0;
+<<<<<<< HEAD
       this.audio.play().catch(() => {});
+=======
+      this.audio.play()?.catch(() => {});
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
   }
 
@@ -106,6 +196,75 @@ export class IntelligenceFindingsBadge {
     this.onAlertClick = handler;
   }
 
+<<<<<<< HEAD
+=======
+  public static getStoredEnabledState(): boolean {
+    return localStorage.getItem(STORAGE_KEY) !== 'hidden';
+  }
+
+  public isEnabled(): boolean {
+    return this.enabled;
+  }
+
+  public isPopupEnabled(): boolean {
+    return this.popupEnabled;
+  }
+
+  public setEnabled(enabled: boolean): void {
+    if (this.enabled === enabled) return;
+    this.enabled = enabled;
+
+    if (enabled) {
+      localStorage.removeItem(STORAGE_KEY);
+      document.addEventListener('click', this.boundCloseDropdown);
+      this.mount();
+      this.initAudio();
+      this.update();
+      this.startRefresh();
+    } else {
+      localStorage.setItem(STORAGE_KEY, 'hidden');
+      document.removeEventListener('click', this.boundCloseDropdown);
+      document.removeEventListener('wm:intelligence-updated', this.boundUpdate);
+      if (this.refreshInterval) {
+        clearInterval(this.refreshInterval);
+        this.refreshInterval = null;
+      }
+      this.closeDropdown();
+      this.dismissContextMenu();
+      this.badge.remove();
+    }
+  }
+
+  private showContextMenu(x: number, y: number): void {
+    this.dismissContextMenu();
+
+    const menu = document.createElement('div');
+    menu.className = 'intel-findings-context-menu';
+    menu.style.left = `${x}px`;
+    menu.style.top = `${y}px`;
+    menu.innerHTML = `<div class="context-menu-item">${t('components.intelligenceFindings.hideFindings')}</div>`;
+
+    menu.querySelector('.context-menu-item')!.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.setEnabled(false);
+      this.dismissContextMenu();
+    });
+
+    const dismiss = () => this.dismissContextMenu();
+    document.addEventListener('click', dismiss, { once: true });
+
+    this.contextMenu = menu;
+    document.body.appendChild(menu);
+  }
+
+  private dismissContextMenu(): void {
+    if (this.contextMenu) {
+      this.contextMenu.remove();
+      this.contextMenu = null;
+    }
+  }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   private mount(): void {
     const headerRight = document.querySelector('.header-right');
     if (headerRight) {
@@ -115,7 +274,12 @@ export class IntelligenceFindingsBadge {
   }
 
   private startRefresh(): void {
+<<<<<<< HEAD
     this.refreshInterval = setInterval(() => this.update(), REFRESH_INTERVAL_MS);
+=======
+    document.addEventListener('wm:intelligence-updated', this.boundUpdate);
+    this.refreshInterval = setInterval(this.boundUpdate, REFRESH_INTERVAL_MS);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   public update(): void {
@@ -131,7 +295,11 @@ export class IntelligenceFindingsBadge {
     if (count > this.lastFindingCount && this.lastFindingCount > 0) {
       this.badge.classList.add('pulse');
       setTimeout(() => this.badge.classList.remove('pulse'), 1000);
+<<<<<<< HEAD
       this.playSound();
+=======
+      if (this.popupEnabled) this.playSound();
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
     this.lastFindingCount = count;
 
@@ -142,6 +310,7 @@ export class IntelligenceFindingsBadge {
     this.badge.classList.remove('status-none', 'status-low', 'status-high');
     if (count === 0) {
       this.badge.classList.add('status-none');
+<<<<<<< HEAD
       this.badge.title = 'No recent intelligence findings';
     } else if (hasCritical || hasHigh) {
       this.badge.classList.add('status-high');
@@ -152,6 +321,18 @@ export class IntelligenceFindingsBadge {
     } else {
       this.badge.classList.add('status-high');
       this.badge.title = `${count} intelligence findings - review recommended`;
+=======
+      this.badge.title = t('components.intelligenceFindings.none');
+    } else if (hasCritical || hasHigh) {
+      this.badge.classList.add('status-high');
+      this.badge.title = t('components.intelligenceFindings.reviewRecommended', { count: String(count) });
+    } else if (count <= LOW_COUNT_THRESHOLD) {
+      this.badge.classList.add('status-low');
+      this.badge.title = t('components.intelligenceFindings.count', { count: String(count) });
+    } else {
+      this.badge.classList.add('status-high');
+      this.badge.title = t('components.intelligenceFindings.reviewRecommended', { count: String(count) });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
 
     this.renderDropdown();
@@ -205,6 +386,7 @@ export class IntelligenceFindingsBadge {
     return map[priority] ?? 0;
   }
 
+<<<<<<< HEAD
   private renderDropdown(): void {
     if (this.findings.length === 0) {
       this.dropdown.innerHTML = `
@@ -216,6 +398,37 @@ export class IntelligenceFindingsBadge {
           <div class="findings-empty">
             <span class="empty-icon">📡</span>
             <span class="empty-text">Scanning for correlations and anomalies...</span>
+=======
+  private renderPopupToggle(): string {
+    const label = t('components.intelligenceFindings.popupAlerts');
+    const checked = this.popupEnabled;
+    const breakingSettings = getAlertSettings();
+    const breakingLabel = t('components.intelligenceFindings.breakingAlerts');
+    return `<div class="popup-toggle-row" data-toggle="popup">
+        <span class="popup-toggle-label">🔔 ${escapeHtml(label)}</span>
+        <span class="popup-toggle-switch${checked ? ' on' : ''}"><span class="popup-toggle-knob"></span></span>
+      </div>
+      <div class="popup-toggle-row" data-toggle="breaking-alerts">
+        <span class="popup-toggle-label">🚨 ${escapeHtml(breakingLabel)}</span>
+        <span class="popup-toggle-switch${breakingSettings.enabled ? ' on' : ''}"><span class="popup-toggle-knob"></span></span>
+      </div>`;
+  }
+
+  private renderDropdown(): void {
+    const toggleHtml = this.renderPopupToggle();
+
+    if (this.findings.length === 0) {
+      this.dropdown.innerHTML = `
+        <div class="findings-header">
+          <span class="header-title">${t('components.intelligenceFindings.title')}</span>
+          <span class="findings-badge none">${t('components.intelligenceFindings.monitoring')}</span>
+        </div>
+        ${toggleHtml}
+        <div class="findings-content">
+          <div class="findings-empty">
+            <span class="empty-icon">📡</span>
+            <span class="empty-text">${t('components.intelligenceFindings.scanning')}</span>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           </div>
         </div>
       `;
@@ -226,6 +439,7 @@ export class IntelligenceFindingsBadge {
     const highCount = this.findings.filter(f => f.priority === 'high' || f.confidence >= 70).length;
 
     let statusClass = 'moderate';
+<<<<<<< HEAD
     let statusText = `${this.findings.length} DETECTED`;
     if (criticalCount > 0) {
       statusClass = 'critical';
@@ -233,6 +447,15 @@ export class IntelligenceFindingsBadge {
     } else if (highCount > 0) {
       statusClass = 'high';
       statusText = `${highCount} HIGH PRIORITY`;
+=======
+    let statusText = t('components.intelligenceFindings.detected', { count: String(this.findings.length) });
+    if (criticalCount > 0) {
+      statusClass = 'critical';
+      statusText = t('components.intelligenceFindings.critical', { count: String(criticalCount) });
+    } else if (highCount > 0) {
+      statusClass = 'high';
+      statusText = t('components.intelligenceFindings.highPriority', { count: String(highCount) });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
 
     const findingsHtml = this.findings.slice(0, MAX_VISIBLE_FINDINGS).map(finding => {
@@ -245,7 +468,11 @@ export class IntelligenceFindingsBadge {
         <div class="finding-item ${priorityClass}" data-finding-id="${escapeHtml(finding.id)}">
           <div class="finding-header">
             <span class="finding-type">${icon} ${escapeHtml(finding.title)}</span>
+<<<<<<< HEAD
             <span class="finding-confidence ${priorityClass}">${finding.priority.toUpperCase()}</span>
+=======
+            <span class="finding-confidence ${priorityClass}">${t(`components.intelligenceFindings.priority.${finding.priority}`)}</span>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           </div>
           <div class="finding-description">${escapeHtml(finding.description)}</div>
           <div class="finding-meta">
@@ -259,14 +486,25 @@ export class IntelligenceFindingsBadge {
     const moreCount = this.findings.length - MAX_VISIBLE_FINDINGS;
     this.dropdown.innerHTML = `
       <div class="findings-header">
+<<<<<<< HEAD
         <span class="header-title">Intelligence Findings</span>
         <span class="findings-badge ${statusClass}">${statusText}</span>
       </div>
+=======
+        <span class="header-title">${t('components.intelligenceFindings.title')}</span>
+        <span class="findings-badge ${statusClass}">${statusText}</span>
+      </div>
+      ${toggleHtml}
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       <div class="findings-content">
         <div class="findings-list">
           ${findingsHtml}
         </div>
+<<<<<<< HEAD
         ${moreCount > 0 ? `<div class="findings-more">+${moreCount} more findings</div>` : ''}
+=======
+        ${moreCount > 0 ? `<div class="findings-more">${t('components.intelligenceFindings.more', { count: String(moreCount) })}</div>` : ''}
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       </div>
     `;
   }
@@ -274,12 +512,17 @@ export class IntelligenceFindingsBadge {
   private getInsight(finding: UnifiedFinding): string {
     if (finding.source === 'signal') {
       const context = getSignalContext((finding.original as CorrelationSignal).type);
+<<<<<<< HEAD
       return context.actionableInsight.split('.')[0] || '';
+=======
+      return (context.actionableInsight ?? '').split('.')[0] || '';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
     // For alerts, provide actionable insight based on type and severity
     const alert = finding.original as UnifiedAlert;
     if (alert.type === 'cii_spike') {
       const cii = alert.components.ciiChange;
+<<<<<<< HEAD
       if (cii && cii.change >= 30) return 'Critical destabilization - immediate attention';
       if (cii && cii.change >= 20) return 'Significant shift - monitor closely';
       return 'Developing situation - track for escalation';
@@ -287,6 +530,15 @@ export class IntelligenceFindingsBadge {
     if (alert.type === 'convergence') return 'Multiple events clustering in region';
     if (alert.type === 'cascade') return 'Infrastructure disruption spreading';
     return 'Review for situational awareness';
+=======
+      if (cii && cii.change >= 30) return t('components.intelligenceFindings.insights.criticalDestabilization');
+      if (cii && cii.change >= 20) return t('components.intelligenceFindings.insights.significantShift');
+      return t('components.intelligenceFindings.insights.developingSituation');
+    }
+    if (alert.type === 'convergence') return t('components.intelligenceFindings.insights.convergence');
+    if (alert.type === 'cascade') return t('components.intelligenceFindings.insights.cascade');
+    return t('components.intelligenceFindings.insights.review');
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   private getTypeIcon(type: string): string {
@@ -301,6 +553,10 @@ export class IntelligenceFindingsBadge {
       hotspot_escalation: '⚠️',
       news_leads_markets: '📰',
       velocity_spike: '📈',
+<<<<<<< HEAD
+=======
+      keyword_spike: '📊',
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       convergence: '🔀',
       triangulation: '🔺',
       flow_drop: '⬇️',
@@ -315,10 +571,17 @@ export class IntelligenceFindingsBadge {
 
   private formatTimeAgo(date: Date): string {
     const ms = Date.now() - date.getTime();
+<<<<<<< HEAD
     if (ms < 60000) return 'just now';
     if (ms < 3600000) return `${Math.floor(ms / 60000)}m ago`;
     if (ms < 86400000) return `${Math.floor(ms / 3600000)}h ago`;
     return `${Math.floor(ms / 86400000)}d ago`;
+=======
+    if (ms < 60000) return t('components.intelligenceFindings.time.justNow');
+    if (ms < 3600000) return t('components.intelligenceFindings.time.minutesAgo', { count: String(Math.floor(ms / 60000)) });
+    if (ms < 86400000) return t('components.intelligenceFindings.time.hoursAgo', { count: String(Math.floor(ms / 3600000)) });
+    return t('components.intelligenceFindings.time.daysAgo', { count: String(Math.floor(ms / 86400000)) });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   private toggleDropdown(): void {
@@ -350,7 +613,11 @@ export class IntelligenceFindingsBadge {
         <div class="findings-modal-item ${finding.priority}" data-finding-id="${escapeHtml(finding.id)}">
           <div class="findings-modal-item-header">
             <span class="findings-modal-item-type">${icon} ${escapeHtml(finding.title)}</span>
+<<<<<<< HEAD
             <span class="findings-modal-item-priority ${finding.priority}">${finding.priority.toUpperCase()}</span>
+=======
+            <span class="findings-modal-item-priority ${finding.priority}">${t(`components.intelligenceFindings.priority.${finding.priority}`)}</span>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           </div>
           <div class="findings-modal-item-desc">${escapeHtml(finding.description)}</div>
           <div class="findings-modal-item-meta">
@@ -364,8 +631,13 @@ export class IntelligenceFindingsBadge {
     overlay.innerHTML = `
       <div class="findings-modal">
         <div class="findings-modal-header">
+<<<<<<< HEAD
           <span class="findings-modal-title">🎯 All Intelligence Findings (${this.findings.length})</span>
           <button class="findings-modal-close">×</button>
+=======
+          <span class="findings-modal-title">🎯 ${t('components.intelligenceFindings.all', { count: String(this.findings.length) })}</span>
+          <button class="findings-modal-close" aria-label="Close">×</button>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         </div>
         <div class="findings-modal-content">
           ${findingsHtml}
@@ -373,6 +645,7 @@ export class IntelligenceFindingsBadge {
       </div>
     `;
 
+<<<<<<< HEAD
     // Add click handlers
     overlay.querySelector('.findings-modal-close')?.addEventListener('click', () => overlay.remove());
     overlay.addEventListener('click', (e) => {
@@ -380,6 +653,22 @@ export class IntelligenceFindingsBadge {
         overlay.remove();
       }
     });
+=======
+    const closeOverlay = () => {
+      overlay.remove();
+      document.removeEventListener('keydown', onEsc);
+    };
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeOverlay();
+    };
+    overlay.querySelector('.findings-modal-close')?.addEventListener('click', closeOverlay);
+    overlay.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).classList.contains('findings-modal-overlay')) {
+        closeOverlay();
+      }
+    });
+    document.addEventListener('keydown', onEsc);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     // Handle clicking individual items
     overlay.querySelectorAll('.findings-modal-item').forEach(item => {
@@ -388,12 +677,22 @@ export class IntelligenceFindingsBadge {
         const finding = this.findings.find(f => f.id === id);
         if (!finding) return;
 
+<<<<<<< HEAD
         if (finding.source === 'signal' && this.onSignalClick) {
           this.onSignalClick(finding.original as CorrelationSignal);
           overlay.remove();
         } else if (finding.source === 'alert' && this.onAlertClick) {
           this.onAlertClick(finding.original as UnifiedAlert);
           overlay.remove();
+=======
+        trackFindingClicked(finding.id, finding.source, finding.type, finding.priority);
+        if (finding.source === 'signal' && this.onSignalClick) {
+          this.onSignalClick(finding.original as CorrelationSignal);
+          closeOverlay();
+        } else if (finding.source === 'alert' && this.onAlertClick) {
+          this.onAlertClick(finding.original as UnifiedAlert);
+          closeOverlay();
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         }
       });
     });
@@ -405,6 +704,13 @@ export class IntelligenceFindingsBadge {
     if (this.refreshInterval) {
       clearInterval(this.refreshInterval);
     }
+<<<<<<< HEAD
+=======
+    if (this.pendingUpdateFrame) {
+      cancelAnimationFrame(this.pendingUpdateFrame);
+    }
+    document.removeEventListener('wm:intelligence-updated', this.boundUpdate);
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     document.removeEventListener('click', this.boundCloseDropdown);
     this.badge.remove();
   }

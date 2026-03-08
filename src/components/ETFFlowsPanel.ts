@@ -1,4 +1,5 @@
 import { Panel } from './Panel';
+<<<<<<< HEAD
 import { escapeHtml } from '@/utils/sanitize';
 
 interface ETFData {
@@ -26,6 +27,15 @@ interface ETFFlowsResult {
   etfs: ETFData[];
   unavailable?: boolean;
 }
+=======
+import { t } from '@/services/i18n';
+import { escapeHtml } from '@/utils/sanitize';
+import { MarketServiceClient } from '@/generated/client/worldmonitor/market/v1/service_client';
+import type { ListEtfFlowsResponse } from '@/generated/client/worldmonitor/market/v1/service_client';
+import { getHydratedData } from '@/services/bootstrap';
+
+type ETFFlowsResult = ListEtfFlowsResponse;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 function formatVolume(v: number): string {
   if (Math.abs(v) >= 1e9) return `${(v / 1e9).toFixed(1)}B`;
@@ -50,6 +60,7 @@ export class ETFFlowsPanel extends Panel {
   private data: ETFFlowsResult | null = null;
   private loading = true;
   private error: string | null = null;
+<<<<<<< HEAD
   private refreshInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
@@ -77,26 +88,90 @@ export class ETFFlowsPanel extends Panel {
       this.loading = false;
       this.renderPanel();
     }
+=======
+  constructor() {
+    super({ id: 'etf-flows', title: t('panels.etfFlows'), showCount: false });
+    // Delay initial fetch by 8s to avoid competing with stock/commodity Yahoo calls
+    // during cold start — all share a global yahooGate() rate limiter on the sidecar
+    setTimeout(() => void this.fetchData(), 8_000);
+  }
+
+  public async fetchData(): Promise<void> {
+    const hydrated = getHydratedData('etfFlows') as ETFFlowsResult | undefined;
+    if (hydrated?.etfs?.length) {
+      this.data = hydrated;
+      this.error = null;
+      this.loading = false;
+      this.renderPanel();
+      return;
+    }
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const client = new MarketServiceClient('', { fetch: (...args) => globalThis.fetch(...args) });
+        this.data = await client.listEtfFlows({});
+        if (!this.element?.isConnected) return;
+        this.error = null;
+
+        if (this.data && this.data.etfs.length === 0 && !this.data.rateLimited && attempt < 2) {
+          this.showRetrying();
+          await new Promise(r => setTimeout(r, 20_000));
+          if (!this.element?.isConnected) return;
+          continue;
+        }
+        break;
+      } catch (err) {
+        if (this.isAbortError(err)) return;
+        if (!this.element?.isConnected) return;
+        if (attempt < 2) {
+          this.showRetrying();
+          await new Promise(r => setTimeout(r, 20_000));
+          if (!this.element?.isConnected) return;
+          continue;
+        }
+        this.error = err instanceof Error ? err.message : 'Failed to fetch';
+      }
+    }
+    this.loading = false;
+    this.renderPanel();
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   private renderPanel(): void {
     if (this.loading) {
+<<<<<<< HEAD
       this.showLoading('Loading ETF data...');
+=======
+      this.showLoading(t('common.loadingEtfData'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return;
     }
 
     if (this.error || !this.data) {
+<<<<<<< HEAD
       this.showError(this.error || 'No data');
+=======
+      this.showError(this.error || t('common.noDataShort'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return;
     }
 
     const d = this.data;
     if (!d.etfs.length) {
+<<<<<<< HEAD
       this.setContent('<div class="panel-loading-text">ETF data temporarily unavailable</div>');
       return;
     }
 
     const s = d.summary;
+=======
+      const msg = d.rateLimited ? t('components.etfFlows.rateLimited') : t('components.etfFlows.unavailable');
+      this.setContent(`<div class="panel-loading-text">${msg}</div>`);
+      return;
+    }
+
+    const s = d.summary || { etfCount: 0, totalVolume: 0, totalEstFlow: 0, netDirection: 'NEUTRAL', inflowCount: 0, outflowCount: 0 };
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const dirClass = s.netDirection.includes('INFLOW') ? 'flow-inflow' : s.netDirection.includes('OUTFLOW') ? 'flow-outflow' : 'flow-neutral';
 
     const rows = d.etfs.map(etf => `
@@ -113,6 +188,7 @@ export class ETFFlowsPanel extends Panel {
       <div class="etf-flows-container">
         <div class="etf-summary ${dirClass}">
           <div class="etf-summary-item">
+<<<<<<< HEAD
             <span class="etf-summary-label">Net Flow</span>
             <span class="etf-summary-value ${dirClass}">${escapeHtml(s.netDirection)}</span>
           </div>
@@ -126,6 +202,21 @@ export class ETFFlowsPanel extends Panel {
           </div>
           <div class="etf-summary-item">
             <span class="etf-summary-label">ETFs</span>
+=======
+            <span class="etf-summary-label">${t('components.etfFlows.netFlow')}</span>
+            <span class="etf-summary-value ${dirClass}">${s.netDirection.includes('INFLOW') ? t('components.etfFlows.netInflow') : t('components.etfFlows.netOutflow')}</span>
+          </div>
+          <div class="etf-summary-item">
+            <span class="etf-summary-label">${t('components.etfFlows.estFlow')}</span>
+            <span class="etf-summary-value">$${formatVolume(Math.abs(s.totalEstFlow))}</span>
+          </div>
+          <div class="etf-summary-item">
+            <span class="etf-summary-label">${t('components.etfFlows.totalVol')}</span>
+            <span class="etf-summary-value">${formatVolume(s.totalVolume)}</span>
+          </div>
+          <div class="etf-summary-item">
+            <span class="etf-summary-label">${t('components.etfFlows.etfs')}</span>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
             <span class="etf-summary-value">${s.inflowCount}↑ ${s.outflowCount}↓</span>
           </div>
         </div>
@@ -133,11 +224,19 @@ export class ETFFlowsPanel extends Panel {
           <table class="etf-table">
             <thead>
               <tr>
+<<<<<<< HEAD
                 <th>Ticker</th>
                 <th>Issuer</th>
                 <th>Est. Flow</th>
                 <th>Volume</th>
                 <th>Change</th>
+=======
+                <th>${t('components.etfFlows.table.ticker')}</th>
+                <th>${t('components.etfFlows.table.issuer')}</th>
+                <th>${t('components.etfFlows.table.estFlow')}</th>
+                <th>${t('components.etfFlows.table.volume')}</th>
+                <th>${t('components.etfFlows.table.change')}</th>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
               </tr>
             </thead>
             <tbody>${rows}</tbody>

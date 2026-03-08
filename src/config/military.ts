@@ -281,6 +281,7 @@ export const MILITARY_AIRCRAFT_TYPES: Record<string, { type: MilitaryAircraftTyp
  * Reference: https://www.ads-b.nl/icao.php
  */
 export const MILITARY_HEX_RANGES: { start: string; end: string; operator: MilitaryOperator; country: string }[] = [
+<<<<<<< HEAD
   // United States Military (largest block)
   { start: 'ADF7C7', end: 'ADF7CF', operator: 'usaf', country: 'USA' }, // Known USAF tankers
   { start: 'AE0000', end: 'AFFFFF', operator: 'usaf', country: 'USA' }, // Main USAF block
@@ -298,24 +299,60 @@ export const MILITARY_HEX_RANGES: { start: string; end: string; operator: Milita
 
   // Israel Military (critical for Middle East)
   { start: '738000', end: '73FFFF', operator: 'iaf', country: 'Israel' },
+=======
+  // United States DoD — civil N-numbers end at ADF7C7; everything above is military
+  { start: 'ADF7C8', end: 'AFFFFF', operator: 'usaf', country: 'USA' },
+
+  // UK Military (small block at start + main RAF block)
+  { start: '400000', end: '40003F', operator: 'raf', country: 'UK' },
+  { start: '43C000', end: '43CFFF', operator: 'raf', country: 'UK' },
+
+  // France Military (two sub-blocks within 380000-3BFFFF)
+  { start: '3AA000', end: '3AFFFF', operator: 'faf', country: 'France' },
+  { start: '3B7000', end: '3BFFFF', operator: 'faf', country: 'France' },
+
+  // Germany Military (two sub-blocks within 3C0000-3FFFFF)
+  { start: '3EA000', end: '3EBFFF', operator: 'gaf', country: 'Germany' },
+  { start: '3F4000', end: '3FBFFF', operator: 'gaf', country: 'Germany' },
+
+  // Israel Military (confirmed IAF sub-range within 738000-73FFFF)
+  { start: '738A00', end: '738BFF', operator: 'iaf', country: 'Israel' },
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
   // NATO AWACS (Luxembourg registration but NATO operated)
   { start: '4D0000', end: '4D03FF', operator: 'nato', country: 'NATO' },
 
+<<<<<<< HEAD
   // Italy Military
   { start: '300000', end: '33FFFF', operator: 'other', country: 'Italy' },
 
   // Spain Military
   { start: '340000', end: '37FFFF', operator: 'other', country: 'Spain' },
+=======
+  // Italy Military (top of 300000-33FFFF block)
+  { start: '33FF00', end: '33FFFF', operator: 'other', country: 'Italy' },
+
+  // Spain Military (upper 3/4 of 340000-37FFFF; civilian in 340000-34FFFF)
+  { start: '350000', end: '37FFFF', operator: 'other', country: 'Spain' },
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
   // Netherlands Military
   { start: '480000', end: '480FFF', operator: 'other', country: 'Netherlands' },
 
+<<<<<<< HEAD
   // Turkey Military (important for Middle East)
   { start: '4BA000', end: '4BCFFF', operator: 'other', country: 'Turkey' },
 
   // Saudi Arabia Military
   { start: '710000', end: '717FFF', operator: 'other', country: 'Saudi Arabia' },
+=======
+  // Turkey Military (confirmed sub-range within 4B8000-4BFFFF)
+  { start: '4B8200', end: '4B82FF', operator: 'other', country: 'Turkey' },
+
+  // Saudi Arabia Military (two small confirmed sub-blocks)
+  { start: '710258', end: '71028F', operator: 'other', country: 'Saudi Arabia' },
+  { start: '710380', end: '71039F', operator: 'other', country: 'Saudi Arabia' },
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
   // UAE Military
   { start: '896000', end: '896FFF', operator: 'other', country: 'UAE' },
@@ -326,6 +363,7 @@ export const MILITARY_HEX_RANGES: { start: string; end: string; operator: Milita
   // Kuwait Military
   { start: '706000', end: '706FFF', operator: 'other', country: 'Kuwait' },
 
+<<<<<<< HEAD
   // Japan Self-Defense Forces
   { start: '840000', end: '87FFFF', operator: 'other', country: 'Japan' },
 
@@ -361,6 +399,40 @@ export const MILITARY_HEX_RANGES: { start: string; end: string; operator: Milita
 
   // Singapore Military
   { start: '768000', end: '76FFFF', operator: 'other', country: 'Singapore' },
+=======
+  // Australia Military (confirmed RAAF sub-range)
+  { start: '7CF800', end: '7CFAFF', operator: 'other', country: 'Australia' },
+
+  // Canada Military (upper half of C00000-C3FFFF)
+  { start: 'C20000', end: 'C3FFFF', operator: 'other', country: 'Canada' },
+
+  // India Military (confirmed IAF sub-range within 800000-83FFFF)
+  { start: '800200', end: '8002FF', operator: 'other', country: 'India' },
+
+  // Egypt Military (confirmed sub-range)
+  { start: '010070', end: '01008F', operator: 'other', country: 'Egypt' },
+
+  // Poland Military (confirmed sub-range within 488000-48FFFF)
+  { start: '48D800', end: '48D87F', operator: 'other', country: 'Poland' },
+
+  // Greece Military (confirmed sub-range at start of 468000-46FFFF)
+  { start: '468000', end: '4683FF', operator: 'other', country: 'Greece' },
+
+  // Norway Military (confirmed sub-range within 478000-47FFFF)
+  { start: '478100', end: '4781FF', operator: 'other', country: 'Norway' },
+
+  // Austria Military
+  { start: '444000', end: '446FFF', operator: 'other', country: 'Austria' },
+
+  // Belgium Military
+  { start: '44F000', end: '44FFFF', operator: 'other', country: 'Belgium' },
+
+  // Switzerland Military
+  { start: '4B7000', end: '4B7FFF', operator: 'other', country: 'Switzerland' },
+
+  // Brazil Military
+  { start: 'E40000', end: 'E41FFF', operator: 'other', country: 'Brazil' },
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 ];
 
 /**
@@ -454,6 +526,129 @@ export const MILITARY_HOTSPOTS = [
   { name: 'ARCTIC', lat: 75.0, lon: 0.0, radius: 10, priority: 'low' },
 ] as const;
 
+<<<<<<< HEAD
+=======
+export interface QueryRegion {
+  name: string;
+  lamin: number;
+  lamax: number;
+  lomin: number;
+  lomax: number;
+}
+
+export const MILITARY_QUERY_REGIONS: QueryRegion[] = [
+  { name: 'PACIFIC', lamin: 10, lamax: 46, lomin: 107, lomax: 143 },
+  { name: 'WESTERN', lamin: 13, lamax: 85, lomin: -10, lomax: 57 },
+];
+
+if (import.meta.env.DEV) {
+  for (const h of MILITARY_HOTSPOTS) {
+    const hbox = { lamin: h.lat - h.radius, lamax: h.lat + h.radius, lomin: h.lon - h.radius, lomax: h.lon + h.radius };
+    const covered = MILITARY_QUERY_REGIONS.some(r =>
+      r.lamin <= hbox.lamin && r.lamax >= hbox.lamax && r.lomin <= hbox.lomin && r.lomax >= hbox.lomax
+    );
+    if (!covered) console.error(`[Military] HOTSPOT ${h.name} bbox not covered by any QUERY_REGION`);
+  }
+}
+
+export const USNI_REGION_COORDINATES: Record<string, { lat: number; lon: number }> = {
+  // Seas & Oceans
+  'Philippine Sea': { lat: 18.0, lon: 130.0 },
+  'South China Sea': { lat: 14.0, lon: 115.0 },
+  'East China Sea': { lat: 28.0, lon: 125.0 },
+  'Sea of Japan': { lat: 40.0, lon: 135.0 },
+  'Arabian Sea': { lat: 18.0, lon: 63.0 },
+  'Red Sea': { lat: 20.0, lon: 38.0 },
+  'Mediterranean Sea': { lat: 35.0, lon: 18.0 },
+  'Eastern Mediterranean': { lat: 34.5, lon: 33.0 },
+  'Western Mediterranean': { lat: 37.0, lon: 3.0 },
+  'Persian Gulf': { lat: 26.5, lon: 52.0 },
+  'Gulf of Oman': { lat: 24.5, lon: 58.5 },
+  'Gulf of Aden': { lat: 12.0, lon: 47.0 },
+  'Caribbean Sea': { lat: 15.0, lon: -73.0 },
+  'North Atlantic': { lat: 45.0, lon: -30.0 },
+  'Atlantic Ocean': { lat: 30.0, lon: -40.0 },
+  'Western Atlantic': { lat: 30.0, lon: -60.0 },
+  'Pacific Ocean': { lat: 20.0, lon: -150.0 },
+  'Eastern Pacific': { lat: 18.0, lon: -125.0 },
+  'Western Pacific': { lat: 20.0, lon: 140.0 },
+  'Indian Ocean': { lat: -5.0, lon: 75.0 },
+  'Antarctic': { lat: -70.0, lon: 20.0 },
+  'Baltic Sea': { lat: 58.0, lon: 20.0 },
+  'Black Sea': { lat: 43.5, lon: 34.0 },
+  'Bay of Bengal': { lat: 14.0, lon: 87.0 },
+  'Bab el-Mandeb Strait': { lat: 12.5, lon: 43.5 },
+  'Strait of Hormuz': { lat: 26.5, lon: 56.5 },
+  'Taiwan Strait': { lat: 24.5, lon: 119.5 },
+  'Suez Canal': { lat: 30.0, lon: 32.5 },
+  // Ports & Bases
+  'Yokosuka': { lat: 35.29, lon: 139.67 },
+  'Japan': { lat: 35.29, lon: 139.67 },
+  'Sasebo': { lat: 33.16, lon: 129.72 },
+  'Guam': { lat: 13.45, lon: 144.79 },
+  'Pearl Harbor': { lat: 21.35, lon: -157.95 },
+  'San Diego': { lat: 32.68, lon: -117.15 },
+  'Norfolk': { lat: 36.95, lon: -76.30 },
+  'Mayport': { lat: 30.39, lon: -81.40 },
+  'Bahrain': { lat: 26.23, lon: 50.55 },
+  'Rota': { lat: 36.63, lon: -6.35 },
+  'Rota Spain': { lat: 36.63, lon: -6.35 },
+  'Diego Garcia': { lat: -7.32, lon: 72.42 },
+  'Souda Bay': { lat: 35.49, lon: 24.08 },
+  'Naples': { lat: 40.84, lon: 14.25 },
+  'Bremerton': { lat: 47.57, lon: -122.63 },
+  'Everett': { lat: 47.97, lon: -122.22 },
+  'Kings Bay': { lat: 30.80, lon: -81.56 },
+  'Bangor': { lat: 47.73, lon: -122.71 },
+  'Djibouti': { lat: 11.55, lon: 43.15 },
+  'Singapore': { lat: 1.35, lon: 103.82 },
+};
+
+export function normalizeUSNIRegion(regionText: string): string {
+  return regionText
+    .replace(/^(In the|In|The)\s+/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export function getUSNIRegionCoords(regionText: string): { lat: number; lon: number } | undefined {
+  const normalized = normalizeUSNIRegion(regionText);
+  if (USNI_REGION_COORDINATES[normalized]) return USNI_REGION_COORDINATES[normalized];
+  const lower = normalized.toLowerCase();
+  for (const [key, coords] of Object.entries(USNI_REGION_COORDINATES)) {
+    if (key.toLowerCase() === lower || lower.includes(key.toLowerCase()) || key.toLowerCase().includes(lower)) {
+      return coords;
+    }
+  }
+  return undefined;
+}
+
+export function getUSNIRegionApproxCoords(regionText: string): { lat: number; lon: number } {
+  const direct = getUSNIRegionCoords(regionText);
+  if (direct) return direct;
+
+  const normalized = normalizeUSNIRegion(regionText).toLowerCase();
+  if (normalized.includes('eastern pacific')) return { lat: 18.0, lon: -125.0 };
+  if (normalized.includes('western atlantic')) return { lat: 30.0, lon: -60.0 };
+  if (normalized.includes('pacific')) return { lat: 15.0, lon: -150.0 };
+  if (normalized.includes('atlantic')) return { lat: 30.0, lon: -40.0 };
+  if (normalized.includes('indian')) return { lat: -5.0, lon: 75.0 };
+  if (normalized.includes('mediterranean')) return { lat: 35.0, lon: 18.0 };
+  if (normalized.includes('antarctic') || normalized.includes('southern')) return { lat: -70.0, lon: 20.0 };
+  if (normalized.includes('arctic')) return { lat: 75.0, lon: 0.0 };
+
+  // Deterministic fallback so previously unseen regions are still rendered.
+  let hash = 0;
+  for (let i = 0; i < normalized.length; i++) {
+    hash = ((hash << 5) - hash) + normalized.charCodeAt(i);
+    hash |= 0;
+  }
+  const lat = ((Math.abs(hash) % 120) - 60);
+  const lon = ((Math.abs(hash * 31) % 300) - 150);
+  return { lat, lon };
+}
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 /**
  * Helper function to identify aircraft by callsign
  */

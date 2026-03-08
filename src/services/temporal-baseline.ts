@@ -1,6 +1,12 @@
 // Temporal Anomaly Detection Service
 // Detects when current activity levels deviate from historical baselines
+<<<<<<< HEAD
 // Backed by Upstash Redis via /api/temporal-baseline edge function
+=======
+// Backed by InfrastructureService RPCs (GetTemporalBaseline, RecordBaselineSnapshot)
+
+import { InfrastructureServiceClient } from '@/generated/client/worldmonitor/infrastructure/v1/service_client';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export type TemporalEventType =
   | 'military_flights'
@@ -20,7 +26,11 @@ export interface TemporalAnomaly {
   severity: 'medium' | 'high' | 'critical';
 }
 
+<<<<<<< HEAD
 const BASELINE_API = '/api/temporal-baseline';
+=======
+const client = new InfrastructureServiceClient('', { fetch: (...args) => globalThis.fetch(...args) });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 const TYPE_LABELS: Record<TemporalEventType, string> = {
   military_flights: 'Military flights',
@@ -60,11 +70,15 @@ export async function reportMetrics(
   updates: Array<{ type: TemporalEventType; region: string; count: number }>
 ): Promise<void> {
   try {
+<<<<<<< HEAD
     await fetch(BASELINE_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ updates }),
     });
+=======
+    await client.recordBaselineSnapshot({ updates });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   } catch (e) {
     console.warn('[TemporalBaseline] Update failed:', e);
   }
@@ -77,21 +91,32 @@ export async function checkAnomaly(
   count: number,
 ): Promise<TemporalAnomaly | null> {
   try {
+<<<<<<< HEAD
     const params = new URLSearchParams({ type, region, count: String(count) });
     const res = await fetch(`${BASELINE_API}?${params}`);
     if (!res.ok) return null;
 
     const data = await res.json();
+=======
+    const data = await client.getTemporalBaseline({ type, region, count });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     if (!data.anomaly) return null;
 
     return {
       type,
       region,
       currentCount: count,
+<<<<<<< HEAD
       expectedCount: Math.round(data.baseline.mean),
       zScore: data.anomaly.zScore,
       severity: getSeverity(data.anomaly.zScore),
       message: formatAnomalyMessage(type, region, count, data.baseline.mean, data.anomaly.multiplier),
+=======
+      expectedCount: Math.round(data.baseline?.mean ?? 0),
+      zScore: data.anomaly.zScore,
+      severity: getSeverity(data.anomaly.zScore),
+      message: formatAnomalyMessage(type, region, count, data.baseline?.mean ?? 0, data.anomaly.multiplier),
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
   } catch (e) {
     console.warn('[TemporalBaseline] Check failed:', e);

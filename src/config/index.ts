@@ -2,12 +2,20 @@
 // For variant-specific builds, set VITE_VARIANT environment variable
 // VITE_VARIANT=tech → tech.worldmonitor.app (tech-focused)
 // VITE_VARIANT=full → worldmonitor.app (geopolitical)
+<<<<<<< HEAD
+=======
+// VITE_VARIANT=finance → finance.worldmonitor.app (markets/trading)
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export { SITE_VARIANT } from './variant';
 
 // Shared base configuration (always included)
 export {
+<<<<<<< HEAD
   API_URLS,
+=======
+  IDLE_PAUSE_MS,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   REFRESH_INTERVALS,
   MONITOR_COLORS,
   STORAGE_KEYS,
@@ -40,6 +48,10 @@ export {
   DEFAULT_PANELS,
   DEFAULT_MAP_LAYERS,
   MOBILE_DEFAULT_MAP_LAYERS,
+<<<<<<< HEAD
+=======
+  LAYER_TO_SOURCE,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 } from './panels';
 
 // ============================================
@@ -57,6 +69,10 @@ export {
 export {
   INTEL_HOTSPOTS,
   CONFLICT_ZONES,
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   MILITARY_BASES,
   NUCLEAR_FACILITIES,
   APT_GROUPS,
@@ -99,3 +115,21 @@ export {
   type TechHQ,
   type CloudRegion,
 } from './tech-geo';
+<<<<<<< HEAD
+=======
+
+// Finance variant - these are included in finance builds
+export {
+  STOCK_EXCHANGES,
+  FINANCIAL_CENTERS,
+  CENTRAL_BANKS,
+  COMMODITY_HUBS,
+  type StockExchange,
+  type FinancialCenter,
+  type CentralBank,
+  type CommodityHub,
+} from './finance-geo';
+
+// Gulf FDI investment database
+export { GULF_INVESTMENTS } from './gulf-fdi';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27

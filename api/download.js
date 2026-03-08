@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+// Non-sebuf: returns XML/HTML, stays as standalone Vercel function
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 export const config = { runtime: 'edge' };
 
 const RELEASES_URL = 'https://api.github.com/repos/koala73/worldmonitor/releases/latest';
@@ -8,11 +12,47 @@ const PLATFORM_PATTERNS = {
   'windows-msi': (name) => name.endsWith('_x64_en-US.msi'),
   'macos-arm64': (name) => name.endsWith('_aarch64.dmg'),
   'macos-x64': (name) => name.endsWith('_x64.dmg') && !name.includes('setup'),
+<<<<<<< HEAD
 };
 
 export default async function handler(req) {
   const url = new URL(req.url);
   const platform = url.searchParams.get('platform');
+=======
+  'linux-appimage': (name) => name.endsWith('_amd64.AppImage'),
+  'linux-appimage-arm64': (name) => name.endsWith('_aarch64.AppImage'),
+};
+
+const VARIANT_IDENTIFIERS = {
+  full: ['worldmonitor'],
+  world: ['worldmonitor'],
+  tech: ['techmonitor'],
+  finance: ['financemonitor'],
+};
+
+function canonicalAssetName(name) {
+  return String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function findAssetForVariant(assets, variant, platformMatcher) {
+  const identifiers = VARIANT_IDENTIFIERS[variant] ?? null;
+  if (!identifiers) return null;
+
+  return assets.find((asset) => {
+    const assetName = String(asset?.name || '');
+    const normalizedAssetName = canonicalAssetName(assetName);
+    const hasVariantIdentifier = identifiers.some((identifier) =>
+      normalizedAssetName.includes(identifier)
+    );
+    return hasVariantIdentifier && platformMatcher(assetName);
+  }) ?? null;
+}
+
+export default async function handler(req) {
+  const url = new URL(req.url);
+  const platform = url.searchParams.get('platform');
+  const variant = (url.searchParams.get('variant') || '').toLowerCase();
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
   if (!platform || !PLATFORM_PATTERNS[platform]) {
     return Response.redirect(RELEASES_PAGE, 302);
@@ -32,7 +72,14 @@ export default async function handler(req) {
 
     const release = await res.json();
     const matcher = PLATFORM_PATTERNS[platform];
+<<<<<<< HEAD
     const asset = release.assets?.find((a) => matcher(a.name));
+=======
+    const assets = Array.isArray(release.assets) ? release.assets : [];
+    const asset = variant
+      ? findAssetForVariant(assets, variant, matcher)
+      : assets.find((a) => matcher(String(a?.name || '')));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     if (!asset) {
       return Response.redirect(RELEASES_PAGE, 302);
@@ -42,7 +89,11 @@ export default async function handler(req) {
       status: 302,
       headers: {
         'Location': asset.browser_download_url,
+<<<<<<< HEAD
         'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60',
+=======
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60, stale-if-error=600',
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       },
     });
   } catch {

@@ -1,4 +1,5 @@
 import { Panel } from './Panel';
+<<<<<<< HEAD
 import { escapeHtml } from '@/utils/sanitize';
 
 interface StablecoinData {
@@ -27,6 +28,15 @@ interface StablecoinResult {
   stablecoins: StablecoinData[];
   unavailable?: boolean;
 }
+=======
+import { t } from '@/services/i18n';
+import { escapeHtml } from '@/utils/sanitize';
+import { MarketServiceClient } from '@/generated/client/worldmonitor/market/v1/service_client';
+import type { ListStablecoinMarketsResponse } from '@/generated/client/worldmonitor/market/v1/service_client';
+import { getHydratedData } from '@/services/bootstrap';
+
+type StablecoinResult = ListStablecoinMarketsResponse;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 function formatLargeNum(v: number): string {
   if (v >= 1e12) return `$${(v / 1e12).toFixed(1)}T`;
@@ -51,6 +61,7 @@ export class StablecoinPanel extends Panel {
   private data: StablecoinResult | null = null;
   private loading = true;
   private error: string | null = null;
+<<<<<<< HEAD
   private refreshInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
@@ -78,26 +89,87 @@ export class StablecoinPanel extends Panel {
       this.loading = false;
       this.renderPanel();
     }
+=======
+  constructor() {
+    super({ id: 'stablecoins', title: t('panels.stablecoins'), showCount: false });
+    void this.fetchData();
+  }
+
+  public async fetchData(): Promise<void> {
+    const hydrated = getHydratedData('stablecoinMarkets') as StablecoinResult | undefined;
+    if (hydrated?.stablecoins?.length) {
+      this.data = hydrated;
+      this.error = null;
+      this.loading = false;
+      this.renderPanel();
+      return;
+    }
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const client = new MarketServiceClient('', { fetch: (...args) => globalThis.fetch(...args) });
+        this.data = await client.listStablecoinMarkets({ coins: [] });
+        if (!this.element?.isConnected) return;
+        this.error = null;
+
+        if (this.data && this.data.stablecoins.length === 0 && attempt < 2) {
+          this.showRetrying();
+          await new Promise(r => setTimeout(r, 20_000));
+          if (!this.element?.isConnected) return;
+          continue;
+        }
+        break;
+      } catch (err) {
+        if (this.isAbortError(err)) return;
+        if (!this.element?.isConnected) return;
+        if (attempt < 2) {
+          this.showRetrying();
+          await new Promise(r => setTimeout(r, 20_000));
+          if (!this.element?.isConnected) return;
+          continue;
+        }
+        this.error = err instanceof Error ? err.message : 'Failed to fetch';
+      }
+    }
+    this.loading = false;
+    this.renderPanel();
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   }
 
   private renderPanel(): void {
     if (this.loading) {
+<<<<<<< HEAD
       this.showLoading('Loading stablecoins...');
+=======
+      this.showLoading(t('common.loadingStablecoins'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return;
     }
 
     if (this.error || !this.data) {
+<<<<<<< HEAD
       this.showError(this.error || 'No data');
+=======
+      this.showError(this.error || t('common.noDataShort'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       return;
     }
 
     const d = this.data;
     if (!d.stablecoins.length) {
+<<<<<<< HEAD
       this.setContent('<div class="panel-loading-text">Stablecoin data temporarily unavailable</div>');
       return;
     }
 
     const s = d.summary;
+=======
+      this.setContent(`<div class="panel-loading-text">${t('components.stablecoins.unavailable')}</div>`);
+      return;
+    }
+
+    const s = d.summary || { totalMarketCap: 0, totalVolume24h: 0, coinCount: 0, depeggedCount: 0, healthStatus: 'UNAVAILABLE' };
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
     const pegRows = d.stablecoins.map(c => `
       <div class="stable-row">
@@ -129,6 +201,7 @@ export class StablecoinPanel extends Panel {
           <span class="health-detail">MCap: ${formatLargeNum(s.totalMarketCap)} | Vol: ${formatLargeNum(s.totalVolume24h)}</span>
         </div>
         <div class="stable-section">
+<<<<<<< HEAD
           <div class="stable-section-title">Peg Health</div>
           <div class="stable-peg-list">${pegRows}</div>
         </div>
@@ -136,6 +209,15 @@ export class StablecoinPanel extends Panel {
           <div class="stable-section-title">Supply & Volume</div>
           <div class="stable-supply-header">
             <span>Token</span><span>MCap</span><span>24h Vol</span><span>24h Chg</span>
+=======
+          <div class="stable-section-title">${t('components.stablecoins.pegHealth')}</div>
+          <div class="stable-peg-list">${pegRows}</div>
+        </div>
+        <div class="stable-section">
+          <div class="stable-section-title">${t('components.stablecoins.supplyVolume')}</div>
+          <div class="stable-supply-header">
+            <span>${t('components.stablecoins.token')}</span><span>${t('components.stablecoins.mcap')}</span><span>${t('components.stablecoins.vol24h')}</span><span>${t('components.stablecoins.chg24h')}</span>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           </div>
           <div class="stable-supply-list">${supplyRows}</div>
         </div>

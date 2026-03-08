@@ -2,6 +2,7 @@
  * Correlation analysis service - main thread wrapper.
  * Core logic is in analysis-core.ts (shared with worker).
  */
+<<<<<<< HEAD
 
 import type { ClusteredEvent, PredictionMarket, MarketData } from '@/types';
 import { getSourceType } from '@/config/feeds';
@@ -12,6 +13,19 @@ import {
   type SourceType,
 } from './analysis-core';
 
+=======
+
+import type { ClusteredEvent, MarketData } from '@/types';
+import type { PredictionMarket } from '@/services/prediction';
+import { getSourceType } from '@/config/feeds';
+import {
+  analyzeCorrelationsCore,
+  type CorrelationSignalCore,
+  type StreamSnapshot,
+  type SourceType,
+} from './analysis-core';
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 // Re-export types
 export type SignalType = CorrelationSignalCore['type'];
 export type CorrelationSignal = CorrelationSignalCore;
@@ -27,6 +41,10 @@ const DEDUPE_TTLS: Record<string, number> = {
   flow_price_divergence: 6 * 60 * 60 * 1000,
   explained_market_move: 6 * 60 * 60 * 1000,
   prediction_leads_news: 2 * 60 * 60 * 1000,
+<<<<<<< HEAD
+=======
+  keyword_spike: 30 * 60 * 1000,
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 };
 
 function getDedupeType(key: string): string {
@@ -81,5 +99,8 @@ export function addToSignalHistory(signals: CorrelationSignal[]): void {
   signalHistory.push(...signals);
   while (signalHistory.length > 100) {
     signalHistory.shift();
+  }
+  if (signals.length > 0) {
+    document.dispatchEvent(new CustomEvent('wm:intelligence-updated'));
   }
 }

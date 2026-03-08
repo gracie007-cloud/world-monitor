@@ -1,11 +1,18 @@
 import { Panel } from './Panel';
+<<<<<<< HEAD
 import type { PredictionMarket } from '@/types';
 import { escapeHtml, sanitizeUrl } from '@/utils/sanitize';
+=======
+import type { PredictionMarket } from '@/services/prediction';
+import { escapeHtml, sanitizeUrl } from '@/utils/sanitize';
+import { t } from '@/services/i18n';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
 export class PredictionPanel extends Panel {
   constructor() {
     super({
       id: 'polymarket',
+<<<<<<< HEAD
       title: 'Prediction Markets',
       infoTooltip: `<strong>Prediction Markets</strong>
         Real-money forecasting markets:
@@ -15,6 +22,10 @@ export class PredictionPanel extends Panel {
           <li>Geopolitical and current events focus</li>
         </ul>
         Source: Polymarket (polymarket.com)`,
+=======
+      title: t('panels.polymarket'),
+      infoTooltip: t('components.prediction.infoTooltip'),
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     });
   }
 
@@ -27,7 +38,7 @@ export class PredictionPanel extends Panel {
 
   public renderPredictions(data: PredictionMarket[]): void {
     if (data.length === 0) {
-      this.showError('Failed to load predictions');
+      this.showError(t('common.failedPredictions'));
       return;
     }
 
@@ -42,16 +53,36 @@ export class PredictionPanel extends Panel {
           ? `<a href="${safeUrl}" target="_blank" rel="noopener" class="prediction-question prediction-link">${escapeHtml(p.title)}</a>`
           : `<div class="prediction-question">${escapeHtml(p.title)}</div>`;
 
+<<<<<<< HEAD
         return `
       <div class="prediction-item">
         ${titleHtml}
         ${volumeStr ? `<div class="prediction-volume">Vol: ${volumeStr}</div>` : ''}
+=======
+        let expiryHtml = '';
+        if (p.endDate) {
+          const d = new Date(p.endDate);
+          if (Number.isFinite(d.getTime())) {
+            const formatted = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+            expiryHtml = `<span class="prediction-expiry">${t('components.predictions.closes')}: ${formatted}</span>`;
+          }
+        }
+
+        const metaHtml = (volumeStr || expiryHtml)
+          ? `<div class="prediction-meta">${volumeStr ? `<span class="prediction-volume">${t('components.predictions.vol')}: ${volumeStr}</span>` : ''}${expiryHtml}</div>`
+          : '';
+
+        return `
+      <div class="prediction-item">
+        ${titleHtml}
+        ${metaHtml}
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         <div class="prediction-bar">
           <div class="prediction-yes" style="width: ${yesPercent}%">
-            <span class="prediction-label">Yes ${yesPercent}%</span>
+            <span class="prediction-label">${t('components.predictions.yes')} ${yesPercent}%</span>
           </div>
           <div class="prediction-no" style="width: ${noPercent}%">
-            <span class="prediction-label">No ${noPercent}%</span>
+            <span class="prediction-label">${t('components.predictions.no')} ${noPercent}%</span>
           </div>
         </div>
       </div>

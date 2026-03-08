@@ -1,31 +1,57 @@
 import { Panel } from './Panel';
 import { mlWorker } from '@/services/ml-worker';
+<<<<<<< HEAD
 import { generateSummary } from '@/services/summarization';
 import { parallelAnalysis, type AnalyzedHeadline } from '@/services/parallel-analysis';
 import { signalAggregator, logSignalSummary, type RegionalConvergence } from '@/services/signal-aggregator';
 import { focalPointDetector } from '@/services/focal-point-detector';
+=======
+import { generateSummary, type SummarizeOptions } from '@/services/summarization';
+import { parallelAnalysis, type AnalyzedHeadline } from '@/services/parallel-analysis';
+import { signalAggregator, type RegionalConvergence } from '@/services/signal-aggregator';
+import { focalPointDetector } from '@/services/focal-point-detector';
+import { stripOrefLabels } from '@/services/oref-alerts';
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 import { ingestNewsForCII } from '@/services/country-instability';
 import { getTheaterPostureSummaries } from '@/services/military-surge';
 import { isMobileDevice } from '@/utils';
 import { escapeHtml, sanitizeUrl } from '@/utils/sanitize';
 import { SITE_VARIANT } from '@/config';
+<<<<<<< HEAD
 import { getPersistentCache, setPersistentCache } from '@/services/persistent-cache';
 import type { ClusteredEvent, FocalPoint, MilitaryFlight } from '@/types';
 
 export class InsightsPanel extends Panel {
   private isHidden = false;
+=======
+import { deletePersistentCache, getPersistentCache, setPersistentCache } from '@/services/persistent-cache';
+import { t } from '@/services/i18n';
+import { isDesktopRuntime } from '@/services/runtime';
+import { getAiFlowSettings, isAnyAiProviderEnabled, subscribeAiFlowChange } from '@/services/ai-flow-settings';
+import { getServerInsights, type ServerInsights, type ServerInsightStory } from '@/services/insights-loader';
+import type { ClusteredEvent, FocalPoint, MilitaryFlight } from '@/types';
+
+export class InsightsPanel extends Panel {
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   private lastBriefUpdate = 0;
   private cachedBrief: string | null = null;
   private lastMissedStories: AnalyzedHeadline[] = [];
   private lastConvergenceZones: RegionalConvergence[] = [];
   private lastFocalPoints: FocalPoint[] = [];
   private lastMilitaryFlights: MilitaryFlight[] = [];
+<<<<<<< HEAD
+=======
+  private lastClusters: ClusteredEvent[] = [];
+  private aiFlowUnsubscribe: (() => void) | null = null;
+  private updateGeneration = 0;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   private static readonly BRIEF_COOLDOWN_MS = 120000; // 2 min cooldown (API has limits)
   private static readonly BRIEF_CACHE_KEY = 'summary:world-brief';
 
   constructor() {
     super({
       id: 'insights',
+<<<<<<< HEAD
       title: 'AI INSIGHTS',
       showCount: false,
       infoTooltip: `
@@ -41,6 +67,20 @@ export class InsightsPanel extends Panel {
     if (isMobileDevice()) {
       this.hide();
       this.isHidden = true;
+=======
+      title: t('panels.insights'),
+      showCount: false,
+      infoTooltip: t('components.insights.infoTooltip'),
+    });
+
+    // Web-only: subscribe to AI flow changes so toggling providers re-runs analysis
+    // Skip on mobile — only server-side insights are used there (no client-side AI)
+    if (!isDesktopRuntime() && !isMobileDevice()) {
+      this.aiFlowUnsubscribe = subscribeAiFlowChange((changedKey) => {
+        if (changedKey === 'mapNewsFlash') return;
+        void this.onAiFlowChanged();
+      });
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     }
   }
 
@@ -241,7 +281,11 @@ export class InsightsPanel extends Panel {
           <div class="insights-progress-fill" style="width: ${percent}%"></div>
         </div>
         <div class="insights-progress-info">
+<<<<<<< HEAD
           <span class="insights-progress-step">Step ${step}/${total}</span>
+=======
+          <span class="insights-progress-step">${t('components.insights.step', { step: String(step), total: String(total) })}</span>
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           <span class="insights-progress-message">${message}</span>
         </div>
       </div>
@@ -249,6 +293,7 @@ export class InsightsPanel extends Panel {
   }
 
   public async updateInsights(clusters: ClusteredEvent[]): Promise<void> {
+<<<<<<< HEAD
     if (this.isHidden) return;
 
     if (clusters.length === 0) {
@@ -257,10 +302,106 @@ export class InsightsPanel extends Panel {
       return;
     }
 
+=======
+    this.lastClusters = clusters;
+    this.updateGeneration++;
+    const thisGeneration = this.updateGeneration;
+
+    if (clusters.length === 0) {
+      this.setDataBadge('unavailable');
+      this.setContent(`<div class="insights-empty">${t('components.insights.waitingForData')}</div>`);
+      return;
+    }
+
+    // Try server-side pre-computed insights first (instant)
+    const serverInsights = getServerInsights();
+    if (serverInsights) {
+      await this.updateFromServer(serverInsights, clusters, thisGeneration);
+      return;
+    }
+
+    // Fallback: full client-side pipeline (skip on mobile — too heavy)
+    if (isMobileDevice()) {
+      this.setDataBadge('unavailable');
+      this.setContent(`<div class="insights-empty">${t('components.insights.waitingForData')}</div>`);
+      return;
+    }
+    await this.updateFromClient(clusters, thisGeneration);
+  }
+
+  private async updateFromServer(
+    serverInsights: ServerInsights,
+    clusters: ClusteredEvent[],
+    thisGeneration: number,
+  ): Promise<void> {
+    const totalSteps = 2;
+
+    try {
+      // Step 1: Signal aggregation (client-side, depends on real-time map data)
+      this.setProgress(1, totalSteps, 'Loading server insights...');
+
+      let signalSummary: ReturnType<typeof signalAggregator.getSummary>;
+      let focalSummary: ReturnType<typeof focalPointDetector.analyze>;
+
+      if (SITE_VARIANT === 'full') {
+        if (this.lastMilitaryFlights.length > 0) {
+          const postures = getTheaterPostureSummaries(this.lastMilitaryFlights);
+          signalAggregator.ingestTheaterPostures(postures);
+        }
+        signalSummary = signalAggregator.getSummary();
+        this.lastConvergenceZones = signalSummary.convergenceZones;
+        focalSummary = focalPointDetector.analyze(clusters, signalSummary);
+        this.lastFocalPoints = focalSummary.focalPoints;
+        if (focalSummary.focalPoints.length > 0) {
+          ingestNewsForCII(clusters);
+          window.dispatchEvent(new CustomEvent('focal-points-ready'));
+        }
+      } else {
+        this.lastConvergenceZones = [];
+        this.lastFocalPoints = [];
+      }
+
+      if (this.updateGeneration !== thisGeneration) return;
+
+      // Step 2: Sentiment analysis on server story titles (fast browser ML)
+      this.setProgress(2, totalSteps, t('components.insights.analyzingSentiment'));
+      const titles = serverInsights.topStories.slice(0, 5).map(s => s.primaryTitle);
+      let sentiments: Array<{ label: string; score: number }> | null = null;
+      if (mlWorker.isAvailable) {
+        sentiments = await mlWorker.classifySentiment(titles).catch(() => null);
+      }
+
+      if (this.updateGeneration !== thisGeneration) return;
+
+      this.setDataBadge('live');
+      this.renderServerInsights(serverInsights, sentiments);
+    } catch (error) {
+      console.error('[InsightsPanel] Server path error, falling back:', error);
+      await this.updateFromClient(clusters, thisGeneration);
+    }
+  }
+
+  private async updateFromClient(clusters: ClusteredEvent[], thisGeneration: number): Promise<void> {
+    // Web-only: if no AI providers enabled, show disabled state
+    if (!isDesktopRuntime() && !isAnyAiProviderEnabled()) {
+      this.setDataBadge('unavailable');
+      this.renderDisabledState();
+      return;
+    }
+
+    // Build summarize options from AI flow settings (web) or defaults (desktop)
+    const aiFlow = isDesktopRuntime() ? { cloudLlm: true, browserModel: true } : getAiFlowSettings();
+    const summarizeOpts: SummarizeOptions = {
+      skipCloudProviders: !aiFlow.cloudLlm,
+      skipBrowserFallback: !aiFlow.browserModel,
+    };
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     const totalSteps = 4;
 
     try {
       // Step 1: Filter and rank stories by composite importance score
+<<<<<<< HEAD
       this.setProgress(1, totalSteps, 'Ranking important stories...');
 
       const importantClusters = this.selectTopStories(clusters, 8);
@@ -274,6 +415,16 @@ export class InsightsPanel extends Panel {
           console.log('%c💡 Improvement Suggestions:', 'color: #f59e0b; font-weight: bold');
           suggestions.forEach(s => console.log(`  • ${s}`));
         }
+=======
+      this.setProgress(1, totalSteps, t('components.insights.rankingStories'));
+
+      const importantClusters = this.selectTopStories(clusters, 8);
+
+      // Run parallel multi-perspective analysis in background
+      // This analyzes ALL clusters, not just the keyword-filtered ones
+      const parallelPromise = parallelAnalysis.analyzeHeadlines(clusters).then(report => {
+        this.lastMissedStories = report.missedByKeywords;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       }).catch(err => {
         console.warn('[ParallelAnalysis] Error:', err);
       });
@@ -284,17 +435,32 @@ export class InsightsPanel extends Panel {
       let focalSummary: ReturnType<typeof focalPointDetector.analyze>;
 
       if (SITE_VARIANT === 'full') {
+<<<<<<< HEAD
         signalSummary = signalAggregator.getSummary();
         this.lastConvergenceZones = signalSummary.convergenceZones;
         if (signalSummary.totalSignals > 0) {
           logSignalSummary();
         }
 
+=======
+        // Feed theater-level posture into signal aggregator so target nations
+        // (Iran, Taiwan, etc.) get credited for military activity in their theater,
+        // even when aircraft/vessels are physically over neighboring airspace/waters.
+        if (this.lastMilitaryFlights.length > 0) {
+          const postures = getTheaterPostureSummaries(this.lastMilitaryFlights);
+          signalAggregator.ingestTheaterPostures(postures);
+        }
+        signalSummary = signalAggregator.getSummary();
+        this.lastConvergenceZones = signalSummary.convergenceZones;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
         // Run focal point detection (correlates news entities with map signals)
         focalSummary = focalPointDetector.analyze(clusters, signalSummary);
         this.lastFocalPoints = focalSummary.focalPoints;
         if (focalSummary.focalPoints.length > 0) {
+<<<<<<< HEAD
           focalPointDetector.logSummary();
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
           // Ingest news for CII BEFORE signaling (so CII has data when it calculates)
           ingestNewsForCII(clusters);
           // Signal CII to refresh now that focal points AND news data are available
@@ -322,6 +488,7 @@ export class InsightsPanel extends Panel {
       }
 
       if (importantClusters.length === 0) {
+<<<<<<< HEAD
         this.setContent('<div class="insights-empty">No breaking or multi-source stories yet</div>');
         return;
       }
@@ -330,11 +497,24 @@ export class InsightsPanel extends Panel {
 
       // Step 2: Analyze sentiment (browser-based, fast)
       this.setProgress(2, totalSteps, 'Analyzing sentiment...');
+=======
+        this.setContent(`<div class="insights-empty">${t('components.insights.noStories')}</div>`);
+        return;
+      }
+
+      // Cap titles sent to AI at 5 to reduce entity conflation in small models
+      // Strip OREF translation labels (ALERT[id]:, AREAS[id]:) that may leak into cluster titles
+      const titles = importantClusters.slice(0, 5).map(c => stripOrefLabels(c.primaryTitle));
+
+      // Step 2: Analyze sentiment (browser-based, fast)
+      this.setProgress(2, totalSteps, t('components.insights.analyzingSentiment'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       let sentiments: Array<{ label: string; score: number }> | null = null;
 
       if (mlWorker.isAvailable) {
         sentiments = await mlWorker.classifySentiment(titles).catch(() => null);
       }
+<<<<<<< HEAD
 
       // Step 3: Generate World Brief (with cooldown)
       const loadedFromPersistentCache = await this.loadBriefFromCache();
@@ -344,6 +524,19 @@ export class InsightsPanel extends Panel {
       let usedCachedBrief = loadedFromPersistentCache;
       if (!worldBrief || now - this.lastBriefUpdate > InsightsPanel.BRIEF_COOLDOWN_MS) {
         this.setProgress(3, totalSteps, 'Generating world brief...');
+=======
+      if (this.updateGeneration !== thisGeneration) return;
+
+      // Step 3: Generate World Brief (with cooldown)
+      await this.loadBriefFromCache();
+      if (this.updateGeneration !== thisGeneration) return;
+
+      let worldBrief = this.cachedBrief;
+      const now = Date.now();
+
+      if (!worldBrief || now - this.lastBriefUpdate > InsightsPanel.BRIEF_COOLDOWN_MS) {
+        this.setProgress(3, totalSteps, t('components.insights.generatingBrief'));
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
         // Pass focal point context + theater posture to AI for correlation-aware summarization
         // Tech variant: no geopolitical context, just tech news summarization
@@ -354,12 +547,19 @@ export class InsightsPanel extends Panel {
         const result = await generateSummary(titles, (_step, _total, msg) => {
           // Show sub-progress for summarization
           this.setProgress(3, totalSteps, `Generating brief: ${msg}`);
+<<<<<<< HEAD
         }, geoContext);
+=======
+        }, geoContext, undefined, summarizeOpts);
+
+        if (this.updateGeneration !== thisGeneration) return;
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
         if (result) {
           worldBrief = result.summary;
           this.cachedBrief = worldBrief;
           this.lastBriefUpdate = now;
+<<<<<<< HEAD
           usedCachedBrief = false;
           void setPersistentCache(InsightsPanel.BRIEF_CACHE_KEY, { summary: worldBrief });
           console.log(`[InsightsPanel] Brief generated${result.cached ? ' (cached)' : ''}${geoContext ? ' (with geo context)' : ''}`);
@@ -370,11 +570,25 @@ export class InsightsPanel extends Panel {
       }
 
       this.setDataBadge(worldBrief ? (usedCachedBrief ? 'cached' : 'live') : 'unavailable');
+=======
+          void setPersistentCache(InsightsPanel.BRIEF_CACHE_KEY, { summary: worldBrief });
+        }
+      } else {
+        this.setProgress(3, totalSteps, 'Using cached brief...');
+      }
+
+      this.setDataBadge(worldBrief ? 'live' : 'unavailable');
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 
       // Step 4: Wait for parallel analysis to complete
       this.setProgress(4, totalSteps, 'Multi-perspective analysis...');
       await parallelPromise;
 
+<<<<<<< HEAD
+=======
+      if (this.updateGeneration !== thisGeneration) return;
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
       this.renderInsights(importantClusters, sentiments, worldBrief);
     } catch (error) {
       console.error('[InsightsPanel] Error:', error);
@@ -409,6 +623,93 @@ export class InsightsPanel extends Panel {
     `);
   }
 
+<<<<<<< HEAD
+=======
+  private renderServerInsights(
+    insights: ServerInsights,
+    sentiments: Array<{ label: string; score: number }> | null,
+  ): void {
+    const briefHtml = insights.worldBrief ? this.renderWorldBrief(insights.worldBrief) : '';
+    const focalPointsHtml = this.renderFocalPoints();
+    const convergenceHtml = this.renderConvergenceZones();
+    const sentimentOverview = this.renderSentimentOverview(sentiments);
+    const storiesHtml = this.renderServerStories(insights.topStories, sentiments);
+    const statsHtml = this.renderServerStats(insights);
+    const missedHtml = this.renderMissedStories();
+
+    this.setContent(`
+      ${briefHtml}
+      ${focalPointsHtml}
+      ${convergenceHtml}
+      ${sentimentOverview}
+      ${statsHtml}
+      <div class="insights-section">
+        <div class="insights-section-title">BREAKING & CONFIRMED</div>
+        ${storiesHtml}
+      </div>
+      ${missedHtml}
+    `);
+  }
+
+  private renderServerStories(
+    stories: ServerInsightStory[],
+    sentiments: Array<{ label: string; score: number }> | null,
+  ): string {
+    return stories.map((story, i) => {
+      const sentiment = sentiments?.[i];
+      const sentimentClass = sentiment?.label === 'negative' ? 'negative' :
+        sentiment?.label === 'positive' ? 'positive' : 'neutral';
+
+      const badges: string[] = [];
+
+      if (story.sourceCount >= 3) {
+        badges.push(`<span class="insight-badge confirmed">✓ ${story.sourceCount} sources</span>`);
+      } else if (story.sourceCount >= 2) {
+        badges.push(`<span class="insight-badge multi">${story.sourceCount} sources</span>`);
+      }
+
+      if (story.isAlert) {
+        badges.push('<span class="insight-badge alert">⚠ ALERT</span>');
+      }
+
+      const VALID_THREAT_LEVELS = ['critical', 'high', 'elevated', 'moderate'];
+      if (story.threatLevel === 'critical' || story.threatLevel === 'high') {
+        const safeThreat = VALID_THREAT_LEVELS.includes(story.threatLevel) ? story.threatLevel : 'moderate';
+        badges.push(`<span class="insight-badge velocity ${safeThreat}">${escapeHtml(story.category)}</span>`);
+      }
+
+      return `
+        <div class="insight-story">
+          <div class="insight-story-header">
+            <span class="insight-sentiment-dot ${sentimentClass}"></span>
+            <span class="insight-story-title">${escapeHtml(story.primaryTitle.slice(0, 100))}${story.primaryTitle.length > 100 ? '...' : ''}</span>
+          </div>
+          ${badges.length > 0 ? `<div class="insight-badges">${badges.join('')}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  private renderServerStats(insights: ServerInsights): string {
+    return `
+      <div class="insights-stats">
+        <div class="insight-stat">
+          <span class="insight-stat-value">${insights.multiSourceCount}</span>
+          <span class="insight-stat-label">Multi-source</span>
+        </div>
+        <div class="insight-stat">
+          <span class="insight-stat-value">${insights.fastMovingCount}</span>
+          <span class="insight-stat-label">Fast-moving</span>
+        </div>
+        <div class="insight-stat">
+          <span class="insight-stat-value">${insights.clusterCount}</span>
+          <span class="insight-stat-label">Clusters</span>
+        </div>
+      </div>
+    `;
+  }
+
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   private renderWorldBrief(brief: string): string {
     return `
       <div class="insights-brief">
@@ -590,9 +891,16 @@ export class InsightsPanel extends Panel {
   }
 
   private renderFocalPoints(): string {
+<<<<<<< HEAD
     // Only show focal points that have both news AND signals (true correlations)
     const correlatedFPs = this.lastFocalPoints.filter(
       fp => fp.newsMentions > 0 && fp.signalCount > 0
+=======
+    // Show focal points with news+signals correlations, or those with active strikes
+    const correlatedFPs = this.lastFocalPoints.filter(
+      fp => (fp.newsMentions > 0 && fp.signalCount > 0) ||
+            fp.signalTypes.includes('active_strike')
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     ).slice(0, 5);
 
     if (correlatedFPs.length === 0) {
@@ -605,6 +913,10 @@ export class InsightsPanel extends Panel {
       military_vessel: '⚓',
       protest: '📢',
       ais_disruption: '🚢',
+<<<<<<< HEAD
+=======
+      active_strike: '💥',
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
     };
 
     const focalPointsHtml = correlatedFPs.map(fp => {
@@ -636,4 +948,49 @@ export class InsightsPanel extends Panel {
       </div>
     `;
   }
+<<<<<<< HEAD
+=======
+
+  private renderDisabledState(): void {
+    this.setContent(`
+      <div class="insights-disabled">
+        <div class="insights-disabled-icon">⚡</div>
+        <div class="insights-disabled-title">${t('components.insights.insightsDisabledTitle')}</div>
+        <div class="insights-disabled-hint">${t('components.insights.insightsDisabledHint')}</div>
+      </div>
+    `);
+  }
+
+  private async onAiFlowChanged(): Promise<void> {
+    this.updateGeneration++;
+    // Reset brief cache so new provider settings take effect immediately
+    this.cachedBrief = null;
+    this.lastBriefUpdate = 0;
+    try {
+      await deletePersistentCache(InsightsPanel.BRIEF_CACHE_KEY);
+    } catch {
+      // Best effort; fallback regeneration still works from memory reset.
+    }
+    if (!this.element?.isConnected) return;
+
+    if (!isAnyAiProviderEnabled()) {
+      this.setDataBadge('unavailable');
+      this.renderDisabledState();
+      return;
+    }
+
+    if (this.lastClusters.length > 0) {
+      void this.updateInsights(this.lastClusters);
+      return;
+    }
+
+    this.setDataBadge('unavailable');
+    this.setContent(`<div class="insights-empty">${t('components.insights.waitingForData')}</div>`);
+  }
+
+  public override destroy(): void {
+    this.aiFlowUnsubscribe?.();
+    super.destroy();
+  }
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
 }

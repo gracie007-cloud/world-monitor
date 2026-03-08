@@ -60,7 +60,10 @@ export async function detectMLCapabilities(): Promise<MLCapabilities> {
     recommendedThreads,
   };
 
+<<<<<<< HEAD
   console.log('[MLCapabilities]', cachedCapabilities);
+=======
+>>>>>>> 0f7893c792ef8a834c008cd8f80eb6f5a9db8f27
   return cachedCapabilities;
 }
 
